@@ -1,0 +1,30 @@
+.features {
+  width: 100%;
+  padding: 2.5rem 0 3.5rem;
+}
+
+.featureCard {
+  height: 100%;
+  border: 1px solid #27272a;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(24, 24, 27, 0.95), rgba(16, 16, 19, 0.95));
+  padding: 1.4rem 1rem;
+}
+
+.iconWrap {
+  margin: 0 auto 1rem;
+  width: 3rem;
+  height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  background: rgba(250, 204, 21, 0.08);
+  color: #facc15;
+}
+
+.featureIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}

@@ -1,0 +1,79 @@
+:root {
+  --ifm-color-primary: #facc15;
+  --ifm-color-primary-dark: #eab308;
+  --ifm-color-primary-darker: #ca8a04;
+  --ifm-color-primary-darkest: #a16207;
+  --ifm-color-primary-light: #fcd34d;
+  --ifm-color-primary-lighter: #fde68a;
+  --ifm-color-primary-lightest: #fef3c7;
+  --ifm-background-color: #09090b;
+  --ifm-background-surface-color: #18181b;
+  --ifm-navbar-background-color: #09090b;
+  --ifm-footer-background-color: #09090b;
+  --ifm-font-color-base: #f4f4f5;
+  --ifm-heading-color: #f9fafb;
+  --ifm-link-color: #fde047;
+  --ifm-code-font-size: 95%;
+  --ifm-card-background-color: #18181b;
+  --docusaurus-highlighted-code-line-bg: rgba(250, 204, 21, 0.08);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #facc15;
+  --ifm-color-primary-dark: #eab308;
+  --ifm-color-primary-darker: #ca8a04;
+  --ifm-color-primary-darkest: #a16207;
+  --ifm-color-primary-light: #fcd34d;
+  --ifm-color-primary-lighter: #fde68a;
+  --ifm-color-primary-lightest: #fef3c7;
+  --ifm-background-color: #09090b;
+  --ifm-background-surface-color: #18181b;
+  --ifm-navbar-background-color: #09090b;
+  --ifm-footer-background-color: #09090b;
+  --ifm-card-background-color: #18181b;
+  --ifm-font-color-base: #f4f4f5;
+  --ifm-heading-color: #f9fafb;
+  --ifm-link-color: #fde047;
+  --docusaurus-highlighted-code-line-bg: rgba(250, 204, 21, 0.1);
+}
+
+html,
+body {
+  background: #09090b;
+}
+
+.navbar,
+.footer {
+  border-color: #27272a;
+}
+
+.theme-doc-markdown a {
+  text-decoration: underline;
+  text-decoration-color: rgba(250, 204, 21, 0.45);
+  text-underline-offset: 0.2rem;
+}
+
+/* Author attribution button in footer */
+.author-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(250, 204, 21, 0.5);
+  background: rgba(250, 204, 21, 0.1);
+  color: #fef08a !important;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+.author-button:hover {
+  background: rgba(250, 204, 21, 0.2);
+  border-color: rgba(250, 204, 21, 0.7);
+  color: #fef08a !important;
+  text-decoration: none !important;
+  transform: translateY(-1px);
+}
