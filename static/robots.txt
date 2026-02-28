@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://edujbarrios.github.io/neural-audio-theory/sitemap.xml
