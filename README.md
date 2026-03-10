@@ -1,13 +1,10 @@
-# Neural Audio Theory
-
 <p align="center">
-  <img src="static/img/logo.svg" width="96" alt="Neural Audio Theory logo" />
+  <img src="https://raw.githubusercontent.com/edujbarrios/neural-audio-theory/main/static/img/logo.svg" width="96" alt="Neural Audio Theory logo" />
 </p>
 
+<h1 align="center">Neural Audio Theory</h1>
+
 <p align="center">
-  <a href="https://github.com/edujbarrios/neural-audio-theory/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-teal.svg" alt="MIT License" />
-  </a>
   <a href="https://neural-audio-theory.vercel.app/">
     <img src="https://img.shields.io/badge/docs-live-40E0D0.svg" alt="Docs live" />
   </a>
