@@ -88,6 +88,11 @@ const config: Config = {
           label: 'GitHub',
           position: 'right',
         },
+        {
+          href: 'https://open.spotify.com/intl-es/artist/2C15mEsXxAqiKWKG4skXHY',
+          label: '🎵 Spotify',
+          position: 'right',
+        },
       ],
     },
     footer: {
