@@ -13,8 +13,8 @@ const config: Config = {
     v4: true,
   },
 
-  url: 'https://edujbarrios.github.io',
-  baseUrl: '/neural-audio-theory/',
+  url: 'https://neural-audio-theory.vercel.app',
+  baseUrl: '/',
 
   organizationName: 'edujbarrios',
   projectName: 'neural-audio-theory',
