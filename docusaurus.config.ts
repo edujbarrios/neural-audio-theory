@@ -130,8 +130,8 @@ const config: Config = {
       copyright: `Copyright © ${new Date().getFullYear()} Eduardo J. Barrios<br/><a href="https://github.com/edujbarrios" target="_blank" rel="noopener noreferrer" class="author-button">✍️ Written by edujbarrios</a>`,
     },
     prism: {
-      theme: prismThemes.dracula,
-      darkTheme: prismThemes.dracula,
+      theme: prismThemes.nightOwl,
+      darkTheme: prismThemes.nightOwl,
     },
   } satisfies Preset.ThemeConfig,
 };

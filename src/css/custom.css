@@ -6,15 +6,20 @@
   --ifm-color-primary-light: #66E6DD;
   --ifm-color-primary-lighter: #8CF0EB;
   --ifm-color-primary-lightest: #B2FAF9;
-  --ifm-background-color: #060d0d;
-  --ifm-background-surface-color: #0d1a1a;
-  --ifm-navbar-background-color: #060d0d;
-  --ifm-footer-background-color: #060d0d;
-  --ifm-font-color-base: #e2f8f7;
-  --ifm-heading-color: #f0fdfc;
+  --ifm-background-color: #0b1516;
+  --ifm-background-surface-color: #111f20;
+  --ifm-navbar-background-color: #0b1516;
+  --ifm-footer-background-color: #0b1516;
+  /* Readable, warm-neutral text — not cold-white */
+  --ifm-font-color-base: #d6e8e8;
+  --ifm-heading-color: #eaf6f5;
+  --ifm-color-content-secondary: #8ab8b6;
   --ifm-link-color: #40E0D0;
   --ifm-code-font-size: 95%;
-  --ifm-card-background-color: #0d1a1a;
+  --ifm-card-background-color: #111f20;
+  /* Inline code: teal tint on dark surface */
+  --ifm-code-background: rgba(64, 224, 208, 0.07);
+  --ifm-code-color: #8CF0EB;
   --docusaurus-highlighted-code-line-bg: rgba(64, 224, 208, 0.08);
 }
 
@@ -26,20 +31,23 @@
   --ifm-color-primary-light: #66E6DD;
   --ifm-color-primary-lighter: #8CF0EB;
   --ifm-color-primary-lightest: #B2FAF9;
-  --ifm-background-color: #060d0d;
-  --ifm-background-surface-color: #0d1a1a;
-  --ifm-navbar-background-color: #060d0d;
-  --ifm-footer-background-color: #060d0d;
-  --ifm-card-background-color: #0d1a1a;
-  --ifm-font-color-base: #e2f8f7;
-  --ifm-heading-color: #f0fdfc;
+  --ifm-background-color: #0b1516;
+  --ifm-background-surface-color: #111f20;
+  --ifm-navbar-background-color: #0b1516;
+  --ifm-footer-background-color: #0b1516;
+  --ifm-card-background-color: #111f20;
+  --ifm-font-color-base: #d6e8e8;
+  --ifm-heading-color: #eaf6f5;
+  --ifm-color-content-secondary: #8ab8b6;
   --ifm-link-color: #40E0D0;
+  --ifm-code-background: rgba(64, 224, 208, 0.07);
+  --ifm-code-color: #8CF0EB;
   --docusaurus-highlighted-code-line-bg: rgba(64, 224, 208, 0.1);
 }
 
 html,
 body {
-  background: #060d0d;
+  background: #0b1516;
 }
 
 .navbar,
@@ -48,11 +56,11 @@ body {
 }
 
 .footer {
-  background-color: #060d0d !important;
+  background-color: #0b1516 !important;
 }
 
 .footer--dark {
-  background-color: #060d0d !important;
+  background-color: #0b1516 !important;
 }
 
 .theme-doc-markdown a {
@@ -84,4 +92,49 @@ body {
   color: #B2FAF9 !important;
   text-decoration: none !important;
   transform: translateY(-1px);
+}
+
+/* ── Code blocks ─────────────────────────────────────────── */
+
+/* Match code block background to the site surface */
+.prism-code,
+div[class*='codeBlockContainer'] {
+  background: #0d1f20 !important;
+  border: 1px solid #0d2e2e;
+  border-radius: 0.6rem;
+}
+
+/* Code block header / title bar */
+div[class*='codeBlockTitle'] {
+  background: #111f20 !important;
+  border-bottom: 1px solid #0d2e2e;
+  color: #8ab8b6;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+/* Copy button */
+button[class*='copyButton'] {
+  color: #8ab8b6;
+}
+button[class*='copyButton']:hover {
+  color: #40E0D0;
+}
+
+/* Highlighted line */
+.docusaurus-highlight-code-line {
+  background: rgba(64, 224, 208, 0.09);
+  border-left: 3px solid #40E0D0;
+  margin: 0 -1.25rem;
+  padding: 0 1.25rem;
+}
+
+/* Inline code */
+code {
+  background: rgba(64, 224, 208, 0.07) !important;
+  color: #8CF0EB !important;
+  border: 1px solid rgba(64, 224, 208, 0.15);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.88em;
 }
