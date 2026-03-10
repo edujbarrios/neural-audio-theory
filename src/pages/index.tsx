@@ -16,8 +16,9 @@ function HomepageHeader() {
           Understand How AI Music Systems Are Engineered
         </Heading>
         <p className={styles.heroSubtitle}>
-          Learn the signal processing, neural architectures, and conditioning
-          pipelines that turn prompts and data into structured musical audio.
+          Sure, everyone knows you&apos;re cool for dropping AI-generated tracks
+          before anyone even noticed. But hey — let&apos;s actually learn how it
+          works, so you can speak about it with real authority.
         </p>
         <div className={styles.buttons}>
           <Link className="button button--primary button--lg" to="/docs/intro">

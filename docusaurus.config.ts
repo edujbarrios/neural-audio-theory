@@ -6,7 +6,7 @@ import rehypeKatex from 'rehype-katex';
 
 const config: Config = {
   title: 'Neural Audio Theory',
-  tagline: 'Engineering Foundations of AI Music Generation',
+  tagline: 'Sure, you drop AI tracks. Now learn how they actually work.',
   favicon: 'img/favicon.png',
 
   future: {

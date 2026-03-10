@@ -3,10 +3,10 @@
   overflow: hidden;
   padding: 7rem 0 5rem;
   background:
-    radial-gradient(circle at 20% 20%, rgba(250, 204, 21, 0.2), transparent 50%),
-    radial-gradient(circle at 80% 0%, rgba(250, 204, 21, 0.14), transparent 45%),
-    linear-gradient(180deg, #09090b 0%, #111113 100%);
-  border-bottom: 1px solid #27272a;
+    radial-gradient(circle at 20% 20%, rgba(64, 224, 208, 0.18), transparent 50%),
+    radial-gradient(circle at 80% 0%, rgba(64, 224, 208, 0.12), transparent 45%),
+    linear-gradient(180deg, #000000 0%, #050f0f 100%);
+  border-bottom: 1px solid #0a2a2a;
 }
 
 .heroContainer {
@@ -18,9 +18,9 @@
   display: inline-block;
   padding: 0.35rem 0.7rem;
   border-radius: 999px;
-  border: 1px solid rgba(250, 204, 21, 0.4);
-  background: rgba(250, 204, 21, 0.08);
-  color: #fef08a;
+  border: 1px solid rgba(64, 224, 208, 0.4);
+  background: rgba(64, 224, 208, 0.08);
+  color: #8CF0EB;
   letter-spacing: 0.04em;
   font-weight: 600;
   font-size: 0.85rem;
