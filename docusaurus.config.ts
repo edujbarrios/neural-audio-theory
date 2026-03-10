@@ -44,8 +44,6 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           remarkPlugins: [remarkMath],
           rehypePlugins: [rehypeKatex],
-          editUrl:
-            'https://github.com/edujbarrios/neural-audio-theory/tree/main/',
         },
         blog: {
           showReadingTime: true,
