@@ -6,15 +6,15 @@
   --ifm-color-primary-light: #fcd34d;
   --ifm-color-primary-lighter: #fde68a;
   --ifm-color-primary-lightest: #fef3c7;
-  --ifm-background-color: #09090b;
-  --ifm-background-surface-color: #18181b;
-  --ifm-navbar-background-color: #09090b;
-  --ifm-footer-background-color: #09090b;
+  --ifm-background-color: #000000;
+  --ifm-background-surface-color: #0f0f0f;
+  --ifm-navbar-background-color: #000000;
+  --ifm-footer-background-color: #000000;
   --ifm-font-color-base: #f4f4f5;
   --ifm-heading-color: #f9fafb;
   --ifm-link-color: #fde047;
   --ifm-code-font-size: 95%;
-  --ifm-card-background-color: #18181b;
+  --ifm-card-background-color: #0f0f0f;
   --docusaurus-highlighted-code-line-bg: rgba(250, 204, 21, 0.08);
 }
 
@@ -26,11 +26,11 @@
   --ifm-color-primary-light: #fcd34d;
   --ifm-color-primary-lighter: #fde68a;
   --ifm-color-primary-lightest: #fef3c7;
-  --ifm-background-color: #09090b;
-  --ifm-background-surface-color: #18181b;
-  --ifm-navbar-background-color: #09090b;
-  --ifm-footer-background-color: #09090b;
-  --ifm-card-background-color: #18181b;
+  --ifm-background-color: #000000;
+  --ifm-background-surface-color: #0f0f0f;
+  --ifm-navbar-background-color: #000000;
+  --ifm-footer-background-color: #000000;
+  --ifm-card-background-color: #0f0f0f;
   --ifm-font-color-base: #f4f4f5;
   --ifm-heading-color: #f9fafb;
   --ifm-link-color: #fde047;
@@ -39,12 +39,20 @@
 
 html,
 body {
-  background: #09090b;
+  background: #000000;
 }
 
 .navbar,
 .footer {
   border-color: #27272a;
+}
+
+.footer {
+  background-color: #000000 !important;
+}
+
+.footer--dark {
+  background-color: #000000 !important;
 }
 
 .theme-doc-markdown a {
