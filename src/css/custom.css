@@ -6,15 +6,15 @@
   --ifm-color-primary-light: #66E6DD;
   --ifm-color-primary-lighter: #8CF0EB;
   --ifm-color-primary-lightest: #B2FAF9;
-  --ifm-background-color: #000000;
-  --ifm-background-surface-color: #0f0f0f;
-  --ifm-navbar-background-color: #000000;
-  --ifm-footer-background-color: #000000;
-  --ifm-font-color-base: #f4f4f5;
-  --ifm-heading-color: #f9fafb;
+  --ifm-background-color: #060d0d;
+  --ifm-background-surface-color: #0d1a1a;
+  --ifm-navbar-background-color: #060d0d;
+  --ifm-footer-background-color: #060d0d;
+  --ifm-font-color-base: #e2f8f7;
+  --ifm-heading-color: #f0fdfc;
   --ifm-link-color: #40E0D0;
   --ifm-code-font-size: 95%;
-  --ifm-card-background-color: #0f0f0f;
+  --ifm-card-background-color: #0d1a1a;
   --docusaurus-highlighted-code-line-bg: rgba(64, 224, 208, 0.08);
 }
 
@@ -26,33 +26,33 @@
   --ifm-color-primary-light: #66E6DD;
   --ifm-color-primary-lighter: #8CF0EB;
   --ifm-color-primary-lightest: #B2FAF9;
-  --ifm-background-color: #000000;
-  --ifm-background-surface-color: #0f0f0f;
-  --ifm-navbar-background-color: #000000;
-  --ifm-footer-background-color: #000000;
-  --ifm-card-background-color: #0f0f0f;
-  --ifm-font-color-base: #f4f4f5;
-  --ifm-heading-color: #f9fafb;
+  --ifm-background-color: #060d0d;
+  --ifm-background-surface-color: #0d1a1a;
+  --ifm-navbar-background-color: #060d0d;
+  --ifm-footer-background-color: #060d0d;
+  --ifm-card-background-color: #0d1a1a;
+  --ifm-font-color-base: #e2f8f7;
+  --ifm-heading-color: #f0fdfc;
   --ifm-link-color: #40E0D0;
   --docusaurus-highlighted-code-line-bg: rgba(64, 224, 208, 0.1);
 }
 
 html,
 body {
-  background: #000000;
+  background: #060d0d;
 }
 
 .navbar,
 .footer {
-  border-color: #27272a;
+  border-color: #0d2e2e;
 }
 
 .footer {
-  background-color: #000000 !important;
+  background-color: #060d0d !important;
 }
 
 .footer--dark {
-  background-color: #000000 !important;
+  background-color: #060d0d !important;
 }
 
 .theme-doc-markdown a {

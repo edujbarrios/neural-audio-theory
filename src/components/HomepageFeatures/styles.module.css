@@ -5,9 +5,9 @@
 
 .featureCard {
   height: 100%;
-  border: 1px solid #27272a;
+  border: 1px solid #0d2e2e;
   border-radius: 1rem;
-  background: linear-gradient(180deg, rgba(24, 24, 27, 0.95), rgba(16, 16, 19, 0.95));
+  background: linear-gradient(180deg, rgba(13, 26, 26, 0.98), rgba(6, 18, 18, 0.98));
   padding: 1.4rem 1rem;
 }
 
@@ -19,9 +19,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 0.75rem;
-  border: 1px solid rgba(250, 204, 21, 0.4);
-  background: rgba(250, 204, 21, 0.08);
-  color: #facc15;
+  border: 1px solid rgba(64, 224, 208, 0.4);
+  background: rgba(64, 224, 208, 0.08);
+  color: #40E0D0;
 }
 
 .featureIcon {
