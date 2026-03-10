@@ -85,7 +85,7 @@ Models with text-to-music training have absorbed these patterns deeply. Prompt c
 ### Rhythmic Subdivisions
 
 $$
-\text{Beat duration} = \frac{60}{BPM} \;\text{seconds}
+\text{Beat duration} = \frac{60}{\text{BPM}} \;\text{seconds}
 $$
 
 | Subdivision | Relationship |

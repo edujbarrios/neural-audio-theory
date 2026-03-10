@@ -51,7 +51,8 @@ Models like **ImageBind** (Meta) create a shared embedding space across 6 modali
 - Text, image, audio, video, depth, thermal
 
 $$
-\text{sim}(\mathbf{e}_{\text{video}}, \mathbf{e}_{\text{audio}}) \text{ high} \iff \text{video and audio are semantically related}
+\text{sim}(\mathbf{e}_{\text{video}}, \mathbf{e}_{\text{audio}})
+\begin{cases} \text{high} & \text{if semantically related} \\ \text{low} & \text{otherwise} \end{cases}
 $$
 
 **3. Autoregressive with Interleaved Tokens**

@@ -70,7 +70,7 @@ The cochlea analyzes sound in overlapping frequency bands called **critical band
 The Bark scale maps frequency to critical band rate:
 
 $$
-z = 13 \arctan(0.00076 f) + 3.5 \arctan\left(\frac{f}{7500}\right)^2
+z = 13 \arctan(0.00076 f) + 3.5 \left[\arctan\!\left(\frac{f}{7500}\right)\right]^2
 $$
 
 Two tones within the same critical band interact (masking, roughness, beating). Tones in different critical bands are perceived more independently.

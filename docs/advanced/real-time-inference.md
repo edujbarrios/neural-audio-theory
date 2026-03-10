@@ -88,7 +88,7 @@ Without cache: each token requires attending to all previous tokens from scratch
 With cache: only compute attention for the new token against cached KV pairs
 
 $$
-\text{Speedup} \approx \frac{T}{1} = T\times
+\text{Speedup} \approx \frac{T}{1} = T
 $$
 
 for generating $T$ tokens. KV-caching is essential for real-time autoregressive audio.

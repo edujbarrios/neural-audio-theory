@@ -147,7 +147,11 @@ More robust than PESQ for music content.
 ### SI-SDR (Scale-Invariant Signal-to-Distortion Ratio)
 
 $$
-\text{SI-SDR} = 10\log_{10}\frac{\|\frac{\langle\hat{s}, s\rangle}{\|s\|^2}s\|^2}{\|\hat{s} - \frac{\langle\hat{s}, s\rangle}{\|s\|^2}s\|^2}
+s_{\text{proj}} = \frac{\langle\hat{s}, s\rangle}{\|s\|^2}\, s
+$$
+
+$$
+\text{SI-SDR} = 10\log_{10} \frac{\|s_{\text{proj}}\|^2}{\|\hat{s} - s_{\text{proj}}\|^2}
 $$
 
 Used primarily for source separation quality. Higher is better.
