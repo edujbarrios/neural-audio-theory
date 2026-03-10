@@ -3,9 +3,9 @@
   overflow: hidden;
   padding: 7rem 0 5rem;
   background:
-    radial-gradient(circle at 20% 20%, rgba(64, 224, 208, 0.22), transparent 50%),
-    radial-gradient(circle at 80% 0%, rgba(64, 224, 208, 0.15), transparent 45%),
-    linear-gradient(180deg, #060d0d 0%, #0d1a1a 100%);
+    radial-gradient(circle at 20% 20%, rgba(64, 224, 208, 0.18), transparent 50%),
+    radial-gradient(circle at 80% 0%, rgba(64, 224, 208, 0.12), transparent 45%),
+    linear-gradient(180deg, #0b1516 0%, #111f20 100%);
   border-bottom: 1px solid #0d2e2e;
 }
 
@@ -38,7 +38,8 @@
   margin: 0 auto;
   max-width: 700px;
   font-size: clamp(1rem, 1.9vw, 1.2rem);
-  color: #d4d4d8;
+  color: #8ab8b6;
+  line-height: 1.7;
 }
 
 .buttons {

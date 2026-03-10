@@ -8,10 +8,7 @@
   <a href="https://github.com/edujbarrios/neural-audio-theory/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-teal.svg" alt="MIT License" />
   </a>
-  <a href="https://docusaurus.io/">
-    <img src="https://img.shields.io/badge/built%20with-Docusaurus%203-40E0D0.svg" alt="Built with Docusaurus" />
-  </a>
-  <a href="https://edujbarrios.github.io/neural-audio-theory/">
+  <a href="https://neural-audio-theory.vercel.app/">
     <img src="https://img.shields.io/badge/docs-live-40E0D0.svg" alt="Docs live" />
   </a>
   <a href="https://open.spotify.com/intl-es/artist/2C15mEsXxAqiKWKG4skXHY">
@@ -28,7 +25,7 @@
 
 > [!WARNING]
 > **This repository is intended for developers, researchers, and technically-minded contributors only.**
-> If you are looking for the documentation website, visit [edujbarrios.github.io/neural-audio-theory](https://edujbarrios.github.io/neural-audio-theory/) instead.
+> If you are looking for the documentation website, visit [neural-audio-theory.vercel.app](https://neural-audio-theory.vercel.app/) instead.
 > The source code here covers project configuration, site scaffolding, and content architecture — not the learning material itself.
 
 ## About
@@ -96,7 +93,7 @@ Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for gu
 If you found this resource useful and want to reference it in your work or research, feel free to cite it as:
 
 ```bibtex
-@misc{barrios2025neuralaudiotheory,
+@misc{barrios2026neuralaudiotheory,
   author       = {Eduardo J. Barrios},
   title        = {Neural Audio Theory: Engineering Foundations of AI Music Generation},
   year         = {2026},
