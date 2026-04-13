@@ -28,10 +28,10 @@ const config: Config = {
 
   stylesheets: [
     {
-      href: 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css',
+      href: 'https://cdn.jsdelivr.net/npm/katex@0.16.45/dist/katex.min.css',
       type: 'text/css',
       integrity:
-        'sha384-nB0miv6/jRmo5YCBER1visBkGEBaODnHAlChiiKJf+MVdoERHpOWqkhko6UHFeYB',
+        'sha384-UA8juhPf75SzzAMA/4fo3yOU7sBJ0om7SCD2GHq0fZqZco6tr1UCV7nUbk9J90JM',
       crossorigin: 'anonymous',
     },
   ],

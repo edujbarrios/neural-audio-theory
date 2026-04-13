@@ -94,6 +94,20 @@ body {
   transform: translateY(-1px);
 }
 
+/* ── KaTeX: hide MathML accessibility layer ──────────────── */
+/* Prevents the plain-text MathML fallback from showing
+   beneath rendered formulas when the CDN stylesheet is slow
+   to load or the browser renders MathML natively. */
+.katex .katex-mathml {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 0;
+  border: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+
 /* ── Code blocks ─────────────────────────────────────────── */
 
 /* Match code block background to the site surface */
