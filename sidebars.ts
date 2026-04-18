@@ -46,10 +46,20 @@ const sidebars: SidebarsConfig = {
         'apis/sunauto-api',
       ],
     },
-    // ── 08  Foundational Technical ───────────────────────────────
     {
       type: 'category',
-      label: '08 · Audio Fundamentals',
+      label: '08 · AI Music Agents',
+      items: [
+        'agents/index',
+        'agents/multi-model-pipelines',
+        'agents/orchestration-patterns',
+        'agents/building-a-music-agent',
+      ],
+    },
+    // ── 09  Foundational Technical ───────────────────────────────
+    {
+      type: 'category',
+      label: '09 · Audio Fundamentals',
       items: [
         'audio-fundamentals/digital-audio-basics',
         'audio-fundamentals/psychoacoustics',
@@ -57,10 +67,10 @@ const sidebars: SidebarsConfig = {
         'audio-fundamentals/audio-formats-and-codecs',
       ],
     },
-    // ── 09–10  Intermediate ──────────────────────────────────────
+    // ── 10–11  Intermediate ──────────────────────────────────────
     {
       type: 'category',
-      label: '09 · Concepts',
+      label: '10 · Concepts',
       items: [
         'concepts/music-representations',
         'concepts/audio-embeddings',
@@ -71,7 +81,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '10 · Model Zoo',
+      label: '11 · Model Zoo',
       items: [
         'model-zoo/udio-and-suno',
         'model-zoo/musicgen',
@@ -80,10 +90,10 @@ const sidebars: SidebarsConfig = {
         'model-zoo/jukebox',
       ],
     },
-    // ── 11–12  Technical / Math-heavy ────────────────────────────
+    // ── 12–13  Technical / Math-heavy ────────────────────────────
     {
       type: 'category',
-      label: '11 · Mathematics',
+      label: '12 · Mathematics',
       items: [
         'mathematics/signal-processing-basics',
         'mathematics/fft',
@@ -94,7 +104,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '12 · Architecture',
+      label: '13 · Architecture',
       items: [
         'architecture/transformers-for-audio',
         'architecture/variational-autoencoders',
@@ -103,10 +113,10 @@ const sidebars: SidebarsConfig = {
         'architecture/u-net-for-audio',
       ],
     },
-    // ── 13–14  Advanced / Research-level ─────────────────────────
+    // ── 14–15  Advanced / Research-level ─────────────────────────
     {
       type: 'category',
-      label: '13 · Training',
+      label: '14 · Training',
       items: [
         'training/dataset-curation',
         'training/data-augmentation',
@@ -116,7 +126,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '14 · Advanced Topics',
+      label: '15 · Advanced Topics',
       items: [
         'advanced/multimodal-generation',
         'advanced/controllable-generation',
@@ -124,8 +134,8 @@ const sidebars: SidebarsConfig = {
         'advanced/real-time-inference',
       ],
     },
-    // ── 15  Reference ─────────────────────────────────────────────
-    { type: 'doc', id: 'glossary', label: '15 · Glossary' },
+    // ── 16  Reference ─────────────────────────────────────────────
+    { type: 'doc', id: 'glossary', label: '16 · Glossary' },
   ],
 };
 
