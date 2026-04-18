@@ -13,11 +13,6 @@
   </a>
 </p>
 
-<p align="center">
-  <strong>Open-source educational project on the engineering foundations of AI music generation.</strong><br/>
-  <em>By <a href="https://github.com/edujbarrios">Eduardo J. Barrios</a></em>
-</p>
-
 ---
 
 > [!WARNING]
@@ -101,7 +96,7 @@ If you found this resource useful and want to reference it in your work or resea
 
 Or in plain text:
 
-> Barrios, E. J. (2026). *Neural Audio Theory: Engineering Foundations of AI Music Generation*. Retrieved from https://edujbarrios.github.io/neural-audio-theory/
+> Barrios, E. J. (2026). *Neural Audio Theory: Engineering Foundations of AI Music Generation*. Retrieved from https://neural-audio-theory.vercel.app/
 
 ---
 
