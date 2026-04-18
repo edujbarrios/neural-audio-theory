@@ -3,9 +3,10 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 const sidebars: SidebarsConfig = {
   mainSidebar: [
     // ── 01–03  Beginner ──────────────────────────────────────────
-    'intro',
-    'for-dummies',
-    'suno-prompting-guide',
+    { type: 'doc', id: 'intro',                label: '01 · Introduction' },
+    { type: 'doc', id: 'for-dummies',          label: '02 · For Dummies' },
+    { type: 'doc', id: 'suno-prompting-guide', label: '03 · Suno Prompting Guide' },
+    // ── 04  Ethics ───────────────────────────────────────────────
     {
       type: 'category',
       label: '04 · Ethics & Legal',
@@ -14,7 +15,7 @@ const sidebars: SidebarsConfig = {
         'ethics-legal/copyright-and-training-data',
       ],
     },
-    // ── 05–06  Practical / Creator-facing ───────────────────────
+    // ── 05–07  Practical / Creator-facing ───────────────────────
     {
       type: 'category',
       label: '05 · Producer Handbook',
@@ -38,17 +39,17 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '06b · APIs',
+      label: '07 · APIs',
       items: [
         'apis/index',
         'apis/suno-api',
         'apis/sunauto-api',
       ],
     },
-    // ── 07  Foundational Technical ───────────────────────────────
+    // ── 08  Foundational Technical ───────────────────────────────
     {
       type: 'category',
-      label: '07 · Audio Fundamentals',
+      label: '08 · Audio Fundamentals',
       items: [
         'audio-fundamentals/digital-audio-basics',
         'audio-fundamentals/psychoacoustics',
@@ -56,10 +57,10 @@ const sidebars: SidebarsConfig = {
         'audio-fundamentals/audio-formats-and-codecs',
       ],
     },
-    // ── 08–09  Intermediate ──────────────────────────────────────
+    // ── 09–10  Intermediate ──────────────────────────────────────
     {
       type: 'category',
-      label: '08 · Concepts',
+      label: '09 · Concepts',
       items: [
         'concepts/music-representations',
         'concepts/audio-embeddings',
@@ -70,7 +71,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '09 · Model Zoo',
+      label: '10 · Model Zoo',
       items: [
         'model-zoo/udio-and-suno',
         'model-zoo/musicgen',
@@ -79,10 +80,10 @@ const sidebars: SidebarsConfig = {
         'model-zoo/jukebox',
       ],
     },
-    // ── 10–11  Technical / Math-heavy ────────────────────────────
+    // ── 11–12  Technical / Math-heavy ────────────────────────────
     {
       type: 'category',
-      label: '10 · Mathematics',
+      label: '11 · Mathematics',
       items: [
         'mathematics/signal-processing-basics',
         'mathematics/fft',
@@ -93,7 +94,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '11 · Architecture',
+      label: '12 · Architecture',
       items: [
         'architecture/transformers-for-audio',
         'architecture/variational-autoencoders',
@@ -102,10 +103,10 @@ const sidebars: SidebarsConfig = {
         'architecture/u-net-for-audio',
       ],
     },
-    // ── 12–13  Advanced / Research-level ─────────────────────────
+    // ── 13–14  Advanced / Research-level ─────────────────────────
     {
       type: 'category',
-      label: '12 · Training',
+      label: '13 · Training',
       items: [
         'training/dataset-curation',
         'training/data-augmentation',
@@ -115,7 +116,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '13 · Advanced Topics',
+      label: '14 · Advanced Topics',
       items: [
         'advanced/multimodal-generation',
         'advanced/controllable-generation',
@@ -123,8 +124,8 @@ const sidebars: SidebarsConfig = {
         'advanced/real-time-inference',
       ],
     },
-    // ── Reference ────────────────────────────────────────────────
-    'glossary',
+    // ── 15  Reference ─────────────────────────────────────────────
+    { type: 'doc', id: 'glossary', label: '15 · Glossary' },
   ],
 };
 
