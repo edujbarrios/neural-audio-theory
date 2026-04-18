@@ -89,7 +89,7 @@ If you found this resource useful and want to reference it in your work or resea
   author       = {Eduardo J. Barrios},
   title        = {Neural Audio Theory: Engineering Foundations of AI Music Generation},
   year         = {2026},
-  howpublished = {\url{https://edujbarrios.github.io/neural-audio-theory/}},
+  howpublished = {\url{https://neural-audio-theory.vercel.app/}},
   note         = {Open-source educational documentation project}
 }
 ```
