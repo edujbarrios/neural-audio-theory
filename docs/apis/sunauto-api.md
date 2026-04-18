@@ -1,324 +1,360 @@
 ---
 sidebar_position: 3
-title: Sunauto API
+title: Sonauto API
 ---
 
-# Sunauto API
+# Sonauto API
 
-**Sunauto** is an open-source automation framework built on top of the Suno platform. It adds higher-level abstractions for bulk generation, album workflows, prompt templating, and webhook-based delivery that the raw Suno API does not expose.
+[Sonauto](https://sonauto.ai) is an AI music generation platform with its own API for generating, extending, and inpainting songs programmatically. It is a standalone service — not a wrapper around Suno.
 
-> Sunauto is a community project and is **not** officially affiliated with Suno AI. Always review the [Suno Terms of Service](https://suno.com/terms) before deploying automated workflows at scale.
+- **Base URL:** `https://api.sonauto.ai/v1`
+- **Docs:** [sonauto.ai/developers/docs](https://sonauto.ai/developers/docs)
+- **Pricing:** [sonauto.ai/developers/pricing](https://sonauto.ai/developers/pricing)
 
-## Installation
+> Songs are stored on Sonauto's CDN for **168 hours (1 week)** after generation. Download anything you want to keep before the URLs expire.
 
-```bash
-# Node.js
-npm install sunauto
-
-# Python
-pip install sunauto
-```
+---
 
 ## Authentication
 
-Sunauto reuses your Suno API key and optionally a Sunauto Cloud token for managed infrastructure:
-
-```env
-SUNO_API_KEY=sk-...
-SUNAUTO_TOKEN=sat-...    # optional — required only for Sunauto Cloud runners
-```
-
-Pass credentials in code:
-
-```python
-from sunauto import Sunauto
-
-client = Sunauto(
-    suno_api_key="sk-...",
-    sunauto_token="sat-..."   # omit for self-hosted
-)
-```
-
----
-
-## Core Concepts
-
-### Jobs vs. Campaigns
-
-| Concept | Description |
-|---------|-------------|
-| **Job** | A single generation request (maps 1-to-1 to a Suno clip pair) |
-| **Campaign** | A group of Jobs with shared settings, retry logic, and output handling |
-| **Template** | A reusable prompt recipe with variable slots |
-
-### Prompt Templating
-
-Sunauto uses a Mustache-style syntax for reusable prompts:
-
-```
-{{mood}} {{genre}} track at {{bpm}} BPM featuring {{instrument}}
-```
-
-Render a template with a context object:
-
-```python
-from sunauto.templates import PromptTemplate
-
-tmpl = PromptTemplate("{{mood}} {{genre}} track at {{bpm}} BPM featuring {{instrument}}")
-
-rendered = tmpl.render({
-    "mood": "melancholic",
-    "genre": "post-rock",
-    "bpm": "120",
-    "instrument": "reverb-heavy guitar"
-})
-# → "melancholic post-rock track at 120 BPM featuring reverb-heavy guitar"
-```
-
----
-
-## Endpoints (Sunauto Cloud)
-
-### Submit a Job
+All endpoints require a Bearer token in the `Authorization` header. Generate your key at [sonauto.ai/developers/account](https://sonauto.ai/login?redirectUrl=%2Fdevelopers%2Faccount).
 
 ```http
-POST https://api.sunauto.dev/v1/jobs
-Authorization: Bearer <SUNAUTO_TOKEN>
+Authorization: Bearer your_api_key_here
 Content-Type: application/json
 ```
 
+> **Security:** Never expose your API key in client-side code. Proxy requests through a backend and store the key in an environment variable.
+
+---
+
+## Generation Endpoints
+
+### Core Parameters
+
+At least one of `tags`, `lyrics`, or `prompt` is required for every generation request.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `prompt` | string | Natural-language description. Used to generate `tags`/`lyrics` if those are omitted. |
+| `tags` | array[string] | Musical style tags (see [Tag Explorer](https://sonauto.ai/tag-explorer)). |
+| `lyrics` | string | Full lyrics for the song. |
+| `instrumental` | boolean | `true` to suppress vocals. Do not pass `lyrics` when set. |
+| `prompt_strength` | float | Higher = stricter prompt adherence; lower = more natural sound. |
+| `webhook_url` | string | URL to receive real-time status `POST` updates. |
+| `output_format` | string | `ogg` (default), `mp3`, `flac`, `wav`, `m4a` |
+| `output_bit_rate` | integer | For `mp3`/`m4a` only. Supported: `128`, `192`, `256`, `320` kbps. |
+| `align_lyrics` | boolean | Run word-level lyrics-to-audio alignment after generation. |
+
+> Providing only `lyrics` or `tags` without `prompt` is not supported — pass `prompt: ""` to leave style entirely to the AI.
+
+---
+
+### POST `/generations/v3`
+
+Generates a variable-length song (typically 2–4 minutes) using the v3 model with improved audio quality. v3 supports real-time streaming.
+
+**v3 does not support:** `seed`, `balance_strength`, `bpm`, or `num_songs` (always generates 1 song).
+
+#### Request Body
+
 ```json
 {
-  "prompt": "Ambient drone music with Tibetan bowl samples",
-  "tags": "ambient, meditative, drone",
-  "make_instrumental": true,
-  "webhook_url": "https://yourdomain.com/webhooks/sunauto",
-  "metadata": { "project": "meditation-app", "user_id": "u_9900" }
+  "tags": ["lo-fi", "ambient", "2020s"],
+  "prompt": "a chill lofi beat for studying",
+  "instrumental": true,
+  "prompt_strength": 2.0,
+  "output_format": "mp3",
+  "enable_streaming": false,
+  "stream_format": "ogg",
+  "align_lyrics": false,
+  "webhook_url": "https://yourdomain.com/webhook"
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `prompt` | string | Yes | Generation prompt |
-| `tags` | string | No | Style tags |
-| `make_instrumental` | boolean | No | Suppress vocals |
-| `webhook_url` | string | No | Receive results via webhook instead of polling |
-| `metadata` | object | No | Arbitrary key/value pairs passed back in webhook payloads |
+| Field | Default | Notes |
+|-------|---------|-------|
+| `prompt_strength` | `2.0` | |
+| `output_format` | `"ogg"` | |
+| `enable_streaming` | `false` | Must be `true` to use the streaming endpoint later |
+| `stream_format` | `"ogg"` | `"ogg"` or `"mp3"` |
 
-**Response (202 Accepted):**
+#### Response
 
 ```json
-{
-  "job_id": "sau_01HXYZ...",
-  "status": "queued",
-  "estimated_seconds": 25
+{ "task_id": "abc123-def456-ghi789" }
+```
+
+#### Python Example
+
+```python
+import requests, os
+
+headers = {
+    "Authorization": f"Bearer {os.environ['SONAUTO_API_KEY']}",
+    "Content-Type": "application/json"
 }
+payload = {
+    "tags": ["rock", "energetic"],
+    "prompt": "An upbeat rock song with heavy guitar riffs"
+}
+resp = requests.post("https://api.sonauto.ai/v1/generations/v3", json=payload, headers=headers)
+task_id = resp.json()["task_id"]
 ```
 
 ---
 
-### Poll Job Status
+### POST `/generations/v2`
 
-```http
-GET https://api.sunauto.dev/v1/jobs/{job_id}
-```
+Generates a fixed-length song (~1 min 35 sec). Supports `seed`, `balance_strength`, `bpm`, and `num_songs`.
+
+#### Request Body
 
 ```json
 {
-  "job_id": "sau_01HXYZ...",
-  "status": "complete",
-  "clips": [
-    {
-      "id": "suno_abc123",
-      "audio_url": "https://cdn.suno.ai/...",
-      "duration_seconds": 92,
-      "waveform_url": "https://cdn.sunauto.dev/waveforms/..."
-    }
-  ],
-  "metadata": { "project": "meditation-app", "user_id": "u_9900" }
+  "tags": ["jazz", "mellow"],
+  "lyrics": "[Verse 1]\nWalking through the midnight rain",
+  "prompt": "A soulful jazz ballad",
+  "instrumental": false,
+  "prompt_strength": 1.5,
+  "balance_strength": 0.7,
+  "bpm": "auto",
+  "seed": 42,
+  "num_songs": 1,
+  "output_format": "ogg",
+  "align_lyrics": false,
+  "webhook_url": "https://yourdomain.com/webhook"
 }
 ```
 
-Sunauto enriches the base Suno response with `duration_seconds` and an optional `waveform_url`.
+| v2-specific field | Default | Description |
+|-------------------|---------|-------------|
+| `balance_strength` | `0.7` | Higher = more natural vocals; lower = sharper instrumentals |
+| `bpm` | `null` | Integer, `"auto"`, or `null` to skip BPM conditioning |
+| `seed` | — | Fixed seed for reproducible output |
+| `num_songs` | `1` | `1` or `2`. Generating 2 songs costs **150 credits** instead of 100 |
 
 ---
 
-### Bulk Campaign
+### POST `/generations/v2/extend`
 
-Generate many tracks in a single request with per-item prompt overrides:
-
-```http
-POST https://api.sunauto.dev/v1/campaigns
-```
+Extends an existing song at the start or end.
 
 ```json
 {
-  "template": "{{mood}} {{genre}} track for a {{scene}} scene",
-  "items": [
-    { "mood": "tense",   "genre": "cinematic", "scene": "car chase" },
-    { "mood": "serene",  "genre": "folk",       "scene": "sunrise hike" },
-    { "mood": "playful", "genre": "jazz",       "scene": "comedy sketch" }
-  ],
-  "make_instrumental": true,
-  "webhook_url": "https://yourdomain.com/webhooks/sunauto/campaign"
+  "audio_url": "https://cdn.sonauto.ai/generations2/audio_<id>_0.ogg",
+  "tags": ["rock", "energetic"],
+  "prompt": "Write another verse for my song",
+  "side": "right",
+  "extend_duration": 45.0,
+  "crop_duration": 0
 }
+```
+
+| Field | Description |
+|-------|-------------|
+| `audio_url` | Publicly accessible URL of the source audio. Use the original CDN URL to avoid re-encoding quality loss. |
+| `audio_base64` | Alternative to `audio_url` — base64-encoded audio bytes (max 40 MB). |
+| `side` | `"right"` (extend end) or `"left"` (extend start) |
+| `extend_duration` | Seconds of new audio to generate (0 – 85.0) |
+| `crop_duration` | Seconds to crop from the end (or start) of the original before extending |
+
+---
+
+### POST `/generations/v2/inpaint`
+
+Replaces a section of an existing song with newly generated content.
+
+```json
+{
+  "audio_url": "https://cdn.sonauto.ai/generations2/audio_<id>_0.ogg",
+  "tags": ["rock", "energetic"],
+  "lyrics": "New lyrics for the replaced section",
+  "sections": [[0.0, 30.0]],
+  "selection_crop": false
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `sections` | Array of `[start, end]` timestamp pairs (seconds). Currently only 1 section supported. |
+| `selection_crop` | When `true`, crops output to only the inpainted section |
+
+---
+
+## Data Fetching Endpoints
+
+### GET `/generations/{task_id}`
+
+Retrieve the completed generation and all its parameters.
+
+```python
+import requests, os
+
+resp = requests.get(
+    f"https://api.sonauto.ai/v1/generations/{task_id}",
+    headers={"Authorization": f"Bearer {os.environ['SONAUTO_API_KEY']}"}
+)
+data = resp.json()
+print(data["song_paths"])   # list of CDN URLs
 ```
 
 **Response:**
 
 ```json
 {
-  "campaign_id": "camp_01HXYZ...",
-  "total_jobs": 3,
-  "estimated_total_seconds": 75
+  "id": "string (UUID)",
+  "created_at": "ISO 8601 timestamp",
+  "status": "SUCCESS",
+  "alignment_status": "null | SUCCESS | FAILURE",
+  "model_version": "v2.2 | v3-preview",
+  "song_paths": ["https://cdn.sonauto.ai/..."],
+  "error_message": null,
+  "lyrics": "string",
+  "prompt": "string | null",
+  "prompt_strength": 2.0,
+  "tags": ["string"],
+  "v2_params": {
+    "balance_strength": 0.7,
+    "seed": 42,
+    "bpm": "auto | integer | null"
+  }
 }
 ```
 
-Poll the campaign:
-
-```http
-GET https://api.sunauto.dev/v1/campaigns/{campaign_id}
-```
-
 ---
 
-### Webhook Payload
+### GET `/generations/status/{task_id}`
 
-When `webhook_url` is set, Sunauto sends a `POST` with the following JSON when each job completes:
-
-```json
-{
-  "event": "job.complete",
-  "job_id": "sau_01HXYZ...",
-  "clips": [{ "id": "...", "audio_url": "...", "duration_seconds": 88 }],
-  "metadata": { "project": "meditation-app", "user_id": "u_9900" }
-}
-```
-
-**Verify webhook authenticity** by checking the `X-Sunauto-Signature` header:
-
-```python
-import hmac, hashlib
-
-def verify_sunauto_webhook(payload: bytes, signature: str, secret: str) -> bool:
-    expected = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
-    return hmac.compare_digest(expected, signature)
-```
-
----
-
-## Python SDK — End-to-End Example
-
-```python
-import os
-from sunauto import Sunauto
-from sunauto.templates import PromptTemplate
-
-client = Sunauto(suno_api_key=os.environ["SUNO_API_KEY"])
-
-tmpl = PromptTemplate("{{mood}} {{genre}} instrumental at {{bpm}} BPM")
-
-prompts = [
-    tmpl.render({"mood": "dark",    "genre": "ambient", "bpm": "60"}),
-    tmpl.render({"mood": "upbeat",  "genre": "pop",     "bpm": "128"}),
-    tmpl.render({"mood": "soulful", "genre": "R&B",     "bpm": "90"}),
-]
-
-campaign = client.campaigns.create(
-    prompts=prompts,
-    make_instrumental=True,
-)
-
-print(f"Campaign {campaign.id} launched — {len(prompts)} jobs queued")
-
-# Block until all complete (self-hosted polling)
-results = campaign.wait()
-
-for job in results:
-    for clip in job.clips:
-        print(clip.audio_url)
-```
-
----
-
-## JavaScript / TypeScript SDK
-
-```ts
-import { Sunauto } from 'sunauto';
-
-const client = new Sunauto({ sunoApiKey: process.env.SUNO_API_KEY });
-
-const job = await client.jobs.create({
-  prompt: 'Cinematic trailer music with rising tension and orchestral swells',
-  tags: 'cinematic, orchestral, trailer',
-  makeInstrumental: true,
-});
-
-const result = await job.wait(); // polls internally
-console.log(result.clips.map(c => c.audioUrl));
-```
-
----
-
-## Sunauto vs. Raw Suno API
-
-| Feature | Raw Suno API | Sunauto |
-|---------|-------------|---------|
-| Single generation | ✅ | ✅ |
-| Bulk / campaign | ❌ | ✅ |
-| Prompt templates | ❌ | ✅ |
-| Webhooks | ❌ | ✅ |
-| Waveform thumbnails | ❌ | ✅ |
-| Retry logic | Manual | Built-in |
-| Self-hosted runner | N/A | ✅ |
-| Official support | ✅ | Community |
-
----
-
-## Self-Hosting the Runner
-
-Run the Sunauto worker locally instead of routing through Sunauto Cloud:
+Poll the status of a pending generation. Returns a plain string by default.
 
 ```bash
-docker run -e SUNO_API_KEY=sk-... \
-           -p 8080:8080 \
-           ghcr.io/sunauto/runner:latest
+curl https://api.sonauto.ai/v1/generations/status/abc123 \
+  -H "Authorization: Bearer your_api_key_here"
+# → "GENERATING"
 ```
 
-Then point your SDK at `http://localhost:8080`:
+Pass `?include_alignment=true` for combined status:
+
+```json
+{ "status": "SUCCESS", "alignment_status": "ALIGNING" }
+```
+
+**Status progression:**
+
+| # | Status | Notes |
+|---|--------|-------|
+| 1 | `RECEIVED` | Request parsed |
+| 2–6 | `TRANSCRIBE_*` | Inpaint / extend only |
+| 7 | `PROMPT` | Generating tags / lyrics from prompt |
+| 8 | `TASK_SENT` | Dispatched to GPU cluster |
+| 9 | `GENERATE_TASK_STARTED` | GPU worker assigned |
+| 10 | `LOADING_SOURCE` | Inpaint / extend only |
+| 11 | `BEGINNING_GENERATION` | |
+| 12 | `GENERATING` | Main generation in progress |
+| 13 | `GENERATING_STREAMING_READY` | v3 only — streaming endpoint is live |
+| 14 | `DECOMPRESSING` | |
+| 15 | `SAVING` | Uploading to CDN |
+| 16 | `SUCCESS` | `song_paths` are ready |
+| 17 | `FAILURE` | No credits deducted |
+
+---
+
+### GET `/credits/balance`
 
 ```python
-client = Sunauto(suno_api_key="sk-...", base_url="http://localhost:8080")
+resp = requests.get("https://api.sonauto.ai/v1/credits/balance", headers=headers)
+print(resp.json())
+# { "num_credits": 900, "num_credits_payg": 200 }
 ```
 
----
+| Field | Description |
+|-------|-------------|
+| `num_credits` | Subscription credits remaining |
+| `num_credits_payg` | Pay-as-you-go credits remaining |
 
-## Rate Limits
-
-Sunauto inherits Suno's underlying credit limits. The Sunauto Cloud layer adds:
-
-| Tier | Concurrent jobs | Campaigns / hour |
-|------|----------------|-----------------|
-| Free | 2 | 3 |
-| Starter | 10 | 20 |
-| Pro | 50 | Unlimited |
+**Credit costs:** 100 credits per generation (1 song); 150 credits for `num_songs=2`.
 
 ---
 
-## Error Reference
+## Streaming (v3 only)
 
-| Code | Meaning |
-|------|---------|
-| `sau_invalid_key` | Sunauto token invalid or expired |
-| `sau_quota_exceeded` | Campaign size exceeds plan limit |
-| `sau_suno_error` | Upstream Suno API error — check `upstream_detail` field |
-| `sau_timeout` | Job did not complete within 120 s (retried automatically) |
+v3 songs can be streamed in real time while generating. You must set `enable_streaming: true` in the generation request.
+
+### GET `https://api-stream.sonauto.ai/stream/{task_id}`
+
+- Connect after the status reaches `GENERATING_STREAMING_READY`.
+- Returns all previously generated audio immediately, then streams new chunks.
+- Stream expires a few seconds after `SUCCESS` — use `song_paths` for permanent access.
+
+```html
+<!-- Use directly in an HTML audio element -->
+<audio controls autoplay>
+  <source src="https://api-stream.sonauto.ai/stream/your_task_id" type="audio/ogg" />
+</audio>
+```
+
+**Response content types:**
+- `audio/ogg; codecs="opus"` (default)
+- `audio/mpeg` (if `stream_format: "mp3"` was set)
+
+---
+
+## Lyrics Alignment
+
+Set `align_lyrics: true` to get word-level timing data syncing lyrics to the generated audio. Runs as a post-processing step after `SUCCESS`.
+
+- Only works for non-instrumental songs with lyrics.
+- v2: requires `num_songs=1`.
+- Monitor via `GET /generations/status/{task_id}?include_alignment=true`.
+
+**Alignment status values:** `REQUESTED` → `TASK_SENT` → `ALIGNING` → `SUCCESS` / `FAILURE`
+
+> Alignment failure deducts credits if the main generation succeeded.
+
+---
+
+## End-to-End Python Example
+
+```python
+import os, time, requests
+
+BASE = "https://api.sonauto.ai/v1"
+HEADERS = {
+    "Authorization": f"Bearer {os.environ['SONAUTO_API_KEY']}",
+    "Content-Type": "application/json"
+}
+
+# 1. Start generation
+resp = requests.post(f"{BASE}/generations/v3", json={
+    "prompt": "a chill lofi beat for studying",
+    "tags": ["lo-fi", "ambient"],
+    "instrumental": True
+}, headers=HEADERS)
+task_id = resp.json()["task_id"]
+print(f"Task: {task_id}")
+
+# 2. Poll until complete
+while True:
+    status = requests.get(f"{BASE}/generations/status/{task_id}", headers=HEADERS).text.strip('"')
+    print(f"  Status: {status}")
+    if status == "SUCCESS":
+        break
+    if status == "FAILURE":
+        raise RuntimeError("Generation failed")
+    time.sleep(5)
+
+# 3. Retrieve audio URL
+data = requests.get(f"{BASE}/generations/{task_id}", headers=HEADERS).json()
+print(data["song_paths"][0])
+```
 
 ---
 
 ## Related Resources
 
-- [Suno API](./suno-api) — underlying generation API
-- [Suno Prompting Guide](../suno-prompting-guide) — prompt strategies
+- [Sonauto Developers](https://sonauto.ai/developers/docs) — official docs
+- [Tag Explorer](https://sonauto.ai/tag-explorer) — browse supported style tags
+- [Suno API](./suno-api) — Suno's separate generation API
+- [API Patterns](../tools/api-reference-patterns) — general async API design
 - [Production Workflow](../producer-handbook/production-workflow) — integrating AI audio into a DAW pipeline
-- [API Patterns](../tools/api-reference-patterns) — general async API design patterns
