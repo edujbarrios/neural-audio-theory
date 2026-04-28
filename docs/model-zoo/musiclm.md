@@ -34,7 +34,7 @@ MuLan embeddings serve as the conditioning signal for generation.
 
 ### Stage 2: Semantic Token Generation
 
-A transformer generates **SoundStream semantic tokens** conditioned on MuLan embeddings:
+A transformer generates **w2v-BERT semantic tokens** conditioned on MuLan embeddings:
 
 $$
 p(\mathbf{s}_{1:T} | \mathbf{c}_{\text{MuLan}}) = \prod_{t=1}^{T} p_\theta(\mathbf{s}_t | \mathbf{s}_{<t}, \mathbf{c}_{\text{MuLan}})

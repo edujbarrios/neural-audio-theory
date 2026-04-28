@@ -286,5 +286,5 @@ Fully automated pipelines are powerful, but sometimes you want a human decision 
 
 - [Multi-Model Pipelines](./multi-model-pipelines)
 - [Building a Music Agent](./building-a-music-agent)
-- [Sonauto API](../apis/sunauto-api)
+- [Sonauto API](../apis/sonauto-api)
 - [Controllable Generation](../advanced/controllable-generation)

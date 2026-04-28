@@ -350,6 +350,6 @@ def generate_task(brief: str, job_id: str):
 
 - [Multi-Model Pipelines](./multi-model-pipelines)
 - [Orchestration Patterns](./orchestration-patterns)
-- [Sonauto API](../apis/sunauto-api)
+- [Sonauto API](../apis/sonauto-api)
 - [Suno API](../apis/suno-api)
 - [Real-Time Inference](../advanced/real-time-inference)

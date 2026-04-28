@@ -50,7 +50,7 @@ Most AI music systems follow a practical pipeline:
 
 If your main goal is creating songs quickly, start with the beginner page:
 
-- **[For Dummies: Practical AI Music Background](./for-dummies.md)**
+- **[For Dummies: AI Music in Plain Language](./for-dummies.md)**
 
 It translates the same engineering foundations into plain language while staying technically accurate, so you can move from "just prompting" to more consistent, controllable outputs.
 

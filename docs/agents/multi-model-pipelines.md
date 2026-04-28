@@ -237,6 +237,6 @@ for i, url in enumerate(variations):
 
 - [Orchestration Patterns](./orchestration-patterns)
 - [Building a Music Agent](./building-a-music-agent)
-- [Sonauto API](../apis/sunauto-api)
+- [Sonauto API](../apis/sonauto-api)
 - [MusicGen](../model-zoo/musicgen)
 - [Stem Separation](../producer-handbook/stem-separation)
