@@ -136,7 +136,7 @@ Set `prompt` to the full lyrics with section markers:
 }
 ```
 
-Use `[Verse]`, `[Chorus]`, `[Bridge]`, `[Outro]` markers to guide song structure. See the [Suno Prompting Guide](../suno-prompting-guide) for full syntax.
+Use `[Verse]`, `[Chorus]`, `[Bridge]`, `[Outro]` markers to guide song structure. See the [Prompt Engineering Guide](../suno-prompting-guide) for full syntax.
 
 ---
 
@@ -213,6 +213,6 @@ print(urls)
 
 ## Related Resources
 
-- [Suno Prompting Guide](../suno-prompting-guide) — craft better prompts
+- [Prompt Engineering Guide](../suno-prompting-guide) — craft better prompts
 - [API Patterns](../tools/api-reference-patterns) — general async API design
 - [Udio & Suno Deep Dive](../model-zoo/udio-and-suno) — model internals

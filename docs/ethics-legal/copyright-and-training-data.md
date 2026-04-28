@@ -16,7 +16,7 @@ AI music models are trained on existing music. This creates fundamental question
 3. **Can AI output infringe copyright?** (Output similarity)
 4. **Should training data creators be compensated?** (Fair compensation)
 
-These questions remain legally unsettled in most jurisdictions as of 2025.
+These questions remain legally unsettled in most jurisdictions as of 2026.
 
 ## Training Data Rights
 

@@ -21,9 +21,9 @@ Raw Audio (44.1 kHz)
 └──────────────────┘
     │
     ▼
-Level 2 (top): 344 tokens/s   ──▶ Sparse Transformer ──▶ top codes
-Level 1 (mid): 86 tokens/s    ──▶ Upsampler ──▶ mid codes
-Level 0 (bottom): 21 tokens/s ──▶ Upsampler ──▶ bottom codes
+Level 2 (top): ~344 tokens/s    ──▶ Sparse Transformer ──▶ top codes
+Level 1 (mid): ~1,378 tokens/s  ──▶ Upsampler ──▶ mid codes
+Level 0 (bottom): ~5,513 tokens/s ──▶ Upsampler ──▶ bottom codes
     │
     ▼
 ┌──────────────────┐

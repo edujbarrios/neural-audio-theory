@@ -12,7 +12,7 @@ This section covers the public and unofficial APIs available for programmatic ac
 | Guide | Description |
 |-------|-------------|
 | [Suno API](./suno-api) | Authentication, endpoints, generation parameters, and best practices for the Suno AI API |
-| [Sonauto API](./sunauto-api) | Official Sonauto REST API — generate, extend, and inpaint songs with v2/v3 models, real-time streaming, and lyrics alignment |
+| [Sonauto API](./sonauto-api) | Official Sonauto REST API — generate, extend, and inpaint songs with v2/v3 models, real-time streaming, and lyrics alignment |
 
 ## Common Concepts
 

@@ -5,7 +5,7 @@ title: Udio & Suno
 
 # Udio and Suno: Commercial AI Music Platforms
 
-Udio and Suno are the two leading commercial AI music generation platforms (as of 2024–2025). While their architectures are not fully public, their capabilities and design choices reveal important engineering principles.
+Udio and Suno are the two leading commercial AI music generation platforms (as of 2026). While their architectures are not fully public, their capabilities and design choices reveal important engineering principles.
 
 ## Suno
 

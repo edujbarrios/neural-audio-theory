@@ -5,7 +5,7 @@ const sidebars: SidebarsConfig = {
     // ── 01–03  Beginner ──────────────────────────────────────────
     { type: 'doc', id: 'intro',                label: '01 · Introduction' },
     { type: 'doc', id: 'for-dummies',          label: '02 · For Dummies' },
-    { type: 'doc', id: 'suno-prompting-guide', label: '03 · Suno Prompting Guide' },
+    { type: 'doc', id: 'suno-prompting-guide', label: '03 · Prompt Engineering Guide' },
     // ── 04  Ethics ───────────────────────────────────────────────
     {
       type: 'category',
@@ -43,7 +43,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'apis/index',
         'apis/suno-api',
-        'apis/sunauto-api',
+        'apis/sonauto-api',
       ],
     },
     {
