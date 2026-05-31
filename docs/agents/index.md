@@ -31,3 +31,4 @@ An agent can route tasks to whichever model fits best, or pipeline several model
 | [Multi-Model Pipelines](./multi-model-pipelines) | Chain models sequentially: generate → extend → separate → remix |
 | [Orchestration Patterns](./orchestration-patterns) | Selector, fan-out/fan-in, critic-loop, and hybrid agent patterns |
 | [Building a Music Agent](./building-a-music-agent) | Step-by-step: design, implement, and deploy an agent in Python |
+| [Agent Evaluation and Observability](./evaluation-and-observability) | Score runs, debug failures, and track whether agent changes improve results |

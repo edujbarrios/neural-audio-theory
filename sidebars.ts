@@ -54,6 +54,7 @@ const sidebars: SidebarsConfig = {
         'agents/multi-model-pipelines',
         'agents/orchestration-patterns',
         'agents/building-a-music-agent',
+        'agents/evaluation-and-observability',
       ],
     },
     // ── 09  Foundational Technical ───────────────────────────────
