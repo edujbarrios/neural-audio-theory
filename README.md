@@ -112,6 +112,40 @@ npm run build
 
 The production build is written to `build/`. Run `npm run serve` to inspect that output locally.
 
+### Available commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm start` | Start the local development server with live reload |
+| `npm run build` | Generate an optimized production site and validate document links |
+| `npm run serve` | Serve the generated `build/` directory locally |
+| `npm run typecheck` | Check TypeScript configuration and components |
+| `npm run clear` | Remove Docusaurus caches and generated metadata |
+| `npm run write-heading-ids` | Add explicit IDs to documentation headings |
+
+## Working on the documentation
+
+All learning material lives in `docs/` as Markdown or MDX. Navigation is intentionally divided between `userGuidesSidebar` and `engineeringSidebar` in `sidebars.ts`.
+
+When adding or moving a page:
+
+1. Choose the audience that benefits most from the page.
+2. Add concise front matter and a single descriptive H1.
+3. Register the document in the appropriate sidebar.
+4. Link related practical and technical pages where useful.
+5. Run the typecheck and production build before opening a pull request.
+
+### Content quality principles
+
+- **Accurate** — distinguish established behavior from model-specific observations or inference.
+- **Audience-aware** — explain unfamiliar terms in User Guides; preserve technical precision in Engineering Docs.
+- **Actionable** — connect concepts to decisions, diagnostics, examples, or implementation patterns.
+- **Reproducible** — include relevant settings, assumptions, units, and evaluation criteria.
+- **Responsible** — address rights, consent, attribution, provenance, and limitations where they affect use.
+- **Connected** — prefer useful internal links over repeating the same explanation in multiple pages.
+
+Use `$...$` for inline mathematics and `$$...$$` for display equations. Code blocks should include a language identifier whenever one applies.
+
 ## Contributing
 
 Contributions that improve accuracy, clarity, coverage, examples, navigation, accessibility, or the reader experience are welcome.
