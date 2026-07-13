@@ -146,6 +146,46 @@ When adding or moving a page:
 
 Use `$...$` for inline mathematics and `$$...$$` for display equations. Code blocks should include a language identifier whenever one applies.
 
+## Repository structure
+
+```text
+neural-audio-theory/
+├── blog/                    # Engineering notes and author metadata
+├── docs/                    # User Guides and Engineering Docs content
+│   ├── producer-handbook/  # Practical production workflows
+│   ├── audio-fundamentals/ # Digital audio and listening foundations
+│   ├── concepts/           # Representations, embeddings, and alignment
+│   ├── architecture/       # Neural generation architectures
+│   ├── training/           # Data, optimization, and evaluation
+│   ├── agents/             # Multi-model systems and observability
+│   └── advanced/           # Fine-tuning, control, and real-time inference
+├── src/
+│   ├── components/         # Reusable and interactive React components
+│   ├── css/                # Global visual system
+│   └── pages/              # Custom site pages
+├── static/                 # Logos, icons, social cards, and robots.txt
+├── docusaurus.config.ts    # Site, navigation, plugin, and theme configuration
+├── sidebars.ts             # Audience-specific documentation navigation
+├── package.json            # Dependencies, scripts, and runtime requirements
+└── vercel.json             # Production build and routing configuration
+```
+
+## Deployment
+
+The site is configured as a static Docusaurus deployment on Vercel:
+
+- Install command: `npm install`
+- Build command: `npm run build`
+- Output directory: `build`
+
+No runtime server or database is required. Other static hosts can deploy the same `build/` output; update `url` and `baseUrl` in `docusaurus.config.ts` when hosting under a different origin or path.
+
+## Support and feedback
+
+- Use [GitHub Issues](https://github.com/edujbarrios/neural-audio-theory/issues) for factual corrections, content requests, rendering defects, and accessibility problems.
+- Include the affected page, expected result, actual result, and a reliable source when reporting a technical inaccuracy.
+- Do not include private prompts, licensed source audio, access tokens, or personal information in public reports.
+
 ## Contributing
 
 Contributions that improve accuracy, clarity, coverage, examples, navigation, accessibility, or the reader experience are welcome.
