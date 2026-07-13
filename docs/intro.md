@@ -7,7 +7,19 @@ title: Introduction
 
 **By Eduardo J. Barrios**
 
-Neural Audio Theory is an open educational reference focused on how AI music systems are engineered, trained, and evaluated.
+Neural Audio Theory is an open educational reference for both people making music with AI and people engineering the systems behind it.
+
+## Choose Your Path
+
+### [User Guides](./user-guides/index.md)
+
+For musicians, producers, and curious readers who want plain-language explanations, better prompts, practical workflows, troubleshooting, and responsible release guidance. No machine-learning background is required.
+
+### [Engineering Docs](./engineering/index.md)
+
+For developers, researchers, and technical readers who want signal processing, representations, architectures, training methods, evaluation, APIs, and system-design details.
+
+Both paths describe the same field from different levels of abstraction. You can switch between them whenever a practical question needs a technical explanation—or an engineering concept needs a musical example.
 
 ## What You Will Learn
 
