@@ -144,6 +144,43 @@ Specify where the voice sits in the arrangement:
 
 Roles can also be assigned by section: `solo verse, stacked harmony pre-chorus, choir-backed final chorus`.
 
+## Build a Vocal Prompt
+
+Use this model-agnostic order:
+
+1. **Role**: lead, duet, harmony, choir, or ad-libs
+2. **Register or voice type**: low register, high register, alto, tenor, and so on
+3. **Technique**: falsetto, belt, straight tone, rap delivery, or another specific behavior
+4. **Tone**: one primary quality and, optionally, one modifier
+5. **Delivery**: intensity, articulation, rhythm, and emotion
+6. **Section assignment**: where the direction begins or changes
+
+Example recipes:
+
+| Goal | Prompt phrase |
+| --- | --- |
+| Intimate pop verse | `close-miked lead vocal, mid-register, breathy tone, restrained conversational delivery` |
+| Lifted pop chorus | `high-register lead, clear belted notes, bright tone, sustained anthemic delivery, stacked backing harmonies` |
+| Soulful hook | `warm alto lead, chest voice with controlled rasp, expressive vibrato and short melismatic runs` |
+| Dreamy electronic layer | `wordless falsetto vocal pads, airy tone, long legato phrases, distant reverb` |
+| Rhythmic verse | `low-register rap delivery, dry close vocal, precise syncopated phrasing, occasional whispered doubles` |
+| Dramatic finale | `wide-range lead vocal, rising from soft head voice to a strong belt, choir-backed final chorus` |
+
+:::note Model behavior varies
+These terms are conditioning cues, not exact controls. A model may ignore, blend, or reinterpret them. Test one vocal change at a time, and preserve the seed and settings when the platform exposes them.
+:::
+
+### Keep requests coherent
+
+- Use two to four strong vocal descriptors before adding more detail.
+- Assign contrasting techniques to different sections.
+- Match the technique to the likely register: for example, `high falsetto` or `mid-to-high belt`.
+- Describe backing vocals separately from the lead.
+- State whether vocal effects are part of the performance or the mix, such as `raspy lead vocal` versus `clean lead through telephone filtering`.
+- Avoid naming a living singer as a shortcut; describe the audible qualities you want instead.
+
+When a result misses the target, revise the vocal phrase before rewriting the entire music prompt. Change one dimension—register, technique, tone, delivery, or arrangement role—and compare a consistent batch of outputs.
+
 ## Run Controlled Prompt Experiments
 
 Treat each revision as a small experiment:
