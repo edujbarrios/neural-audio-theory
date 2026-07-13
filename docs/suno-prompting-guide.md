@@ -78,6 +78,30 @@ Prompt terms compete for influence. When two instructions imply different arrang
 
 Assigning each descriptor to a section, instrument, or rhythmic layer preserves the creative contrast while removing ambiguity.
 
+## Run Controlled Prompt Experiments
+
+Treat each revision as a small experiment:
+
+1. Save a baseline prompt and its strongest output.
+2. Choose one variable to test, such as groove, instrumentation, structure, or mix language.
+3. Keep the seed and generation settings fixed when the system exposes them.
+4. Generate the same number of candidates for the baseline and revision.
+5. Compare the outputs against a short rubric instead of relying on memory.
+
+| Criterion | Question |
+| --- | --- |
+| Style match | Does the output stay inside the intended genre and era? |
+| Structure | Are sections distinct and ordered as requested? |
+| Groove | Do tempo, meter, and rhythmic feel match the brief? |
+| Timbre | Are the requested sound sources recognizable? |
+| Mix direction | Is the density, space, and stereo character appropriate? |
+
+Record the prompt, settings, candidate count, and result. If a revision improves one criterion but damages another, keep the useful phrase and narrow its scope in the next prompt.
+
+:::tip Keep a prompt changelog
+Write one sentence per revision: `Changed X because Y; result Z.` This is enough to reproduce successful decisions without creating heavy project documentation.
+:::
+
 ## Practical Guidance
 
 - Lead with style and tempo constraints
@@ -85,5 +109,7 @@ Assigning each descriptor to a section, instrument, or rhythmic layer preserves 
 - Add structure explicitly
 - Keep descriptors consistent (avoid conflicting tags)
 - Iterate with small prompt edits and compare outputs
+- Preserve generation settings during comparisons when possible
+- Score results against the same short rubric
 
 Prompt quality improves control, but dataset scope and model architecture still bound what can be generated.
