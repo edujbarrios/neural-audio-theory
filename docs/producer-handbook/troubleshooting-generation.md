@@ -7,6 +7,20 @@ title: Troubleshooting Generation
 
 Use this quick diagnostic page when outputs are weak or inconsistent.
 
+## Diagnose Before Rewriting
+
+Change the smallest part of the prompt that can explain the failure. Start with the symptom, identify the constraint most likely responsible, and keep everything else fixed for the next batch.
+
+| Symptom | First variable to test | Keep fixed |
+| --- | --- | --- |
+| Style drifts | Genre and era language | BPM, structure, instrumentation |
+| Groove feels wrong | BPM and rhythmic feel | Genre, arrangement, mix terms |
+| Sections blur together | Arrangement and contrast cues | Tempo, core instruments |
+| Mix is crowded | Instrument count and ambience | Structure, groove |
+| Mood is inconsistent | Emotional and dynamic language | Tempo, arrangement |
+
+If the first variable does not improve the output, restore the baseline before testing another. Otherwise, several simultaneous edits can hide which instruction caused the change.
+
 ## Symptom: Results feel random every generation
 
 Likely causes:
@@ -82,3 +96,8 @@ When a generation misses the target:
 4. Compare against last best version
 5. Repeat until direction is stable
 
+## Know When to Regenerate or Edit
+
+Regenerate when the failure affects the composition: the wrong groove, missing section, unsuitable melody, or genre drift. Edit the selected audio when the musical idea works but needs trimming, level changes, transition effects, stem balancing, or other production polish.
+
+Repeatedly prompting for a mix fix can discard a strong performance. Conversely, detailed editing rarely rescues a candidate whose core rhythm or structure misses the brief.
