@@ -95,3 +95,30 @@ Rights: account, license, and source-material notes
 ```
 
 This record connects the generated source to the edited session and makes later revisions, credits, and rights review much easier.
+
+## 7) Prepare the Handoff
+
+Export files that let the next stage begin without reopening the creative session:
+
+- A full-resolution stereo mix at the session sample rate
+- Consolidated stems that all begin at the same timestamp
+- A reference mix showing the intended balance and processing
+- Tempo, meter, key, and arrangement notes
+- A text file containing the version record and open issues
+
+Use lossless audio for production handoffs. Reserve compressed formats for quick review copies unless the recipient requests otherwise.
+
+## Final Delivery Checklist
+
+Before calling the version complete:
+
+- [ ] File names identify the track, version, and content
+- [ ] Exports start and end cleanly, with reverb tails intact
+- [ ] Sample rate and bit depth match the delivery specification
+- [ ] Stems line up when imported into an empty session
+- [ ] The reference mix does not clip
+- [ ] Credits and source-material notes are current
+- [ ] Listening checks pass on headphones, monitors, and a small speaker
+- [ ] The approved prompt and generation settings are archived
+
+Store the project record beside the audio deliverables so the musical and provenance history travel together.
