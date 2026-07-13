@@ -22,11 +22,20 @@
 
 ## About
 
-Neural Audio Theory is a documentation website that explains how modern AI music systems are built — from signal processing and embedding design to transformer/diffusion training and prompt conditioning.
+Neural Audio Theory is a documentation website that serves two audiences: people using AI music tools and people engineering the systems behind them.
+
+The published site separates the material into two paths:
+
+- **User Guides** — plain-language concepts, prompting, production workflows, troubleshooting, model overviews, and responsible-use guidance
+- **Engineering Docs** — signal processing, representations, model architecture, training, evaluation, APIs, and multi-model systems
+
+The paths share one content base so practical guidance can link to deeper technical explanations without forcing every reader through the same navigation.
 
 ## Features
 
+- **Audience-Specific Navigation** — dedicated User Guides and Engineering Docs entry points
 - **Engineering-Focused Documentation** — FFT, embedding geometry, training losses, and generation pipelines
+- **Producer-Focused Guidance** — prompting, vocals, troubleshooting, mixing, and delivery workflows
 - **Architecture Guides** — Transformers and diffusion models for music and general audio synthesis
 - **Prompt Engineering Guide** — practical conditioning strategies grounded in ML behavior
 - **Interactive Components** — latent space visualization and prompt constructor utilities
