@@ -54,6 +54,30 @@ Example:
 
 `Melodic drum and bass, 174 BPM, reese bass, chopped amen break, atmospheric pads, female vocal ad-libs, intro -> build -> drop -> outro, wide stereo, short plate reverb`
 
+## Turn an Idea into a Testable Prompt
+
+Start with a one-sentence brief, then translate each part into a constraint the model can act on.
+
+| Brief question | Prompt constraint | Example |
+| --- | --- | --- |
+| What style is it? | Genre and subgenre | `melodic drum and bass` |
+| How should it move? | Tempo, meter, and groove | `174 BPM, driving breakbeat` |
+| What carries the track? | Lead and supporting instruments | `reese bass, atmospheric pads` |
+| How should it develop? | Section sequence and contrast | `sparse intro -> full drop -> short outro` |
+| How should it feel sonically? | Mix and texture | `wide stereo, controlled low end` |
+
+This translation makes vague goals visible. For example, replace `make the chorus exciting` with `half-time verse -> full-time chorus, doubled drums, brighter synth layer`.
+
+## Resolve Conflicting Constraints
+
+Prompt terms compete for influence. When two instructions imply different arrangements or textures, decide which one is primary instead of asking the model to satisfy both equally.
+
+- Replace `minimal, huge wall of sound` with `minimal verse, dense chorus`.
+- Replace `acoustic, heavily processed synth texture` with `acoustic guitar lead over subtle granular ambience`.
+- Replace `slow and energetic` with `92 BPM, double-time hi-hats`.
+
+Assigning each descriptor to a section, instrument, or rhythmic layer preserves the creative contrast while removing ambiguity.
+
 ## Practical Guidance
 
 - Lead with style and tempo constraints
