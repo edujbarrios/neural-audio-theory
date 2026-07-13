@@ -77,10 +77,22 @@ const config: Config = {
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'mainSidebar',
+          type: 'doc',
+          docId: 'intro',
           position: 'left',
-          label: 'Docs',
+          label: 'Overview',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'userGuidesSidebar',
+          position: 'left',
+          label: 'User Guides',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'engineeringSidebar',
+          position: 'left',
+          label: 'Engineering Docs',
         },
         {to: '/blog', label: 'Engineering Notes', position: 'left'},
         {
@@ -102,12 +114,12 @@ const config: Config = {
           title: 'Documentation',
           items: [
             {
-              label: 'Introduction',
-              to: '/docs/intro',
+              label: 'User Guides',
+              to: '/docs/user-guides',
             },
             {
-              label: 'Prompt Engineering Guide',
-              to: '/docs/suno-prompting-guide',
+              label: 'Engineering Docs',
+              to: '/docs/engineering',
             },
           ],
         },

@@ -1,24 +1,13 @@
 import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 
 const sidebars: SidebarsConfig = {
-  mainSidebar: [
-    // ── 01–03  Beginner ──────────────────────────────────────────
-    { type: 'doc', id: 'intro',                label: '01 · Introduction' },
-    { type: 'doc', id: 'for-dummies',          label: '02 · For Dummies' },
-    { type: 'doc', id: 'suno-prompting-guide', label: '03 · Prompt Engineering Guide' },
-    // ── 04  Ethics ───────────────────────────────────────────────
+  userGuidesSidebar: [
+    {type: 'doc', id: 'user-guides/index', label: 'User Guides Home'},
+    {type: 'doc', id: 'for-dummies', label: 'AI Music in Plain Language'},
+    {type: 'doc', id: 'suno-prompting-guide', label: 'Prompt Engineering Guide'},
     {
       type: 'category',
-      label: '04 · Ethics & Legal',
-      items: [
-        'ethics-legal/responsible-use',
-        'ethics-legal/copyright-and-training-data',
-      ],
-    },
-    // ── 05–07  Practical / Creator-facing ───────────────────────
-    {
-      type: 'category',
-      label: '05 · Producer Handbook',
+      label: 'Producer Handbook',
       items: [
         'producer-handbook/production-workflow',
         'producer-handbook/troubleshooting-generation',
@@ -30,37 +19,38 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '06 · Tools & Ecosystem',
+      label: 'Practical Tools',
       items: [
         'tools/daw-integration',
         'tools/open-source-tools',
-        'tools/api-reference-patterns',
       ],
     },
     {
       type: 'category',
-      label: '07 · APIs',
+      label: 'Model Guide',
       items: [
-        'apis/index',
-        'apis/suno-api',
-        'apis/sonauto-api',
+        'model-zoo/udio-and-suno',
+        'model-zoo/musicgen',
+        'model-zoo/musiclm',
+        'model-zoo/stable-audio',
+        'model-zoo/jukebox',
       ],
     },
     {
       type: 'category',
-      label: '08 · AI Music Agents',
+      label: 'Ethics & Legal',
       items: [
-        'agents/index',
-        'agents/multi-model-pipelines',
-        'agents/orchestration-patterns',
-        'agents/building-a-music-agent',
-        'agents/evaluation-and-observability',
+        'ethics-legal/responsible-use',
+        'ethics-legal/copyright-and-training-data',
       ],
     },
-    // ── 09  Foundational Technical ───────────────────────────────
+  ],
+
+  engineeringSidebar: [
+    {type: 'doc', id: 'engineering/index', label: 'Engineering Docs Home'},
     {
       type: 'category',
-      label: '09 · Audio Fundamentals',
+      label: 'Audio Fundamentals',
       items: [
         'audio-fundamentals/digital-audio-basics',
         'audio-fundamentals/psychoacoustics',
@@ -68,10 +58,9 @@ const sidebars: SidebarsConfig = {
         'audio-fundamentals/audio-formats-and-codecs',
       ],
     },
-    // ── 10–11  Intermediate ──────────────────────────────────────
     {
       type: 'category',
-      label: '10 · Concepts',
+      label: 'Core Concepts',
       items: [
         'concepts/music-representations',
         'concepts/audio-embeddings',
@@ -82,19 +71,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '11 · Model Zoo',
-      items: [
-        'model-zoo/udio-and-suno',
-        'model-zoo/musicgen',
-        'model-zoo/musiclm',
-        'model-zoo/stable-audio',
-        'model-zoo/jukebox',
-      ],
-    },
-    // ── 12–13  Technical / Math-heavy ────────────────────────────
-    {
-      type: 'category',
-      label: '12 · Mathematics',
+      label: 'Mathematics',
       items: [
         'mathematics/signal-processing-basics',
         'mathematics/fft',
@@ -105,7 +82,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '13 · Architecture',
+      label: 'Architecture',
       items: [
         'architecture/transformers-for-audio',
         'architecture/variational-autoencoders',
@@ -114,10 +91,9 @@ const sidebars: SidebarsConfig = {
         'architecture/u-net-for-audio',
       ],
     },
-    // ── 14–15  Advanced / Research-level ─────────────────────────
     {
       type: 'category',
-      label: '14 · Training',
+      label: 'Training & Evaluation',
       items: [
         'training/dataset-curation',
         'training/data-augmentation',
@@ -127,7 +103,28 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: '15 · Advanced Topics',
+      label: 'APIs & Integration',
+      items: [
+        'apis/index',
+        'apis/suno-api',
+        'apis/sonauto-api',
+        'tools/api-reference-patterns',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'AI Music Agents',
+      items: [
+        'agents/index',
+        'agents/multi-model-pipelines',
+        'agents/orchestration-patterns',
+        'agents/building-a-music-agent',
+        'agents/evaluation-and-observability',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Advanced Topics',
       items: [
         'advanced/multimodal-generation',
         'advanced/controllable-generation',
@@ -135,8 +132,7 @@ const sidebars: SidebarsConfig = {
         'advanced/real-time-inference',
       ],
     },
-    // ── 16  Reference ─────────────────────────────────────────────
-    { type: 'doc', id: 'glossary', label: '16 · Glossary' },
+    {type: 'doc', id: 'glossary', label: 'Glossary'},
   ],
 };
 
