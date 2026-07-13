@@ -86,6 +86,34 @@ Fix:
 - Anchor emotion to instrumentation and dynamics
 - Keep emotional language consistent across sections
 
+## Symptom: Vocals are unclear or unnatural
+
+Likely causes:
+
+- The requested range or delivery conflicts with the style
+- Lyrics contain awkward stress patterns or crowded syllables
+- Vocal and accompaniment descriptors compete for focus
+
+Fix:
+
+- Specify a comfortable register and a single delivery style
+- Shorten dense lines and read them aloud to check their rhythm
+- Reduce competing lead instruments and request space around the vocal
+
+## Symptom: Transitions feel abrupt
+
+Likely causes:
+
+- Sections are named but their relationship is not described
+- Energy changes without a transition cue
+- Too many sections are compressed into a short duration
+
+Fix:
+
+- Describe the transition: drum fill, riser, held chord, or brief pause
+- State the energy change between adjacent sections
+- Simplify the arrangement or allow more time for each section
+
 ## Fast Recovery Loop
 
 When a generation misses the target:
@@ -101,3 +129,16 @@ When a generation misses the target:
 Regenerate when the failure affects the composition: the wrong groove, missing section, unsuitable melody, or genre drift. Edit the selected audio when the musical idea works but needs trimming, level changes, transition effects, stem balancing, or other production polish.
 
 Repeatedly prompting for a mix fix can discard a strong performance. Conversely, detailed editing rarely rescues a candidate whose core rhythm or structure misses the brief.
+
+## Capture a Useful Bug Report
+
+When a failure is repeatable, save enough context for another person—or your future self—to reproduce it:
+
+- Model or service version, when available
+- Full prompt and negative prompt
+- Seed, duration, and generation settings
+- Expected behavior and actual behavior
+- Timestamp or candidate identifier
+- A short audio excerpt that demonstrates the problem
+
+Avoid reporting only that an output “sounds bad.” Name the audible event and its location, such as `vocal consonants smear at 00:42` or `tempo shifts during the second chorus`.
