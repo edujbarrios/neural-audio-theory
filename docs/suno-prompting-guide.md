@@ -78,6 +78,72 @@ Prompt terms compete for influence. When two instructions imply different arrang
 
 Assigning each descriptor to a section, instrument, or rhythmic layer preserves the creative contrast while removing ambiguity.
 
+## Describe the Vocal Sound
+
+Vocal prompts work best when they describe a few independent dimensions instead of relying on a single label. Most music-generation models can respond to some combination of register, technique, tone, delivery, and role, although exact control varies by model and training data.
+
+### Register and range
+
+| Descriptor | Typical result |
+| --- | --- |
+| `low register` | Darker, weightier notes near the bottom of the singer's range |
+| `mid-register` | Conversational, centered vocal lines |
+| `high register` | Bright, elevated melodies with greater intensity |
+| `wide vocal range` | Melodies that move between low and high registers |
+| `soprano`, `alto`, `tenor`, `baritone`, `bass` | Broad range and color references associated with those voice types |
+
+Voice-type labels are useful directions, not guaranteed biological characteristics or exact pitch boundaries. Add a register or delivery term when the musical result matters more than the singer label.
+
+### Vocal technique
+
+| Descriptor | Typical result |
+| --- | --- |
+| `chest voice` | Full, direct, speech-connected tone |
+| `head voice` | Lighter resonance suited to higher notes |
+| `falsetto` | Airy, light high notes with a softer connection |
+| `belted vocals` | Strong, projected high-intensity singing |
+| `vocal fry` | Rough, creaky texture at the onset or bottom of phrases |
+| `vibrato` | Regular pitch movement on sustained notes |
+| `straight tone` | Sustained notes with little or no vibrato |
+| `melismatic runs` | Several notes sung on one syllable |
+| `spoken word` or `rap delivery` | Speech-led rhythm rather than sustained melody |
+
+Avoid stacking techniques that imply competing production goals unless they belong to different sections. For example, use `breathy falsetto verse, belted final chorus` rather than asking for both throughout the song.
+
+### Tone and texture
+
+Useful tone words include `airy`, `breathy`, `warm`, `bright`, `dark`, `smoky`, `husky`, `raspy`, `gritty`, `clear`, `smooth`, `nasal`, and `intimate`. Pair one or two tone words with a technique and register:
+
+`high-register falsetto, airy and intimate tone`
+
+Too many near-synonyms usually add noise rather than precision. Prefer a short hierarchy such as `warm lead vocal with a slight rasp` over a long list of equally weighted adjectives.
+
+### Delivery and performance
+
+Delivery terms describe how the singer shapes phrases and emotion:
+
+- `soft`, `restrained`, or `conversational` for low-intensity passages
+- `urgent`, `passionate`, or `anthemic` for stronger projection
+- `staccato` for short separated notes; `legato` for connected phrases
+- `behind the beat`, `syncopated`, or `rapid-fire` for rhythmic placement
+- `close-miked` or `distant` for an implied recording perspective
+- `vulnerable`, `confident`, `playful`, or `melancholic` for emotional intent
+
+Anchor emotion to an audible behavior. `Vulnerable, close-miked vocal with restrained dynamics` is more actionable than `emotional singer`.
+
+### Vocal role and arrangement
+
+Specify where the voice sits in the arrangement:
+
+- `solo lead vocal`
+- `call-and-response vocals`
+- `unison duet` or `contrasting duet`
+- `stacked harmonies` or `three-part harmony`
+- `choir`, `gang vocals`, or `crowd chant`
+- `whispered backing vocals`, `vocal ad-libs`, or `wordless vocal pads`
+
+Roles can also be assigned by section: `solo verse, stacked harmony pre-chorus, choir-backed final chorus`.
+
 ## Run Controlled Prompt Experiments
 
 Treat each revision as a small experiment:
