@@ -40,6 +40,18 @@ Example structure (adapt to your style):
 
 This keeps comparisons valid and helps you learn what each change actually does.
 
+### Use a Selection Gate
+
+Before promoting a candidate into production, check it against the same brief used to generate it:
+
+- The main musical idea is memorable and supports the intended use
+- Tempo and groove remain stable
+- Required sections are present and clearly differentiated
+- Lead elements are usable without major reconstruction
+- No artifact repeatedly distracts from the performance
+
+Reject candidates that fail a core musical requirement. Keep fixable mix or transition issues as production notes instead of restarting generation automatically.
+
 ## 4) Curate and Edit Like a Producer
 
 After selecting a candidate:
@@ -71,3 +83,15 @@ Save each approved step with clear naming:
 
 Document prompt changes so you can reproduce successful directions.
 
+For each approved version, save a compact record:
+
+```text
+Source: service/model and version
+Prompt: full prompt text
+Settings: seed, duration, and other exposed controls
+Decision: why this candidate was selected
+Edits: trims, layers, processing, and replacements
+Rights: account, license, and source-material notes
+```
+
+This record connects the generated source to the edited session and makes later revisions, credits, and rights review much easier.
