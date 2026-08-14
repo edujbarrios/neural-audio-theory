@@ -46,8 +46,8 @@ The project treats practical and technical knowledge as two views of the same sy
 
 | Path | Designed for | What you will find |
 | --- | --- | --- |
-| **[User Guides](https://neural-audio-theory.vercel.app/docs/user-guides)** | Musicians, producers, and curious readers | Plain-language concepts, prompting, vocals, production workflows, troubleshooting, model overviews, and responsible-use guidance |
-| **[Engineering Docs](https://neural-audio-theory.vercel.app/docs/engineering)** | Developers, researchers, audio engineers, and technical readers | Signal processing, representations, model architecture, training, evaluation, APIs, agents, and advanced system design |
+| **[User Guides](https://neural-audio-theory.vercel.app/docs/user-guides)** | Musicians, producers, and curious readers | Plain-language concepts, prompting, vocals, production workflows, troubleshooting, quality control, delivery, model overviews, and responsible-use guidance |
+| **[Engineering Docs](https://neural-audio-theory.vercel.app/docs/engineering)** | Developers, researchers, audio engineers, and technical readers | Signal processing, representations, architecture, training, evaluation, APIs, agents, long-form generation, and deployment |
 
 Both paths share one knowledge base and cross-link where a practical decision benefits from a technical explanation.
 
@@ -55,24 +55,28 @@ Technical and time-sensitive claims follow a published [reliability and sourcing
 
 ## What is covered
 
-- **AI music workflows** — planning, prompting, candidate selection, editing, mixing, stem separation, delivery, and troubleshooting
+- **AI music workflows** — planning, prompting, candidate selection, editing, mixing, stem separation, technical quality control, delivery, and troubleshooting
 - **Vocal direction** — register, technique, tone, delivery, arrangement roles, and reusable prompt recipes
 - **Audio foundations** — digital audio, formats, psychoacoustics, music theory, FFTs, and mel spectrograms
 - **Representations** — symbolic music, embeddings, latent spaces, spectrograms, and neural audio codecs
 - **Generative architectures** — transformers, diffusion models, VAEs, GANs, and U-Nets
-- **Training and evaluation** — dataset curation, augmentation, objectives, strategies, metrics, and listening tests
+- **Training and evaluation** — dataset curation, augmentation, objectives, strategies, benchmark design, metrics, and listening tests
 - **Models and integrations** — model overviews, hosted APIs, open-source tools, DAW integration, and API design patterns
 - **AI music agents** — multi-model pipelines, orchestration, observability, and evaluation
-- **Responsible development and use** — copyright, training data, attribution, consent, and release considerations
+- **Advanced systems** — control, adaptation, real-time inference, and long-form planning and memory
+- **Responsible development and use** — evidence standards, copyright, training data, attribution, consent, and release considerations
 
 ## Project highlights
 
 - Two audience-specific documentation paths with stable page URLs
 - More than 50 focused guides across practical, foundational, and advanced topics
+- A visual homepage that maps the path from sound and representations to generation and evaluation
 - Equations rendered with KaTeX and code examples with syntax highlighting
 - Interactive React components for prompt construction and latent-space concepts
 - Cross-references between producer workflows and engineering explanations
-- Static production builds suitable for fast global deployment
+- Reader-visible reliability and sourcing standards for technical and time-sensitive claims
+- Automated typechecking, production builds, and internal-link validation on pull requests
+- Self-hosted math assets and immutable caching for fast static delivery
 
 ## Technology
 
@@ -108,17 +112,17 @@ Docusaurus starts the development server at `http://localhost:3000` and reloads 
 ### Validate a change
 
 ```bash
-npm run typecheck
-npm run build
+npm run check
 ```
 
-The production build is written to `build/`. Run `npm run serve` to inspect that output locally.
+This runs the TypeScript check and a production Docusaurus build, including internal-link validation. The build is written to `build/`; run `npm run serve` to inspect it locally. Pull requests run the same checks through GitHub Actions with a locked dependency install.
 
 ### Available commands
 
 | Command | Purpose |
 | --- | --- |
 | `npm start` | Start the local development server with live reload |
+| `npm run check` | Run the required typecheck and production-build validation |
 | `npm run build` | Generate an optimized production site and validate document links |
 | `npm run serve` | Serve the generated `build/` directory locally |
 | `npm run typecheck` | Check TypeScript configuration and components |
@@ -135,7 +139,7 @@ When adding or moving a page:
 2. Add concise front matter and a single descriptive H1.
 3. Register the document in the appropriate sidebar.
 4. Link related practical and technical pages where useful.
-5. Run the typecheck and production build before opening a pull request.
+5. Run `npm run check` before opening a pull request.
 
 ### Content quality principles
 
@@ -152,6 +156,7 @@ Use `$...$` for inline mathematics and `$$...$$` for display equations. Code blo
 
 ```text
 neural-audio-theory/
+├── .github/                 # Pull-request template and documentation CI
 ├── blog/                    # Engineering notes and author metadata
 ├── docs/                    # User Guides and Engineering Docs content
 │   ├── producer-handbook/  # Practical production workflows
@@ -181,6 +186,8 @@ The site is configured as a static Docusaurus deployment on Vercel:
 - Output directory: `build`
 
 No runtime server or database is required. Other static hosts can deploy the same `build/` output; update `url` and `baseUrl` in `docusaurus.config.ts` when hosting under a different origin or path.
+
+KaTeX styling and fonts are bundled locally rather than fetched from a third-party CDN. Vercel serves fingerprinted files under `/assets/` with immutable caching; HTML remains independently deployable so releases can reference new asset hashes.
 
 ## Support and feedback
 
