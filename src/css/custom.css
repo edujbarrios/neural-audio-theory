@@ -250,3 +250,100 @@ code {
     overscroll-behavior-inline: contain;
   }
 }
+
+/* Documentation navigation and wayfinding */
+.theme-doc-sidebar-container {
+  border-right-color: rgba(103, 232, 249, 0.13) !important;
+  background: linear-gradient(180deg, rgba(9, 24, 26, 0.98), rgba(11, 21, 22, 0.98));
+}
+
+.theme-doc-sidebar-menu {
+  padding: 0.7rem;
+}
+
+.theme-doc-sidebar-menu .menu__link {
+  border-radius: 0.55rem;
+  color: #a9c8c7;
+  line-height: 1.4;
+}
+
+.theme-doc-sidebar-menu .menu__link:hover {
+  background: rgba(103, 232, 249, 0.06);
+  color: #eafffd;
+}
+
+.theme-doc-sidebar-menu .menu__link--active {
+  background: linear-gradient(90deg, rgba(94, 234, 212, 0.16), rgba(103, 232, 249, 0.06));
+  color: #8cf7e6;
+  font-weight: 700;
+  box-shadow: inset 3px 0 #5eead4;
+}
+
+.breadcrumbs__link {
+  border-radius: 999px;
+  color: #9fc0bf;
+}
+
+.breadcrumbs__item--active .breadcrumbs__link {
+  background: rgba(103, 232, 249, 0.08);
+  color: #dffcf8;
+}
+
+.table-of-contents__link {
+  color: #8fb1b0;
+}
+
+.table-of-contents__link--active {
+  color: #67e8f9;
+  font-weight: 650;
+}
+
+.pagination-nav__link {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(103, 232, 249, 0.2);
+  border-radius: 0.85rem;
+  background: linear-gradient(145deg, rgba(15, 35, 38, 0.9), rgba(11, 25, 28, 0.9));
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.pagination-nav__link:hover,
+.pagination-nav__link:focus-visible {
+  border-color: #67e8f9;
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.pagination-nav__sublabel {
+  color: #83aaa8;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pagination-nav__label {
+  color: #eafffd;
+}
+
+.alert {
+  border-width: 1px;
+  border-radius: 0.85rem;
+  background: linear-gradient(135deg, rgba(17, 39, 42, 0.92), rgba(12, 28, 31, 0.94));
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.13);
+}
+
+.alert a {
+  color: #bdfaf2;
+}
+
+.navbar {
+  border-bottom: 1px solid rgba(103, 232, 249, 0.12);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pagination-nav__link {
+    transition: none;
+  }
+}
