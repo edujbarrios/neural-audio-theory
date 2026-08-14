@@ -94,7 +94,7 @@ body {
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none !important;
-  transition: all 0.2s ease;
+  transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease;
 }
 
 .author-button:hover {
@@ -345,6 +345,7 @@ code {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .author-button,
   .pagination-nav__link {
     transition: none;
   }
