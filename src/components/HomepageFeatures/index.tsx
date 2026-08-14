@@ -1,5 +1,6 @@
 import type {ReactNode, SVGProps} from 'react';
 import clsx from 'clsx';
+import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
@@ -7,6 +8,8 @@ type FeatureItem = {
   title: string;
   Icon: (props: SVGProps<SVGSVGElement>) => ReactNode;
   description: ReactNode;
+  href: string;
+  accent: 'coral' | 'violet' | 'cyan';
 };
 
 function SignalIcon(props: SVGProps<SVGSVGElement>) {
@@ -50,6 +53,8 @@ const FeatureList: FeatureItem[] = [
         and latent embeddings used by modern generative audio stacks.
       </>
     ),
+    href: '/docs/audio-fundamentals/digital-audio-basics',
+    accent: 'coral',
   },
   {
     title: 'Model Internals and Training',
@@ -60,6 +65,8 @@ const FeatureList: FeatureItem[] = [
         functions interact to optimize timbre, rhythm, and structural coherence.
       </>
     ),
+    href: '/docs/architecture/transformers-for-audio',
+    accent: 'violet',
   },
   {
     title: 'Conditioning and Prompt Control',
@@ -70,22 +77,24 @@ const FeatureList: FeatureItem[] = [
         arrangement, and dynamics in text-to-music inference pipelines.
       </>
     ),
+    href: '/docs/advanced/controllable-generation',
+    accent: 'cyan',
   },
 ];
 
-function Feature({title, Icon, description}: FeatureItem) {
+function Feature({title, Icon, description, href, accent}: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
-      <div className={styles.featureCard}>
+    <Link className={clsx(styles.featureCard, styles[accent])} to={href}>
+      <div className={styles.cardTopline} aria-hidden="true" />
+      <div className={styles.cardHeader}>
         <div className={styles.iconWrap}>
           <Icon className={styles.featureIcon} aria-hidden="true" />
         </div>
-        <div className="text--center padding-horiz--md">
-          <Heading as="h3">{title}</Heading>
-          <p>{description}</p>
-        </div>
+        <span className={styles.exploreLabel}>Explore →</span>
       </div>
-    </div>
+      <Heading as="h3">{title}</Heading>
+      <p>{description}</p>
+    </Link>
   );
 }
 
@@ -93,9 +102,14 @@ export default function HomepageFeatures(): ReactNode {
   return (
     <section className={styles.features}>
       <div className="container">
-        <div className="row">
-          {FeatureList.map((props, idx) => (
-            <Feature key={idx} {...props} />
+        <div className={styles.sectionHeading}>
+          <span>Inside the guide</span>
+          <Heading as="h2">From sound to system</Heading>
+          <p>Follow the complete technical path, or enter at the layer relevant to your work.</p>
+        </div>
+        <div className={styles.featureGrid}>
+          {FeatureList.map((props) => (
+            <Feature key={props.href} {...props} />
           ))}
         </div>
       </div>

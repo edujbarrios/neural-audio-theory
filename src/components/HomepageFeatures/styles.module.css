@@ -1,30 +1,151 @@
 .features {
+  position: relative;
   width: 100%;
-  padding: 2.5rem 0 3.5rem;
+  padding: 5.5rem 0 4rem;
+  background: linear-gradient(180deg, #0b1516, #0d181b 70%, #0b1516);
+}
+
+.sectionHeading {
+  max-width: 680px;
+  margin: 0 auto 2.25rem;
+  text-align: center;
+}
+
+.sectionHeading > span {
+  color: #67e8f9;
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.sectionHeading h2 {
+  margin: 0.55rem 0 0.7rem;
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+  letter-spacing: -0.03em;
+}
+
+.sectionHeading p {
+  margin: 0;
+  color: #9fc0bf;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 .featureCard {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  border: 1px solid #0d2e2e;
+  min-height: 18rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(133, 196, 194, 0.2);
   border-radius: 1rem;
-  background: linear-gradient(180deg, rgba(17, 31, 32, 0.98), rgba(11, 21, 22, 0.98));
-  padding: 1.4rem 1rem;
+  background: rgba(14, 28, 31, 0.88);
+  color: #d6e8e8;
+  text-decoration: none;
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.16);
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.featureCard:hover,
+.featureCard:focus-visible {
+  border-color: var(--card-accent);
+  background: linear-gradient(155deg, var(--card-tint), rgba(13, 27, 30, 0.96) 58%);
+  color: #f5ffff;
+  text-decoration: none;
+  transform: translateY(-4px);
+}
+
+.featureCard:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 4px;
+}
+
+.coral {
+  --card-accent: #ff9c7a;
+  --card-tint: rgba(110, 49, 53, 0.62);
+}
+
+.violet {
+  --card-accent: #c4a7ff;
+  --card-tint: rgba(72, 50, 111, 0.62);
+}
+
+.cyan {
+  --card-accent: #67e8f9;
+  --card-tint: rgba(13, 75, 82, 0.62);
+}
+
+.cardTopline {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, var(--card-accent), transparent 80%);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .iconWrap {
-  margin: 0 auto 1rem;
   width: 3rem;
   height: 3rem;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 0.75rem;
-  border: 1px solid rgba(64, 224, 208, 0.4);
-  background: rgba(64, 224, 208, 0.08);
-  color: #40E0D0;
+  border: 1px solid color-mix(in srgb, var(--card-accent) 58%, transparent);
+  background: color-mix(in srgb, var(--card-accent) 10%, transparent);
+  color: var(--card-accent);
+}
+
+.exploreLabel {
+  color: var(--card-accent);
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
 }
 
 .featureIcon {
   width: 1.5rem;
   height: 1.5rem;
+}
+
+.featureCard h3 {
+  margin: auto 0 0.7rem;
+  color: #f4fffe;
+  font-size: 1.28rem;
+  line-height: 1.25;
+}
+
+.featureCard p {
+  margin: 0;
+  color: #9fc0bf;
+  line-height: 1.65;
+}
+
+@media screen and (max-width: 996px) {
+  .featureGrid {
+    grid-template-columns: 1fr;
+    margin-inline: auto;
+    max-width: 40rem;
+  }
+
+  .featureCard {
+    min-height: 14rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featureCard {
+    transition: none;
+  }
 }
