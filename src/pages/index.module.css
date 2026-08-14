@@ -1,12 +1,26 @@
 .heroBanner {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
-  padding: 7rem 0 5rem;
+  padding: 6.5rem 0 5.5rem;
   background:
-    radial-gradient(circle at 20% 20%, rgba(64, 224, 208, 0.18), transparent 50%),
-    radial-gradient(circle at 80% 0%, rgba(64, 224, 208, 0.12), transparent 45%),
-    linear-gradient(180deg, #0b1516 0%, #111f20 100%);
-  border-bottom: 1px solid #0d2e2e;
+    radial-gradient(circle at 12% 18%, rgba(255, 126, 95, 0.2), transparent 32%),
+    radial-gradient(circle at 88% 14%, rgba(52, 211, 235, 0.22), transparent 34%),
+    radial-gradient(circle at 50% 100%, rgba(145, 92, 255, 0.12), transparent 42%),
+    linear-gradient(145deg, #081516 0%, #0b2024 46%, #10192a 100%);
+  border-bottom: 1px solid rgba(103, 232, 249, 0.16);
+}
+
+.heroBanner::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, black, transparent 88%);
+  content: '';
 }
 
 .heroContainer {
@@ -18,48 +32,137 @@
   display: inline-block;
   padding: 0.35rem 0.7rem;
   border-radius: 999px;
-  border: 1px solid rgba(64, 224, 208, 0.4);
-  background: rgba(64, 224, 208, 0.08);
-  color: #8CF0EB;
-  letter-spacing: 0.04em;
-  font-weight: 600;
+  border: 1px solid rgba(129, 230, 217, 0.48);
+  background: rgba(9, 35, 37, 0.72);
+  box-shadow: 0 0 32px rgba(64, 224, 208, 0.08);
+  color: #9ff8ee;
+  letter-spacing: 0.09em;
+  font-weight: 700;
   font-size: 0.85rem;
   text-transform: uppercase;
 }
 
 .heroTitle {
   margin: 1.2rem auto 1rem;
-  max-width: 760px;
-  font-size: clamp(2rem, 4vw, 3.3rem);
-  line-height: 1.08;
+  max-width: 820px;
+  color: #f4fffe;
+  font-size: clamp(2.4rem, 5.3vw, 4.35rem);
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  text-wrap: balance;
 }
 
 .heroSubtitle {
   margin: 0 auto;
-  max-width: 700px;
+  max-width: 680px;
   font-size: clamp(1rem, 1.9vw, 1.2rem);
-  color: #8ab8b6;
+  color: #b6d7d7;
   line-height: 1.7;
 }
 
-.buttons {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+.pathGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 2.5rem auto 0;
+  max-width: 820px;
+  text-align: left;
 }
 
-.buttons :global(.button--secondary) {
-  border-color: rgba(140, 240, 235, 0.55);
-  color: #eaf6f5;
+.pathCard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  min-height: 9rem;
+  padding: 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  color: #f8ffff;
+  text-decoration: none;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
-.buttons :global(.button--secondary:hover),
-.buttons :global(.button--secondary:focus-visible) {
-  border-color: #8cf0eb;
-  background: rgba(64, 224, 208, 0.1);
+.producerPath {
+  border-color: rgba(255, 170, 123, 0.45);
+  background: linear-gradient(135deg, rgba(100, 39, 52, 0.8), rgba(56, 28, 58, 0.9));
+}
+
+.engineeringPath {
+  border-color: rgba(103, 232, 249, 0.42);
+  background: linear-gradient(135deg, rgba(9, 67, 74, 0.88), rgba(17, 45, 76, 0.92));
+}
+
+.pathCard:hover,
+.pathCard:focus-visible {
   color: #ffffff;
+  text-decoration: none;
+  transform: translateY(-3px);
+}
+
+.producerPath:hover,
+.producerPath:focus-visible {
+  border-color: #ffb07c;
+  box-shadow: 0 20px 54px rgba(255, 105, 97, 0.18);
+}
+
+.engineeringPath:hover,
+.engineeringPath:focus-visible {
+  border-color: #67e8f9;
+  box-shadow: 0 20px 54px rgba(34, 211, 238, 0.16);
+}
+
+.pathCard:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 4px;
+}
+
+.pathIcon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.pathCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+
+.pathCopy strong {
+  color: #ffffff;
+  font-size: 1.22rem;
+}
+
+.pathCopy > span:last-child {
+  color: rgba(237, 255, 254, 0.76);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.pathLabel {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pathArrow {
+  font-size: 1.45rem;
+  transition: transform 180ms ease;
+}
+
+.pathCard:hover .pathArrow,
+.pathCard:focus-visible .pathArrow {
+  transform: translateX(4px);
 }
 
 .proofLine {
@@ -88,10 +191,15 @@
     padding: 5rem 0 4rem;
   }
 
-  .buttons {
-    align-items: stretch;
-    flex-direction: column;
-    margin-inline: auto;
-    max-width: 20rem;
+  .pathGrid {
+    grid-template-columns: 1fr;
+    max-width: 34rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pathCard,
+  .pathArrow {
+    transition: none;
   }
 }

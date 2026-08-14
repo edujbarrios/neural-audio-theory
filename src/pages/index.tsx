@@ -19,15 +19,24 @@ function HomepageHeader() {
           A practical, technically rigorous guide to creating with AI music
           systems, understanding their internals, and evaluating their limits.
         </p>
-        <div className={styles.buttons}>
-          <Link className="button button--primary button--lg" to="/docs/intro">
-            Explore the guide
+        <div className={styles.pathGrid} aria-label="Choose a learning path">
+          <Link className={clsx(styles.pathCard, styles.producerPath)} to="/docs/user-guides">
+            <span className={styles.pathIcon} aria-hidden="true">♪</span>
+            <span className={styles.pathCopy}>
+              <span className={styles.pathLabel}>For music makers</span>
+              <strong>Producer path</strong>
+              <span>Prompt, arrange, troubleshoot, mix, and release.</span>
+            </span>
+            <span className={styles.pathArrow} aria-hidden="true">→</span>
           </Link>
-          <Link className="button button--secondary button--lg" to="/docs/user-guides">
-            Producer path
-          </Link>
-          <Link className="button button--secondary button--lg" to="/docs/engineering">
-            Engineering path
+          <Link className={clsx(styles.pathCard, styles.engineeringPath)} to="/docs/engineering">
+            <span className={styles.pathIcon} aria-hidden="true">∿</span>
+            <span className={styles.pathCopy}>
+              <span className={styles.pathLabel}>For technical readers</span>
+              <strong>Engineering path</strong>
+              <span>Study signals, models, training, evaluation, and deployment.</span>
+            </span>
+            <span className={styles.pathArrow} aria-hidden="true">→</span>
           </Link>
         </div>
         <p className={styles.proofLine}>
