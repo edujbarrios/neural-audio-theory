@@ -48,6 +48,7 @@ const sidebars: SidebarsConfig = {
 
   engineeringSidebar: [
     {type: 'doc', id: 'engineering/index', label: 'Engineering Docs Home'},
+    {type: 'doc', id: 'engineering/reliability-and-sourcing', label: 'Reliability & Sourcing'},
     {
       type: 'category',
       label: 'Audio Fundamentals',
