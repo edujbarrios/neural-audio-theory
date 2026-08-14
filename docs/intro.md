@@ -19,6 +19,8 @@ For musicians, producers, and curious readers who want plain-language explanatio
 
 For developers, researchers, and technical readers who want signal processing, representations, architectures, training methods, evaluation, APIs, and system-design details.
 
+Technical claims follow the guide's [Reliability and Sourcing](./engineering/reliability-and-sourcing.md) standard, which distinguishes documented facts, observations, inference, and unknowns.
+
 Both paths describe the same field from different levels of abstraction. You can switch between them whenever a practical question needs a technical explanation—or an engineering concept needs a musical example.
 
 ## What You Will Learn

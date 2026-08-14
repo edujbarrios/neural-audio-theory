@@ -5,7 +5,13 @@ title: APIs Overview
 
 # AI Music Generation APIs
 
-This section covers the public and unofficial APIs available for programmatic access to AI music generation platforms. Whether you're building a creative tool, automating a production pipeline, or experimenting with generative audio, understanding these APIs is essential.
+This section covers supported APIs and durable integration patterns for programmatic music generation. Provider contracts change quickly: verify endpoints, fields, model identifiers, limits, pricing, and terms in current first-party documentation before deployment.
+
+:::info Freshness rule
+
+Provider pages explain integration boundaries and link to the live contract. They do not treat undocumented browser endpoints or copied wrappers as supported APIs. See [Reliability and Sourcing](../engineering/reliability-and-sourcing.md) for the evidence standard.
+
+:::
 
 ## What's Covered
 
@@ -18,7 +24,7 @@ This section covers the public and unofficial APIs available for programmatic ac
 
 ### Asynchronous Generation
 
-All AI music generation APIs operate **asynchronously**. You submit a job and poll for results — generation typically takes 10–60 seconds depending on track length and server load.
+Long-running music generation commonly uses asynchronous jobs. A provider may support polling, webhooks, streaming, synchronous previews, or a combination; follow its documented contract.
 
 ```
 POST /generate   →  202 Accepted  { job_id }
@@ -27,7 +33,7 @@ GET  /status/:id →  200 { status: "processing" | "complete" | "failed" }
 
 ### Rate Limits
 
-Most services enforce per-minute and per-day quotas. Design your integration to:
+Hosted services commonly enforce request, concurrency, duration, or account quotas. Design your integration to:
 - Respect `Retry-After` headers
 - Implement exponential back-off
 - Cache completed assets by `job_id` to avoid re-generation
