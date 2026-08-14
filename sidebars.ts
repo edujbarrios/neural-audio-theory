@@ -131,6 +131,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'advanced/multimodal-generation',
         'advanced/controllable-generation',
+        'advanced/long-form-generation',
         'advanced/fine-tuning-and-adaptation',
         'advanced/real-time-inference',
       ],
