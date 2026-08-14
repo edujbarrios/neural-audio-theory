@@ -122,3 +122,5 @@ Before calling the version complete:
 - [ ] The approved prompt and generation settings are archived
 
 Store the project record beside the audio deliverables so the musical and provenance history travel together.
+
+Use the dedicated [Quality Control and Delivery](./quality-control-and-delivery.md) workflow to validate rendered files, stems, metadata, checksums, and AI-specific risks before handoff.

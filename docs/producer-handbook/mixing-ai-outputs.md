@@ -9,12 +9,7 @@ AI-generated music is raw material, not a finished product. This guide covers th
 
 ## Why Post-Processing Is Necessary
 
-AI generators produce audio that is often:
-- Slightly muddy in the low-mid range
-- Lacking dynamic contrast between sections
-- Missing the final polish that makes music sound "professional"
-- Inconsistent in loudness between generations
-- Over-compressed or under-compressed
+Generated audio can contain spectral imbalance, unstable dynamics, discontinuities, codec artifacts, or inconsistent loudness. These are possibilities to diagnose, not defects shared by every model or output.
 
 Even the best AI outputs benefit from the same mixing attention that any raw recording would receive.
 
@@ -33,24 +28,23 @@ Before touching any controls:
 
 Set proper levels before any processing:
 
-- Normalize to a reasonable peak level (-6 to -3 dBFS peak)
-- This provides headroom for subsequent processing
-- AI outputs sometimes have inconsistent peak levels
+- Trim clip or channel gain so the signal reaches processors at a useful operating level.
+- Preserve enough headroom for the intended processing chain without treating one peak value as universal.
+- Compare candidates at matched perceived loudness so a louder render is not mistaken for a better one.
 
 ### 3. EQ (Equalization)
 
 The most important tool for shaping AI audio.
 
-**Common fixes for AI-generated music:**
+**Diagnostic starting points:**
 
-| Problem | EQ Fix |
+| Observation | What to investigate before processing |
 |---|---|
-| Muddy low-mids | Cut 2–4 dB around 200–400 Hz |
-| Harsh/brittle highs | Gentle cut around 3–5 kHz |
-| Thin/weak feel | Slight boost at 100–200 Hz |
-| Lacks air/sparkle | Shelf boost above 10 kHz |
-| Boomy bass | High-pass filter at 30–40 Hz |
-| Boxy midrange | Narrow cut at 400–800 Hz |
+| Muddy low-mids | Arrangement overlap, masking, reverb buildup, or excess energy in the measured region |
+| Harsh/brittle highs | Resonance, distortion, sibilance, codec artifacts, or monitoring level |
+| Thin/weak feel | Phase cancellation, missing fundamentals, arrangement density, or loudness mismatch |
+| Boomy bass | Room modes, kick/bass overlap, sustained notes, or subsonic content |
+| Boxy midrange | Source resonance, spectral crowding, or an overly narrow monitoring reference |
 
 **Approach**: subtractive EQ first (remove problems), then additive (enhance character).
 
@@ -77,8 +71,8 @@ For final loudness:
 
 - True peak limiter on the master bus
 - Target -1 dBTP (true peak) or lower
-- Aim for -14 LUFS for streaming platforms (Spotify, Apple Music)
-- Don't over-limit — AI audio already has limited dynamic range
+- Choose loudness from the musical goal and current delivery specification.
+- Don't over-limit; compare against a level-matched version to judge the trade-off.
 
 ### 5. Stereo Processing
 
@@ -151,15 +145,11 @@ Some AI outputs have a subtle background noise:
 - High-pass filter removes low-frequency rumble
 - Gate can clean up gaps between sections
 
-## Loudness Standards
+## Loudness and delivery
 
-| Platform | Target LUFS | True Peak |
-|---|---|---|
-| Spotify | -14 LUFS | -1 dBTP |
-| Apple Music | -16 LUFS | -1 dBTP |
-| YouTube | -14 LUFS | -1 dBTP |
-| Broadcast (EBU) | -23 LUFS | -1 dBTP |
-| Club / DJ play | -8 to -6 LUFS | -0.3 dBTP |
+Streaming normalization references are not universal mastering targets. Services can use different measurement methods, album behavior, user settings, codecs, and policy revisions. Master for the musical result and the current delivery specification, measure integrated and short-term loudness plus true peak, and audition any lossy preview separately. Broadcast, cinema, games, clubs, physical media, and archival masters each have different constraints.
+
+See [Quality Control and Delivery](./quality-control-and-delivery.md) for export verification and handoff requirements.
 
 ## Quick Quality Checklist
 
@@ -202,7 +192,7 @@ Stereo Processing (if needed)
 Reverb / Spatial (send)
   │
   ▼
-Limiter (-14 LUFS, -1 dBTP)
+Limiter (only when required by the delivery and musical target)
   │
   ▼
 Final Export
