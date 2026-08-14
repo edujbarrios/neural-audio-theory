@@ -3,6 +3,8 @@
   width: 100%;
   padding: 5.5rem 0 4rem;
   background: linear-gradient(180deg, #0b1516, #0d181b 70%, #0b1516);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 620px;
 }
 
 .sectionHeading {
@@ -51,6 +53,7 @@
   text-decoration: none;
   box-shadow: 0 20px 55px rgba(0, 0, 0, 0.16);
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  contain: layout paint;
 }
 
 .featureCard:hover,
