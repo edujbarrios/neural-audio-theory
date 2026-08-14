@@ -46,10 +46,52 @@
   margin-top: 2rem;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.buttons :global(.button--secondary) {
+  border-color: rgba(140, 240, 235, 0.55);
+  color: #eaf6f5;
+}
+
+.buttons :global(.button--secondary:hover),
+.buttons :global(.button--secondary:focus-visible) {
+  border-color: #8cf0eb;
+  background: rgba(64, 224, 208, 0.1);
+  color: #ffffff;
+}
+
+.proofLine {
+  margin: 1.25rem auto 0;
+  color: #8ab8b6;
+  font-size: 0.9rem;
+}
+
+.startSection {
+  padding: 1rem 0 5rem;
+  text-align: center;
+}
+
+.startSection p {
+  max-width: 680px;
+  margin: 0.75rem auto;
+  color: #a8c9c7;
+}
+
+.startSection a {
+  font-weight: 700;
 }
 
 @media screen and (max-width: 996px) {
   .heroBanner {
     padding: 5rem 0 4rem;
+  }
+
+  .buttons {
+    align-items: stretch;
+    flex-direction: column;
+    margin-inline: auto;
+    max-width: 20rem;
   }
 }

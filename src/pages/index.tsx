@@ -16,15 +16,23 @@ function HomepageHeader() {
           Understand How AI Music Systems Are Engineered
         </Heading>
         <p className={styles.heroSubtitle}>
-          Sure, everyone knows you&apos;re cool for dropping AI-generated tracks
-          before anyone even noticed. But hey — let&apos;s actually learn how it
-          works, so you can speak about it with real authority.
+          A practical, technically rigorous guide to creating with AI music
+          systems, understanding their internals, and evaluating their limits.
         </p>
         <div className={styles.buttons}>
           <Link className="button button--primary button--lg" to="/docs/intro">
-            Launch Docs
+            Explore the guide
+          </Link>
+          <Link className="button button--secondary button--lg" to="/docs/user-guides">
+            Producer path
+          </Link>
+          <Link className="button button--secondary button--lg" to="/docs/engineering">
+            Engineering path
           </Link>
         </div>
+        <p className={styles.proofLine}>
+          Open source · 50+ focused chapters · equations, workflows, and primary references
+        </p>
       </div>
     </header>
   );
@@ -38,6 +46,16 @@ export default function Home(): ReactNode {
       <HomepageHeader />
       <main>
         <HomepageFeatures />
+        <section className={styles.startSection} aria-labelledby="start-heading">
+          <div className="container">
+            <Heading as="h2" id="start-heading">Choose the depth you need</Heading>
+            <p>
+              Start with production decisions, or follow the full path from digital audio
+              through representations, architectures, training, evaluation, and deployment.
+            </p>
+            <Link to="/docs/intro">See the complete learning map →</Link>
+          </div>
+        </section>
       </main>
     </Layout>
   );
