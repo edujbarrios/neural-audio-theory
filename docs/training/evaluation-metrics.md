@@ -19,12 +19,14 @@ $$
 
 where $(\boldsymbol{\mu}_r, \boldsymbol{\Sigma}_r)$ and $(\boldsymbol{\mu}_g, \boldsymbol{\Sigma}_g)$ are the mean and covariance of embeddings from real and generated audio respectively.
 
-**Lower FAD = better quality.**
+**Lower FAD indicates closer fitted embedding distributions under the chosen setup.** It is not a direct measure of musical quality. FAD is sensitive to the embedding model, sample duration, resampling, loudness, reference corpus, and sample count. Scores produced with different pipelines are not directly comparable.
 
-Embedding model choices:
+Embedding model choices include:
 - **VGGish**: original, widely used but dated
 - **CLAP**: more recent, captures text-audio alignment
-- **MERT**: music-specific embeddings
+- **MERT**: music-oriented representations; using it creates a Fréchet-style embedding distance, not the original VGGish FAD protocol
+
+The Gaussian estimate is biased at finite sample counts. Use the same number of clips for every system, bootstrap the complete pipeline, and publish the exact embedding checkpoint and preprocessing code.
 
 ### Fréchet Inception Distance (FID)
 
@@ -82,7 +84,7 @@ where $c_i$ and $\hat{c}_i$ are mel cepstral coefficients. Widely used in speech
 
 ## Text-Audio Alignment Metrics
 
-### CLAP Score
+### CLAP similarity
 
 Using a pre-trained CLAP (Contrastive Language-Audio Pretraining) model:
 
@@ -90,7 +92,7 @@ $$
 \text{CLAP Score} = \text{cos\_sim}(\mathbf{e}_{\text{text}}, \mathbf{e}_{\text{audio}})
 $$
 
-Measures how well the generated audio matches the text prompt. Higher is better.
+Measures compatibility under one pretrained model. Higher is not universally better: the model can reward audible prompt keywords while missing arrangement, negation, counting, or fine temporal control. Report results by prompt category and include hard negatives or counterfactual prompts.
 
 ### Text-Audio Relevance
 
@@ -170,12 +172,13 @@ Listeners rate audio samples on a 1–5 scale:
 | 2 | Poor |
 | 1 | Bad |
 
-MOS is the gold standard but expensive and slow. Design guidelines:
+MOS is useful but expensive, and a mean can hide listener disagreement. Study size should come from a power analysis or sequential design rather than a fixed folklore threshold. Design guidelines:
 
-- Use at least 20 listeners
+- define the target population and screen listening equipment when relevant
 - Randomize presentation order
 - Include anchor samples (real music, known-bad examples)
-- Report confidence intervals
+- collect repeated or sentinel trials to estimate reliability
+- Report uncertainty and the number of listeners and ratings per condition
 
 ### AB Preference Testing
 
@@ -210,6 +213,53 @@ Rate specific dimensions independently:
 | Report confidence intervals | Quantify uncertainty |
 | Disclose evaluation conditions | Sample rate, duration, number of listeners |
 
+## A reproducible evaluation protocol
+
+### 1. Freeze the evaluation unit
+
+Define whether one observation is a clip, prompt, song, continuation, or listener rating. Multiple clips generated from one prompt are correlated and must not be treated as independent prompts. Keep train, validation, and test identities disjoint at the work or recording level when possible.
+
+### 2. Pre-register system settings
+
+Freeze checkpoints, samplers, guidance, candidate count, reranking, duration, random seeds, loudness processing, and failure handling. If a product generates four candidates and a human selects one, compare that workflow against other systems with an equivalent selection budget.
+
+### 3. Use paired comparisons
+
+Generate every system output from the same prompt or source item. Analyze paired differences and resample at the highest independent level—usually prompt or source—not individual rating. For listener studies, a mixed-effects model can account for both listener and item variation.
+
+### 4. Separate evaluation dimensions
+
+At minimum, distinguish:
+
+- signal fidelity and artifacts;
+- prompt or control adherence;
+- musical coherence over time;
+- diversity within and across prompts;
+- memorization or similarity risk;
+- latency, throughput, and resource use.
+
+A single weighted score hides trade-offs and makes the result depend on arbitrary weights.
+
+### 5. Quantify uncertainty
+
+Publish confidence intervals or posterior intervals, paired effect sizes, sample counts, and the resampling unit. Correct for multiple comparisons when testing many systems or attributes. Statistical significance without a practically meaningful effect size is not a useful product decision.
+
+### 6. Preserve artifacts
+
+Store prompt IDs, seeds, model and dependency versions, raw outputs, metric inputs, excluded cases, and analysis code. Normalize only copies used for a declared listening condition; retain original renders for artifact and loudness analysis.
+
+## Common evaluation leaks
+
+| Leak | Why it invalidates a comparison |
+| --- | --- |
+| Selecting only successful outputs | Measures a curated demo, not system reliability |
+| Different candidate budgets | Gives one system more chances to succeed |
+| Reference corpus overlaps training data | Can reward memorization or familiar production |
+| Per-clip random split of one recording | Places near-duplicate material in train and test |
+| Different mastering chains | Confounds model quality with loudness and post-processing |
+| Unblinded system labels | Introduces brand and expectation bias |
+| Treating every listener rating as independent | Produces confidence intervals that are too narrow |
+
 ## Metric Correlation Summary
 
 | Metric | Correlates With | Limitations |
@@ -219,3 +269,9 @@ Rate specific dimensions independently:
 | MOS | Perceived quality | Expensive, subjective variance |
 | LSD | Spectral accuracy | Doesn't capture temporal coherence |
 | Tempo/Key accuracy | Musical correctness | Narrow attributes only |
+
+## Primary references and standards
+
+- Kilgour et al., [Fréchet Audio Distance: A Reference-Free Metric for Evaluating Music Enhancement Algorithms](https://arxiv.org/abs/1812.08466) (2019)
+- ITU-R, [BS.1534: Method for the subjective assessment of intermediate quality level of audio systems](https://www.itu.int/rec/R-REC-BS.1534/) (MUSHRA)
+- ITU-T, [P.808: Subjective evaluation of speech quality with a crowdsourcing approach](https://www.itu.int/rec/T-REC-P.808/)

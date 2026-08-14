@@ -99,6 +99,7 @@ const sidebars: SidebarsConfig = {
         'training/data-augmentation',
         'training/training-strategies',
         'training/evaluation-metrics',
+        'training/benchmark-design',
       ],
     },
     {
