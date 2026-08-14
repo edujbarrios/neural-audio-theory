@@ -31,7 +31,9 @@ Client ◀── 200 {status: "complete", url: "..."} ◀── Server
 Client ──▶ GET /download/{audio_id} ──▶ Audio file
 ```
 
-Generation is asynchronous because it takes seconds to minutes.
+Long-running generation is usually asynchronous. A successful submission should return `202 Accepted`, a stable job resource URL, and a retry hint rather than pretending that work has completed.
+
+Use an idempotency key on creation requests. Network timeouts leave the client uncertain whether the server accepted a job; blindly retrying without a key can create and bill duplicate generations.
 
 ## Request Patterns
 
@@ -106,7 +108,7 @@ Generation is asynchronous because it takes seconds to minutes.
   "results": [
     {
       "id": "audio_001",
-      "url": "https://api.example.com/audio/audio_001.wav",
+      "url": "https://storage.example.com/signed/audio_001.wav",
       "duration": 30.0,
       "sample_rate": 44100,
       "format": "wav",
@@ -122,7 +124,7 @@ Generation is asynchronous because it takes seconds to minutes.
     }
   ],
   "metadata": {
-    "model": "musicgen-large",
+        "model": "model-version-immutable-id",
     "inference_time": 12.3,
     "prompt": "Melodic techno, 126 BPM..."
   }
@@ -145,7 +147,7 @@ For self-hosted models, common frameworks:
 
 ### Batching
 
-Audio generation can benefit from dynamic batching:
+Audio generation can benefit from dynamic batching, but the queueing window adds latency:
 
 $$
 \text{Throughput} = \frac{B \times L}{\max(T_1, T_2, \dots, T_B) + T_{\text{overhead}}}
@@ -153,7 +155,7 @@ $$
 
 where $B$ is batch size and $T_i$ is processing time for request $i$.
 
-Batching same-length requests is most efficient since padding short requests wastes compute.
+Batching similar shapes reduces padding waste. Bound batching delay and expose queue time separately from inference time so throughput optimization does not silently violate latency objectives.
 
 ### Streaming
 
@@ -164,7 +166,7 @@ Client ──▶ WebSocket /stream
 Server ──▶ [chunk_1] [chunk_2] [chunk_3] ...
 ```
 
-Autoregressive models naturally support streaming (tokens generated sequentially). Diffusion models require full denoising before output, making streaming harder.
+Autoregressive models can emit incremental tokens, but audio is playable only after the codec has enough frames and context. Diffusion models are commonly non-streaming, although chunked, inpainting, and causally conditioned designs can emit windows. The API contract should state startup delay, chunk duration, ordering, and whether revisions are possible.
 
 ## Rate Limiting and Quotas
 
@@ -225,9 +227,9 @@ Server POSTs to your webhook when generation completes:
 |---|---|---|
 | 400 | Bad request (invalid prompt/params) | Fix request |
 | 401 | Unauthorized | Check API key |
-| 402 | Quota exceeded | Upgrade plan or wait |
+| 402 | Payment required, when used | Follow provider billing guidance; do not assume a transient quota error |
 | 429 | Rate limited | Back off and retry |
-| 500 | Server error | Retry with backoff |
+| 500 | Server error | Retry only when the operation is idempotent |
 | 503 | Service unavailable | Retry later |
 
 ### Safety Rejections
@@ -280,9 +282,9 @@ $$
 \text{cache\_key} = \text{hash}(\text{prompt} + \text{params} + \text{seed})
 $$
 
-Exact seed match → exact same output (for deterministic models).
+The key must include the immutable model version, all generation parameters, input-asset digests, and relevant preprocessing versions. A seed is not a reproducibility guarantee across model updates, hardware kernels, or provider revisions.
 
-### Embedding-Based Caching
+### Similarity lookup is not a response cache
 
 For similar (not identical) prompts:
 
@@ -290,15 +292,34 @@ $$
 \text{similarity} = \text{cos\_sim}(\text{embed}(p_1), \text{embed}(p_2))
 $$
 
-If similarity > threshold, return cached result. Useful for deduplication.
+Embedding similarity can find prior jobs for deduplication or user review. Do not silently return a different prompt's audio as if it were the requested generation: semantically close prompts may differ in negation, rights, user ownership, safety policy, or control parameters.
+
+## Webhook security and delivery
+
+Treat webhook delivery as at-least-once and unordered:
+
+1. Sign the raw payload with a rotating secret and timestamp.
+2. Reject stale timestamps and verify the signature before applying side effects.
+3. Deduplicate on an immutable event ID.
+4. Acknowledge quickly, then process asynchronously.
+5. Make state transitions monotonic so an old `processing` event cannot overwrite `complete`.
+6. Provide replay or reconciliation through the job resource.
+
+Signed download URLs should be short-lived and scoped to one object. Store durable object IDs, not expiring URLs, and authorize downloads independently from knowledge of a job ID.
+
+## Cancellation and backpressure
+
+Cancellation is a request, not proof that compute stopped. Model the job as a state machine such as `queued → running → succeeded | failed | cancel_requested | cancelled`. Document whether partial audio is retained and how billing behaves.
+
+Streaming clients need bounded buffers and an explicit overload policy. A server may pause generation, drop preview chunks, lower quality, or terminate the stream; it should not grow memory without limit when a client reads slowly.
 
 ## Best Practices
 
-1. **Always specify seeds** for reproducibility
-2. **Generate multiple variations** per prompt (N=4 is a good default)
+1. **Pin immutable model versions** and record seeds as one part of provenance
+2. **Declare candidate budgets** instead of assuming a universal number of variations
 3. **Store prompts with outputs** for traceability
 4. **Implement retry logic** with exponential backoff
 5. **Validate outputs** before using them (check duration, sample rate, silence)
 6. **Monitor costs** — generation API credits add up quickly
 7. **Use webhooks** instead of polling for production systems
-8. **Cache aggressively** to avoid redundant generations
+8. **Cache exact, authorized requests** and keep similarity search explicit
