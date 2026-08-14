@@ -46,8 +46,8 @@ The project treats practical and technical knowledge as two views of the same sy
 
 | Path | Designed for | What you will find |
 | --- | --- | --- |
-| **[User Guides](https://neural-audio-theory.vercel.app/docs/user-guides)** | Musicians, producers, and curious readers | Plain-language concepts, prompting, vocals, production workflows, troubleshooting, model overviews, and responsible-use guidance |
-| **[Engineering Docs](https://neural-audio-theory.vercel.app/docs/engineering)** | Developers, researchers, audio engineers, and technical readers | Signal processing, representations, model architecture, training, evaluation, APIs, agents, and advanced system design |
+| **[User Guides](https://neural-audio-theory.vercel.app/docs/user-guides)** | Musicians, producers, and curious readers | Plain-language concepts, prompting, vocals, production workflows, troubleshooting, quality control, delivery, model overviews, and responsible-use guidance |
+| **[Engineering Docs](https://neural-audio-theory.vercel.app/docs/engineering)** | Developers, researchers, audio engineers, and technical readers | Signal processing, representations, architecture, training, evaluation, APIs, agents, long-form generation, and deployment |
 
 Both paths share one knowledge base and cross-link where a practical decision benefits from a technical explanation.
 
@@ -55,24 +55,28 @@ Technical and time-sensitive claims follow a published [reliability and sourcing
 
 ## What is covered
 
-- **AI music workflows** — planning, prompting, candidate selection, editing, mixing, stem separation, delivery, and troubleshooting
+- **AI music workflows** — planning, prompting, candidate selection, editing, mixing, stem separation, technical quality control, delivery, and troubleshooting
 - **Vocal direction** — register, technique, tone, delivery, arrangement roles, and reusable prompt recipes
 - **Audio foundations** — digital audio, formats, psychoacoustics, music theory, FFTs, and mel spectrograms
 - **Representations** — symbolic music, embeddings, latent spaces, spectrograms, and neural audio codecs
 - **Generative architectures** — transformers, diffusion models, VAEs, GANs, and U-Nets
-- **Training and evaluation** — dataset curation, augmentation, objectives, strategies, metrics, and listening tests
+- **Training and evaluation** — dataset curation, augmentation, objectives, strategies, benchmark design, metrics, and listening tests
 - **Models and integrations** — model overviews, hosted APIs, open-source tools, DAW integration, and API design patterns
 - **AI music agents** — multi-model pipelines, orchestration, observability, and evaluation
-- **Responsible development and use** — copyright, training data, attribution, consent, and release considerations
+- **Advanced systems** — control, adaptation, real-time inference, and long-form planning and memory
+- **Responsible development and use** — evidence standards, copyright, training data, attribution, consent, and release considerations
 
 ## Project highlights
 
 - Two audience-specific documentation paths with stable page URLs
 - More than 50 focused guides across practical, foundational, and advanced topics
+- A visual homepage that maps the path from sound and representations to generation and evaluation
 - Equations rendered with KaTeX and code examples with syntax highlighting
 - Interactive React components for prompt construction and latent-space concepts
 - Cross-references between producer workflows and engineering explanations
-- Static production builds suitable for fast global deployment
+- Reader-visible reliability and sourcing standards for technical and time-sensitive claims
+- Automated typechecking, production builds, and internal-link validation on pull requests
+- Self-hosted math assets and immutable caching for fast static delivery
 
 ## Technology
 
