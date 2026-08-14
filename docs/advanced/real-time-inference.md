@@ -1,255 +1,127 @@
 ---
-sidebar_position: 2
+sidebar_position: 4
 title: Real-Time Inference
 ---
 
 # Real-Time Audio Inference
 
-Deploying AI music models in real-time or near-real-time applications requires careful optimization of latency, throughput, and computational efficiency. This page covers the engineering strategies for fast audio inference.
+“Real time” is a deadline, not a synonym for fast. An audio system must produce each block before playback consumes it, while also meeting startup latency, tail latency, memory, and quality requirements. A model can average faster than playback and still glitch because its worst-case block misses the deadline.
 
-## Latency Requirements
+## Define the contract
 
-Different applications have different latency budgets:
-
-| Application | Max Latency | Challenge Level |
-|---|---|---|
-| Live performance | &lt;10 ms | Extreme |
-| Interactive music tools | &lt;100 ms | Very hard |
-| Real-time voice conversion | &lt;50 ms | Hard |
-| Streaming generation | &lt;1 second | Moderate |
-| Batch generation | Minutes | Easy |
-| Offline processing | Hours | Trivial |
+For sample rate $f_s$ and callback block size $B$, the device period is
 
 $$
-\text{Total latency} = T_{\text{input}} + T_{\text{compute}} + T_{\text{output}} + T_{\text{network}}
+T_{\mathrm{block}}=\frac{B}{f_s}.
 $$
 
-## Model Optimization Techniques
+At 48 kHz, 256 samples provide about 5.33 ms. Compute scheduled in the audio callback must finish comfortably inside that period; synchronization, memory allocation, data transfer, and competing workloads consume part of the budget.
 
-### Quantization
+Distinguish these measurements:
 
-Reduce numerical precision of model weights and activations:
+| Measurement | Meaning |
+| --- | --- |
+| algorithmic delay | required future context plus analysis/synthesis delay |
+| startup latency | request or input start to first playable output |
+| block latency | processing time for one streaming block |
+| end-to-end latency | capture, buffering, compute, transport, and playback |
+| throughput | audio seconds produced per wall-clock second |
+| real-time factor (RTF) | wall-clock processing time divided by audio duration; lower than 1 is faster than real time |
 
-**Post-Training Quantization (PTQ)**:
-$$
-w_q = \text{round}\left(\frac{w}{\Delta}\right) \cdot \Delta, \quad \Delta = \frac{w_{\max} - w_{\min}}{2^B - 1}
-$$
+Some publications define the reciprocal as a “speed factor.” Always give the equation with the number.
 
-| Precision | Memory | Speed | Quality |
-|---|---|---|---|
-| FP32 | 4 bytes/param | Baseline | Reference |
-| FP16 | 2 bytes/param | ~2× faster | Near-identical |
-| INT8 | 1 byte/param | ~3–4× faster | Slight degradation |
-| INT4 | 0.5 bytes/param | ~5–6× faster | Noticeable degradation |
-
-**Quantization-Aware Training (QAT)**: simulate quantization during training, resulting in better quality at low precision.
-
-For audio models, INT8 quantization typically preserves quality. INT4 may introduce audible artifacts in vocoders.
-
-### Knowledge Distillation
-
-Train a smaller "student" model to mimic a larger "teacher":
+## Budget the whole path
 
 $$
-\mathcal{L}_{\text{distill}} = \alpha \mathcal{L}_{\text{task}} + (1-\alpha) \mathcal{L}_{\text{KD}}
+T_{\mathrm{e2e}}=T_{\mathrm{capture}}+T_{\mathrm{lookahead}}+T_{\mathrm{queue}}+T_{\mathrm{transfer}}+T_{\mathrm{model}}+T_{\mathrm{decode}}+T_{\mathrm{playback}}.
 $$
 
-$$
-\mathcal{L}_{\text{KD}} = D_{\text{KL}}(p_{\text{student}} \| p_{\text{teacher}})
-$$
+Measure timestamps at component boundaries. Host-to-device copies, resampling, codec frames, network jitter buffers, and output crossfades are common hidden costs. Report warm and cold starts separately.
 
-Distillation can reduce model size by 2–10× while retaining most quality.
+## Causality and receptive field
 
-### Pruning
+A causal layer uses only current and past inputs. A system is not causal merely because it emits chunks: centered convolutions, bidirectional attention, normalization over a full clip, or a non-causal codec can introduce future context.
 
-Remove unnecessary weights:
-
-**Structured pruning**: remove entire channels, heads, or layers
-**Unstructured pruning**: zero out individual weights by magnitude
+For a stack of causal convolutions with kernel sizes $k_i$ and dilations $d_i$, the receptive field in samples is
 
 $$
-w'_i = \begin{cases} w_i & \text{if } |w_i| > \theta \\ 0 & \text{otherwise} \end{cases}
+R=1+\sum_i (k_i-1)d_i
 $$
 
-Typical audio models can be pruned 30–50% with minimal quality loss.
+when stride is one. Strides and multirate stages require propagating the jump between layers. State exactly which past activations are cached at chunk boundaries.
 
-### Architecture-Level Optimizations
+## Streaming state
 
-**Reduce attention layers**: attention is the bottleneck for long sequences
-**Use efficient attention**: Flash Attention, linear attention
-**Reduce model depth**: fewer layers with wider channels
-**Cache key-value pairs**: for autoregressive models, cache KV states
+Streaming implementations should carry state rather than recompute the entire prefix:
 
-### KV-Cache for Autoregressive Models
+- convolution tails for causal encoders and decoders;
+- key/value caches for autoregressive or chunked-attention models;
+- phase or overlap state for STFT-based transforms;
+- resampler state and loudness meter state;
+- random-number state when generation must be reproducible.
 
-In autoregressive generation, caching previous key-value pairs avoids recomputation:
+Bound cache growth. Global attention over an unbounded stream eventually violates both latency and memory budgets; use a sliding window, compressed memory, or explicit reset policy.
 
-Without cache: each token requires attending to all previous tokens from scratch
-With cache: only compute attention for the new token against cached KV pairs
+## Chunk boundaries
 
-$$
-\text{Speedup} \approx \frac{T}{1} = T
-$$
-
-for generating $T$ tokens. KV-caching is essential for real-time autoregressive audio.
-
-## Diffusion Model Speedups
-
-Diffusion models are inherently slow due to iterative denoising. Several strategies reduce the number of steps:
-
-### Fewer Diffusion Steps
-
-Standard: 50–1000 steps. Optimized: 4–20 steps.
-
-**DDIM (Denoising Diffusion Implicit Models)**:
+Overlap-add can blend compatible frames,
 
 $$
-x_{t-1} = \sqrt{\bar{\alpha}_{t-1}}\hat{x}_0 + \sqrt{1-\bar{\alpha}_{t-1}-\sigma_t^2}\epsilon_\theta(x_t, t) + \sigma_t \epsilon
+y[n]=\sum_m w[n-mH]y_m[n-mH],
 $$
 
-DDIM enables deterministic sampling with fewer steps (e.g., 50 → 10).
+but it cannot repair inconsistent pitch, phase, or musical state across independently generated chunks. Use conditioning overlap, persistent model state, and boundary-aware training. Validate the constant-overlap-add property of the chosen window and hop, and avoid applying a second unintended gain envelope.
 
-### Consistency Models
+## Optimization order
 
-Train a model to directly predict the final clean sample from any noise level:
+1. **Profile the deployed graph.** Include preprocessing, transfers, decoding, and synchronization.
+2. **Remove avoidable work.** Cache state, fuse operations, preallocate buffers, and eliminate format conversions.
+3. **Choose efficient shapes.** Static shapes and hardware-friendly channel sizes often matter more than theoretical FLOPs.
+4. **Reduce precision carefully.** Validate weights, activations, accumulators, and sensitive output layers separately.
+5. **Reduce model work.** Distill, prune structurally, shorten context, or reduce diffusion evaluations.
+6. **Change architecture if necessary.** A non-causal, full-context model cannot be converted into a low-delay instrument by export tooling alone.
 
-$$
-f_\theta(x_t, t) \approx x_0 \quad \forall t
-$$
+Quantization speedups depend on kernel and hardware support. INT8 can be slower than FP16 when it triggers dequantization or unsupported operators. Report measured latency and quality; do not infer either from bytes per parameter.
 
-Enables 1-step or 2-step generation.
+## Model-family considerations
 
-### Progressive Distillation
+### Autoregressive token models
 
-Distill a multi-step diffusion model into fewer steps:
+Cache keys and values, but include the cost of predicting every codebook stream and decoding tokens. Sampling and synchronization can dominate small matrix operations. Delayed or parallel codebook patterns trade dependency modeling against token latency.
 
-1. Start with N-step model
-2. Train student to match N/2 steps
-3. Repeat: N/4, N/8, etc.
-4. End with 1–4 step model
+### Diffusion and flow models
 
-### Latent Diffusion (Compression-First)
+Latency is roughly the number of neural function evaluations multiplied by denoiser cost, plus conditioning and decoding. Guidance may require an additional conditional/unconditional pass unless batched or distilled. Fewer solver steps do not guarantee equal quality, and one-step generation does not guarantee a small model.
 
-Diffuse in compressed latent space rather than raw audio:
+### Vocoders and codecs
 
-$$
-\text{Speedup} \approx \frac{T_{\text{audio}}}{T_{\text{latent}}} \times \frac{C_{\text{audio}}}{C_{\text{latent}}}
-$$
+Measure algorithmic delay separately from throughput. A decoder may be very fast after it receives a large latent window. Test impulse response, chunk boundaries, stereo behavior, and sustained tones in causal mode.
 
-Typical latent compression: 64–256× fewer elements than raw audio.
+## Benchmark harness
 
-## Vocoder Optimization
+Benchmark the same artifact that ships, after warm-up, under a controlled power and concurrency setting. Record:
 
-The vocoder (mel → waveform) is often the latency bottleneck in mel-spectrogram-based systems.
+- CPU/GPU/accelerator model, runtime, driver, precision, and thread counts;
+- batch size, input/output duration, chunk size, and lookahead;
+- cold start, time to first audio, steady-state p50/p95/p99 block time;
+- deadline misses and longest consecutive underrun;
+- peak device and host memory;
+- audio quality at the exact optimized operating point.
 
-### Streaming Vocoders
+Use a long stream and inject realistic competing load. Average RTF alone hides deadline misses. For network services, add queue time, transport, jitter, cancellation, and backpressure behavior.
 
-Process audio in chunks rather than waiting for the full spectrogram:
+## Production checklist
 
-```
-Mel chunk 1 ──▶ Vocoder ──▶ Audio chunk 1 (output immediately)
-Mel chunk 2 ──▶ Vocoder ──▶ Audio chunk 2 (output immediately)
-...
-```
+- The callback path performs no allocation, logging, file I/O, or blocking lock acquisition.
+- Ring buffers have explicit overflow and underflow policies.
+- State resets are click-free and tested after device or sample-rate changes.
+- Overload degrades predictably by bypassing, reducing quality, or increasing buffer size.
+- Telemetry captures tail latency and underruns without blocking audio.
+- The benchmark is repeated on minimum supported hardware.
+- Quality evaluation uses outputs from the optimized runtime, not the original training framework.
 
-Requires causal architecture (no future lookahead).
+## Related reading
 
-### Faster Vocoder Architectures
-
-| Vocoder | RTF (GPU) | Quality |
-|---|---|---|
-| WaveNet | 0.01× | Excellent |
-| HiFi-GAN V1 | ~80× | Very good |
-| HiFi-GAN V3 | ~150× | Good |
-| Vocos | ~200× | Good |
-| MB-MelGAN | ~150× | Good |
-
-RTF = Real-Time Factor (>1× means faster than real-time).
-
-### ONNX / TensorRT
-
-Export vocoders to optimized inference formats:
-
-- **ONNX**: cross-platform, moderate optimization
-- **TensorRT**: NVIDIA GPU, aggressive optimization (2–5× over PyTorch)
-- **CoreML**: Apple Silicon optimization
-- **OpenVINO**: Intel optimization
-
-## Hardware Considerations
-
-### GPU Inference
-
-| GPU | VRAM | Suitable For |
-|---|---|---|
-| RTX 3060 | 12 GB | Small models, vocoders |
-| RTX 4090 | 24 GB | Medium models, real-time |
-| A100 | 40/80 GB | Large models, batch |
-| H100 | 80 GB | Largest models, lowest latency |
-
-### CPU Inference
-
-For edge deployment:
-- ONNX Runtime with optimized kernels
-- Quantized INT8 models
-- Limited to small models or vocoders
-- Latency: 10–100× slower than GPU
-
-### Edge / Mobile
-
-| Platform | Framework | Feasibility |
-|---|---|---|
-| iOS | CoreML | Vocoders, small models |
-| Android | TFLite, ONNX | Vocoders, small models |
-| Raspberry Pi | ONNX | Vocoders only |
-| Web (WASM) | ONNX.js | Very limited |
-
-## Streaming Architecture
-
-For real-time applications, implement a streaming pipeline:
-
-```
-Input (continuous) ──▶ Buffer ──▶ Model (chunk processing) ──▶ Output Buffer ──▶ Audio Out
-                        │                                           │
-                    Input chunk                               Output chunk
-                    (overlap)                                 (crossfade)
-```
-
-### Overlap-Add for Seamless Output
-
-Process overlapping chunks and crossfade:
-
-$$
-y[n] = \sum_{k} y_k[n - kH] \cdot w[n - kH]
-$$
-
-where $H$ is the hop between chunks and $w$ is a crossfade window.
-
-### Buffer Management
-
-$$
-\text{Latency} = T_{\text{input\_buffer}} + T_{\text{processing}} + T_{\text{output\_buffer}}
-$$
-
-Minimize buffer sizes while ensuring the model can process within one buffer period.
-
-## Benchmarking
-
-### Metrics to Track
-
-| Metric | Definition |
-|---|---|
-| Latency (p50, p99) | Time from input to output |
-| Throughput | Samples generated per second |
-| RTF | Real-time factor |
-| Memory | Peak GPU/CPU memory usage |
-| Quality (FAD) | Audio quality at different speed settings |
-
-### Latency vs. Quality Trade-off
-
-Most optimization techniques sacrifice some quality for speed. Always benchmark both:
-
-```
-Speed optimization ──▶ Measure latency reduction
-                  ──▶ Measure quality change (FAD, MOS)
-                  ──▶ Accept only if quality remains above threshold
-```
+- [Neural Audio Codecs](../concepts/neural-audio-codecs.md)
+- [Benchmark Design](../training/benchmark-design.md)
+- [Evaluation Metrics](../training/evaluation-metrics.md)
