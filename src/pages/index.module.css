@@ -172,18 +172,103 @@
 }
 
 .startSection {
-  padding: 1rem 0 5rem;
-  text-align: center;
+  padding: 2rem 0 6rem;
 }
 
-.startSection p {
-  max-width: 680px;
-  margin: 0.75rem auto;
+.startContainer {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(32rem, 1.2fr);
+  gap: 3rem;
+  align-items: center;
+  padding-block: 2.25rem;
+  border-top: 1px solid rgba(103, 232, 249, 0.16);
+  border-bottom: 1px solid rgba(103, 232, 249, 0.16);
+}
+
+.sectionLabel {
+  color: #ff9c7a;
+  font-size: 0.74rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.startCopy h2 {
+  margin: 0.55rem 0 0.75rem;
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  letter-spacing: -0.03em;
+}
+
+.startCopy p {
+  margin: 0 0 0.9rem;
   color: #a8c9c7;
+  line-height: 1.7;
 }
 
-.startSection a {
+.startCopy a {
   font-weight: 700;
+}
+
+.signalFlow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.signalFlow li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 8.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(103, 232, 249, 0.18);
+  background: rgba(13, 31, 34, 0.72);
+}
+
+.signalFlow li:first-child {
+  border-radius: 0.8rem 0 0 0.8rem;
+}
+
+.signalFlow li:last-child {
+  border-radius: 0 0.8rem 0.8rem 0;
+}
+
+.signalFlow li + li {
+  border-left: 0;
+}
+
+.signalFlow li:not(:last-child)::after {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: -0.48rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-top: 1px solid #67e8f9;
+  border-right: 1px solid #67e8f9;
+  background: #0d1f22;
+  content: '';
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.signalFlow span {
+  color: #67e8f9;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.signalFlow strong {
+  margin-top: auto;
+  color: #f4fffe;
+}
+
+.signalFlow small {
+  margin-top: 0.15rem;
+  color: #8eb2b0;
+  line-height: 1.35;
 }
 
 @media screen and (max-width: 996px) {
@@ -194,6 +279,30 @@
   .pathGrid {
     grid-template-columns: 1fr;
     max-width: 34rem;
+  }
+
+  .startContainer {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+}
+
+@media screen and (max-width: 620px) {
+  .signalFlow {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+
+  .signalFlow li,
+  .signalFlow li:first-child,
+  .signalFlow li:last-child {
+    min-height: 7.5rem;
+    border: 1px solid rgba(103, 232, 249, 0.18);
+    border-radius: 0.7rem;
+  }
+
+  .signalFlow li::after {
+    display: none;
   }
 }
 

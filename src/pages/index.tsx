@@ -56,13 +56,21 @@ export default function Home(): ReactNode {
       <main>
         <HomepageFeatures />
         <section className={styles.startSection} aria-labelledby="start-heading">
-          <div className="container">
-            <Heading as="h2" id="start-heading">Choose the depth you need</Heading>
-            <p>
-              Start with production decisions, or follow the full path from digital audio
-              through representations, architectures, training, evaluation, and deployment.
-            </p>
-            <Link to="/docs/intro">See the complete learning map →</Link>
+          <div className={clsx('container', styles.startContainer)}>
+            <div className={styles.startCopy}>
+              <span className={styles.sectionLabel}>A connected curriculum</span>
+              <Heading as="h2" id="start-heading">See the whole signal path</Heading>
+              <p>
+                Move from physical sound to representations, generation, and a measured output—without losing the connections between each layer.
+              </p>
+              <Link to="/docs/intro">Open the complete learning map →</Link>
+            </div>
+            <ol className={styles.signalFlow} aria-label="Neural audio learning sequence">
+              <li><span>01</span><strong>Sound</strong><small>Waveforms & perception</small></li>
+              <li><span>02</span><strong>Represent</strong><small>Spectra, tokens & latents</small></li>
+              <li><span>03</span><strong>Generate</strong><small>Models & conditioning</small></li>
+              <li><span>04</span><strong>Evaluate</strong><small>Listening & measurements</small></li>
+            </ol>
           </div>
         </section>
       </main>
