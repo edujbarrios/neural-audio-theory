@@ -108,7 +108,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'apis/index',
         'apis/suno-api',
-        'apis/sonauto-api',
+        'apis/treblo-api',
         'tools/api-reference-patterns',
       ],
     },
