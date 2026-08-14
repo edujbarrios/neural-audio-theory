@@ -64,6 +64,16 @@ const config: Config = {
 
   themeConfig: {
     image: 'img/social-card.jpg',
+    metadata: [
+      {
+        name: 'keywords',
+        content:
+          'neural audio, AI music, music generation, audio machine learning, digital signal processing',
+      },
+      {name: 'author', content: 'Eduardo J. Barrios'},
+      {property: 'og:type', content: 'website'},
+      {name: 'twitter:card', content: 'summary_large_image'},
+    ],
     colorMode: {
       defaultMode: 'dark',
       disableSwitch: true,
