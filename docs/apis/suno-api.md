@@ -5,214 +5,91 @@ title: Suno API
 
 # Suno API
 
-[Suno](https://suno.com) is one of the most capable text-to-music AI platforms available as of 2026. Its API allows developers to generate full songs — including vocals, instrumentation, and production — from a natural-language prompt.
+Suno now provides an official developer platform at [platform.suno.com](https://platform.suno.com/). Its public landing page describes a REST API for generating songs, covers, and mashups. Account-specific documentation and credentials require signing in with the Google account linked to a Suno account.
 
-## Authentication
+:::warning Verify the live contract
 
-Suno uses **Bearer token** authentication. Generate your API key in the Suno dashboard under **Settings → API Keys**.
+Do not build against reverse-engineered `studio-api.suno.ai` routes, copied browser cookies, or unofficial wrappers that present private web endpoints as a supported API. Those interfaces can change without notice and may conflict with Suno's terms. This guide intentionally does not reproduce endpoint names, request fields, model identifiers, quotas, or prices that cannot be verified in the signed-in official documentation.
 
-```http
-Authorization: Bearer <YOUR_SUNO_API_KEY>
-Content-Type: application/json
-```
+:::
 
-> **Security note:** Never embed API keys directly in client-side code. Store them in environment variables or a secrets manager and proxy requests through your backend.
+## Integration workflow
 
-## Base URL
+1. Sign in to the [official Suno Platform](https://platform.suno.com/).
+2. Create credentials through its account interface.
+3. Read the current API reference shown for your account and plan.
+4. Pin any documented API or model version supported by the service.
+5. Keep the credential in a server-side secret store, never browser or mobile application code.
+6. Validate generation, polling or callbacks, asset retention, cancellation, and billing in a non-production account.
 
-```
-https://studio-api.suno.ai/api/
-```
+## Contract checklist
 
----
+Before implementing a client, record the official definitions for:
 
-## Endpoints
+| Area | Questions to answer from the live documentation |
+| --- | --- |
+| authentication | Header format, key scopes, rotation, and revocation |
+| creation | Endpoint, required fields, content limits, and idempotency behavior |
+| jobs | Status values, terminal states, retry guidance, and cancellation |
+| assets | Output formats, signed-URL lifetime, retention, and download authorization |
+| versioning | API version, model identifier, deprecation policy, and reproducibility limits |
+| quotas | Request rate, concurrent jobs, audio duration, credits, and billing behavior |
+| rights and safety | Commercial-use terms, prohibited content, moderation, and data handling |
 
-### Generate a Track
+Treat all of these as versioned provider behavior. Marketing product names do not establish an API model identifier, and a seed does not guarantee identical output after a provider-side model update.
 
-```http
-POST /generate/v2/
-```
+## Minimal client shape
 
-**Request body:**
-
-```json
-{
-  "prompt": "An upbeat lo-fi hip-hop track with jazzy piano chords and soft rain",
-  "tags": "lo-fi, hip-hop, jazz, chill",
-  "title": "Rainy Afternoon",
-  "make_instrumental": false,
-  "mv": "chirp-v3-5"
-}
-```
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `prompt` | string | Yes | Natural-language description of the desired music |
-| `tags` | string | No | Genre / style / mood tags, comma-separated |
-| `title` | string | No | Display name for the generated clip |
-| `make_instrumental` | boolean | No | `true` to suppress vocal generation |
-| `mv` | string | No | Model version. Use `chirp-v3-5` (default) or `chirp-v4` |
-
-**Response (202 Accepted):**
-
-```json
-{
-  "clips": [
-    { "id": "abc123", "status": "submitted" },
-    { "id": "def456", "status": "submitted" }
-  ],
-  "metadata": { "prompt": "...", "tags": "..." }
-}
-```
-
-Suno always returns **two clip variants** per request for creative diversity.
-
----
-
-### Poll Generation Status
-
-```http
-GET /feed/?ids=abc123,def456
-```
-
-**Response (in-progress):**
-
-```json
-[
-  { "id": "abc123", "status": "streaming", "audio_url": null },
-  { "id": "def456", "status": "complete",  "audio_url": "https://cdn.suno.ai/abc..." }
-]
-```
-
-**Status values:**
-
-| Status | Meaning |
-|--------|---------|
-| `submitted` | Job queued |
-| `queued` | Waiting for GPU |
-| `streaming` | Audio being generated |
-| `complete` | Ready to download |
-| `error` | Generation failed |
-
----
-
-### Extend a Track
-
-```http
-POST /generate/v2/
-```
-
-Pass `continue_clip_id` to extend an existing clip:
-
-```json
-{
-  "continue_clip_id": "abc123",
-  "continue_at": 30,
-  "prompt": "Bridge section with strings and a key change to E major"
-}
-```
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `continue_clip_id` | string | ID of the clip to extend |
-| `continue_at` | number | Timestamp (seconds) where the extension begins |
-
----
-
-### Upload Custom Lyrics
-
-```http
-POST /generate/v2/
-```
-
-Set `prompt` to the full lyrics with section markers:
-
-```json
-{
-  "prompt": "[Verse 1]\nWalking through the midnight rain\n[Chorus]\nEverything fades away",
-  "tags": "indie pop, melancholic",
-  "make_instrumental": false
-}
-```
-
-Use `[Verse]`, `[Chorus]`, `[Bridge]`, `[Outro]` markers to guide song structure. See the [Prompt Engineering Guide](../suno-prompting-guide) for full syntax.
-
----
-
-## Python SDK Example
+Keep provider-specific paths and fields in configuration derived from the official reference:
 
 ```python
-import os, time, requests
+import os
+import time
+import requests
 
-BASE = "https://studio-api.suno.ai/api"
-HEADERS = {"Authorization": f"Bearer {os.environ['SUNO_API_KEY']}",
-           "Content-Type": "application/json"}
+BASE_URL = os.environ["SUNO_API_BASE_URL"]
+API_KEY = os.environ["SUNO_API_KEY"]
+HEADERS = {
+    "Authorization": f"Bearer {API_KEY}",
+    "Content-Type": "application/json",
+}
 
-def generate(prompt: str, tags: str = "", instrumental: bool = False):
-    resp = requests.post(f"{BASE}/generate/v2/", json={
-        "prompt": prompt, "tags": tags, "make_instrumental": instrumental
-    }, headers=HEADERS)
-    resp.raise_for_status()
-    clips = resp.json()["clips"]
-
-    # Poll until complete
-    ids = ",".join(c["id"] for c in clips)
-    while True:
-        feed = requests.get(f"{BASE}/feed/?ids={ids}", headers=HEADERS).json()
-        if all(c["status"] == "complete" for c in feed):
-            return [c["audio_url"] for c in feed]
-        if any(c["status"] == "error" for c in feed):
-            raise RuntimeError("Generation failed")
-        time.sleep(5)
-
-urls = generate("Epic orchestral battle music with choir", tags="orchestral, epic")
-print(urls)
+def request(method: str, path: str, **kwargs):
+    response = requests.request(
+        method,
+        f"{BASE_URL.rstrip('/')}/{path.lstrip('/')}",
+        headers=HEADERS,
+        timeout=(5, 60),
+        **kwargs,
+    )
+    response.raise_for_status()
+    return response
 ```
 
----
+Add an idempotency key if the official contract supports one. Retry only documented transient failures, use jitter, honor `Retry-After`, and do not retry an uncertain creation request unless duplicate creation is prevented.
 
-## Rate Limits & Credits
+## Provenance record
 
-| Plan | Generations / day | Credits / generation |
-|------|-------------------|--------------------|
-| Free | 5 | 10 |
-| Pro | 500 | 10 |
-| Premier | Unlimited | — |
-
-- Each `POST /generate/v2/` consumes **10 credits** and returns 2 clips.
-- Polls (`GET /feed/`) are **free** and do not count against limits.
-- Use `GET /billing/info/` to check remaining credits programmatically.
-
----
-
-## Error Handling
+Store enough information to audit a generated asset without storing secrets:
 
 ```json
-{ "detail": "Insufficient credits", "status_code": 402 }
+{
+  "provider": "suno",
+  "api_version": "value-from-response-or-contract",
+  "model_version": "value-from-response-if-provided",
+  "request_id": "provider-request-id",
+  "job_id": "provider-job-id",
+  "created_at": "ISO-8601 timestamp",
+  "prompt_sha256": "digest-of-canonical-request",
+  "output_sha256": "digest-of-downloaded-audio",
+  "terms_reviewed_at": "YYYY-MM-DD"
+}
 ```
 
-| HTTP Status | Meaning |
-|-------------|---------|
-| 400 | Invalid request body |
-| 401 | Missing or invalid API key |
-| 402 | Insufficient credits |
-| 429 | Rate limit exceeded — respect `Retry-After` |
-| 5xx | Server error — retry with back-off |
+Keep the canonical request in access-controlled storage when needed for reproducibility or rights review. Preserve the downloaded audio rather than relying on a hosted URL remaining permanent.
 
----
+## Related resources
 
-## Best Practices
-
-- **Deduplicate:** Cache `audio_url` by `clip_id`; the URL is stable once complete.
-- **Parallel polls:** If you have many pending jobs, batch IDs in a single `GET /feed/` call (comma-separated, up to 20).
-- **Retry 5xx:** Use exponential back-off starting at 2 s, capping at 30 s.
-- **Content policy:** Suno's API enforces the same content guidelines as the UI. Prompts that violate terms return a `400` with a policy message.
-
----
-
-## Related Resources
-
-- [Prompt Engineering Guide](../suno-prompting-guide) — craft better prompts
-- [API Patterns](../tools/api-reference-patterns) — general async API design
-- [Udio & Suno Deep Dive](../model-zoo/udio-and-suno) — model internals
+- [Suno Platform](https://platform.suno.com/) — official API entry point
+- [API Patterns](../tools/api-reference-patterns.md) — asynchronous jobs, webhooks, idempotency, and backpressure
+- [Responsible Use](../ethics-legal/responsible-use.md) — release and rights checks
