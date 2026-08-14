@@ -46,12 +46,7 @@ $$
 \hat{\epsilon} = (1 + w) \epsilon_\theta(x_t, t, c) - w \cdot \epsilon_\theta(x_t, t, \varnothing)
 $$
 
-| Guidance Scale $w$ | Effect |
-|---|---|
-| 0 | Unconditioned (ignores prompt) |
-| 1–3 | Balanced (natural, diverse) |
-| 5–7 | Strong adherence (less diverse) |
-| 10+ | Very literal (may reduce quality) |
+The numeric scale is not portable across checkpoints or implementations. Some APIs expose a differently defined control, and some models distill guidance into a single pass. Sweep the documented range for the exact model and report prompt adherence, diversity, and artifacts together.
 
 ### Negative Prompts
 
@@ -73,7 +68,7 @@ $$
 \mathbf{c}_{\text{style}} = E_{\text{audio}}(x_{\text{ref}})
 $$
 
-The style embedding captures timbre, production quality, and overall aesthetic without copying specific notes.
+An audio embedding can carry timbre, production, instrumentation, rhythm, melody, or recording identity depending on its training objective. Do not assume that “style” is isolated or that note-level content cannot leak through. Measure similarity to the reference and training material when copying risk matters.
 
 ### Melody Conditioning
 
@@ -281,4 +276,6 @@ For best results, layer controls from coarse to fine:
 5. **Energy curve** (per-frame) — dynamics
 6. **Melody/MIDI** (note-level) — pitch content
 
-Coarser controls should be set first; fine-grained controls refine within the space defined by coarser ones.
+Coarser controls are often useful for establishing a search region, while finer controls test whether the model can satisfy explicit constraints inside it. Controls may conflict: log the complete combination and evaluate each requested attribute rather than assuming a strict hierarchy.
+
+For controls that must remain stable across sections or minutes, continue with [Long-Form Music Generation](./long-form-generation.md).
