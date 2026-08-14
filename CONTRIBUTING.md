@@ -37,7 +37,7 @@ git checkout -b docs/improve-vae-explanation
 npm start
 ```
 
-Preview at `http://localhost:3000/neural-audio-theory/`.
+Preview at `http://localhost:3000/`.
 
 ### 4. Make your changes
 
@@ -46,6 +46,14 @@ Preview at `http://localhost:3000/neural-audio-theory/`.
 - Math must use KaTeX syntax: `$inline$` or `$$block$$`
 
 ### 5. Open a pull request
+
+Run the same checks used by continuous integration:
+
+```bash
+npm run check
+```
+
+This typechecks the site and creates a production build, including internal-link validation.
 
 - Write a clear title (e.g. `fix: correct FFT formula in signal-processing-basics`)
 - Describe what you changed and why
