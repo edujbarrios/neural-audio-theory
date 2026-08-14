@@ -13,6 +13,7 @@ const sidebars: SidebarsConfig = {
         'producer-handbook/troubleshooting-generation',
         'producer-handbook/genre-specific-prompting',
         'producer-handbook/mixing-ai-outputs',
+        'producer-handbook/quality-control-and-delivery',
         'producer-handbook/stem-separation',
         'producer-handbook/vocal-synthesis',
       ],
