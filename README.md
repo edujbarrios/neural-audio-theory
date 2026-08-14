@@ -51,6 +51,8 @@ The project treats practical and technical knowledge as two views of the same sy
 
 Both paths share one knowledge base and cross-link where a practical decision benefits from a technical explanation.
 
+Technical and time-sensitive claims follow a published [reliability and sourcing standard](https://neural-audio-theory.vercel.app/docs/engineering/reliability-and-sourcing), including explicit treatment of documented facts, observations, inference, and unknowns.
+
 ## What is covered
 
 - **AI music workflows** — planning, prompting, candidate selection, editing, mixing, stem separation, delivery, and troubleshooting
