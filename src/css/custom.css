@@ -1,11 +1,11 @@
 :root {
-  --ifm-color-primary: #40E0D0;
-  --ifm-color-primary-dark: #008080;
-  --ifm-color-primary-darker: #006666;
-  --ifm-color-primary-darkest: #004D4D;
-  --ifm-color-primary-light: #66E6DD;
-  --ifm-color-primary-lighter: #8CF0EB;
-  --ifm-color-primary-lightest: #B2FAF9;
+  --ifm-color-primary: #5eead4;
+  --ifm-color-primary-dark: #3ddfc7;
+  --ifm-color-primary-darker: #2bd8be;
+  --ifm-color-primary-darkest: #1aa48f;
+  --ifm-color-primary-light: #7cefdc;
+  --ifm-color-primary-lighter: #99f4e5;
+  --ifm-color-primary-lightest: #ccfbf1;
   --ifm-background-color: #0b1516;
   --ifm-background-surface-color: #111f20;
   --ifm-navbar-background-color: #0b1516;
@@ -14,7 +14,7 @@
   --ifm-font-color-base: #d6e8e8;
   --ifm-heading-color: #eaf6f5;
   --ifm-color-content-secondary: #8ab8b6;
-  --ifm-link-color: #40E0D0;
+  --ifm-link-color: #67e8f9;
   --ifm-code-font-size: 95%;
   --ifm-card-background-color: #111f20;
   /* Inline code: teal tint on dark surface */
@@ -24,13 +24,13 @@
 }
 
 [data-theme='dark'] {
-  --ifm-color-primary: #40E0D0;
-  --ifm-color-primary-dark: #008080;
-  --ifm-color-primary-darker: #006666;
-  --ifm-color-primary-darkest: #004D4D;
-  --ifm-color-primary-light: #66E6DD;
-  --ifm-color-primary-lighter: #8CF0EB;
-  --ifm-color-primary-lightest: #B2FAF9;
+  --ifm-color-primary: #5eead4;
+  --ifm-color-primary-dark: #3ddfc7;
+  --ifm-color-primary-darker: #2bd8be;
+  --ifm-color-primary-darkest: #1aa48f;
+  --ifm-color-primary-light: #7cefdc;
+  --ifm-color-primary-lighter: #99f4e5;
+  --ifm-color-primary-lightest: #ccfbf1;
   --ifm-background-color: #0b1516;
   --ifm-background-surface-color: #111f20;
   --ifm-navbar-background-color: #0b1516;
@@ -39,7 +39,7 @@
   --ifm-font-color-base: #d6e8e8;
   --ifm-heading-color: #eaf6f5;
   --ifm-color-content-secondary: #8ab8b6;
-  --ifm-link-color: #40E0D0;
+  --ifm-link-color: #67e8f9;
   --ifm-code-background: rgba(64, 224, 208, 0.07);
   --ifm-code-color: #8CF0EB;
   --docusaurus-highlighted-code-line-bg: rgba(64, 224, 208, 0.1);
@@ -48,6 +48,15 @@
 html,
 body {
   background: #0b1516;
+}
+
+::selection {
+  background: #ff8a65;
+  color: #081516;
+}
+
+:focus-visible {
+  outline-color: #67e8f9;
 }
 
 .navbar,
