@@ -163,3 +163,90 @@ code {
   padding: 0.1em 0.35em;
   font-size: 0.88em;
 }
+
+/* Documentation reading surface */
+.theme-doc-markdown {
+  font-size: 1.02rem;
+  line-height: 1.78;
+}
+
+.theme-doc-markdown > h1:first-child {
+  margin-bottom: 1.4rem;
+  max-width: 20ch;
+  font-size: clamp(2.2rem, 4.2vw, 3.45rem);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.theme-doc-markdown h2 {
+  margin-top: 2.8rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(103, 232, 249, 0.12);
+  font-size: clamp(1.55rem, 2.7vw, 2.05rem);
+  letter-spacing: -0.025em;
+}
+
+.theme-doc-markdown h3 {
+  margin-top: 2rem;
+  color: #ccfbf1;
+}
+
+.theme-doc-markdown p,
+.theme-doc-markdown li {
+  max-width: 76ch;
+}
+
+.theme-doc-markdown blockquote {
+  margin: 1.5rem 0;
+  padding: 0.8rem 1.15rem;
+  border-left: 3px solid #ff9c7a;
+  background: linear-gradient(90deg, rgba(255, 126, 95, 0.1), transparent 80%);
+  color: #c7dedd;
+}
+
+.theme-doc-markdown table {
+  display: table;
+  width: 100%;
+  margin: 1.5rem 0 2rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid rgba(103, 232, 249, 0.18);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.theme-doc-markdown th {
+  background: rgba(24, 60, 64, 0.72);
+  color: #eafffd;
+  font-size: 0.78rem;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.theme-doc-markdown td,
+.theme-doc-markdown th {
+  padding: 0.75rem 0.85rem;
+  border-color: rgba(103, 232, 249, 0.12);
+}
+
+.theme-doc-markdown tr:nth-child(even) td {
+  background: rgba(103, 232, 249, 0.025);
+}
+
+.theme-doc-markdown hr {
+  margin-block: 3rem;
+  border-color: rgba(103, 232, 249, 0.14);
+}
+
+@media screen and (max-width: 700px) {
+  .theme-doc-markdown {
+    font-size: 1rem;
+  }
+
+  .theme-doc-markdown table {
+    display: block;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+}
