@@ -112,17 +112,17 @@ Docusaurus starts the development server at `http://localhost:3000` and reloads 
 ### Validate a change
 
 ```bash
-npm run typecheck
-npm run build
+npm run check
 ```
 
-The production build is written to `build/`. Run `npm run serve` to inspect that output locally.
+This runs the TypeScript check and a production Docusaurus build, including internal-link validation. The build is written to `build/`; run `npm run serve` to inspect it locally. Pull requests run the same checks through GitHub Actions with a locked dependency install.
 
 ### Available commands
 
 | Command | Purpose |
 | --- | --- |
 | `npm start` | Start the local development server with live reload |
+| `npm run check` | Run the required typecheck and production-build validation |
 | `npm run build` | Generate an optimized production site and validate document links |
 | `npm run serve` | Serve the generated `build/` directory locally |
 | `npm run typecheck` | Check TypeScript configuration and components |
@@ -139,7 +139,7 @@ When adding or moving a page:
 2. Add concise front matter and a single descriptive H1.
 3. Register the document in the appropriate sidebar.
 4. Link related practical and technical pages where useful.
-5. Run the typecheck and production build before opening a pull request.
+5. Run `npm run check` before opening a pull request.
 
 ### Content quality principles
 
@@ -156,6 +156,7 @@ Use `$...$` for inline mathematics and `$$...$$` for display equations. Code blo
 
 ```text
 neural-audio-theory/
+├── .github/                 # Pull-request template and documentation CI
 ├── blog/                    # Engineering notes and author metadata
 ├── docs/                    # User Guides and Engineering Docs content
 │   ├── producer-handbook/  # Practical production workflows
@@ -185,6 +186,8 @@ The site is configured as a static Docusaurus deployment on Vercel:
 - Output directory: `build`
 
 No runtime server or database is required. Other static hosts can deploy the same `build/` output; update `url` and `baseUrl` in `docusaurus.config.ts` when hosting under a different origin or path.
+
+KaTeX styling and fonts are bundled locally rather than fetched from a third-party CDN. Vercel serves fingerprinted files under `/assets/` with immutable caching; HTML remains independently deployable so releases can reference new asset hashes.
 
 ## Support and feedback
 
