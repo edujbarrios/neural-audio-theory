@@ -33,11 +33,11 @@ Every agent run should produce a structured log that can be replayed later. Stor
     "tags": ["cinematic", "synth", "heroic"],
     "instrumental": true,
     "target_duration_seconds": 90,
-    "route": ["sonauto_v3", "ffmpeg_normalize"]
+    "route": ["treblo_v3", "ffmpeg_normalize"]
   },
   "steps": [
     {
-      "name": "sonauto_v3",
+      "name": "treblo_v3",
       "status": "success",
       "task_id": "task_abc123",
       "latency_seconds": 74.2,
