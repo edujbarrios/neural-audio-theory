@@ -3,11 +3,11 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 const sidebars: SidebarsConfig = {
   userGuidesSidebar: [
     {type: 'doc', id: 'user-guides/index', label: 'User Guides Home'},
-    {type: 'doc', id: 'for-dummies', label: 'AI Music in Plain Language'},
-    {type: 'doc', id: 'suno-prompting-guide', label: 'Prompt Engineering Guide'},
+    {type: 'doc', id: 'for-dummies', label: '1. AI Music in Plain Language'},
+    {type: 'doc', id: 'suno-prompting-guide', label: '2. Prompt Engineering Guide'},
     {
       type: 'category',
-      label: 'Producer Handbook',
+      label: '3. Produce and Finish',
       items: [
         'producer-handbook/production-workflow',
         'producer-handbook/troubleshooting-generation',
@@ -20,7 +20,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Practical Tools',
+      label: '4. Extend Your Workflow',
       items: [
         'tools/daw-integration',
         'tools/open-source-tools',
@@ -28,7 +28,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Model Guide',
+      label: 'Models and Platforms',
       items: [
         'model-zoo/udio-and-suno',
         'model-zoo/musicgen',
@@ -39,7 +39,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Ethics & Legal',
+      label: '5. Release Responsibly',
       items: [
         'ethics-legal/responsible-use',
         'ethics-legal/copyright-and-training-data',
@@ -52,7 +52,7 @@ const sidebars: SidebarsConfig = {
     {type: 'doc', id: 'engineering/reliability-and-sourcing', label: 'Reliability & Sourcing'},
     {
       type: 'category',
-      label: 'Audio Fundamentals',
+      label: '1. Audio Fundamentals',
       items: [
         'audio-fundamentals/digital-audio-basics',
         'audio-fundamentals/psychoacoustics',
@@ -62,7 +62,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Core Concepts',
+      label: '2. Representations and Concepts',
       items: [
         'concepts/music-representations',
         'concepts/audio-embeddings',
@@ -73,7 +73,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Mathematics',
+      label: '3. Mathematics',
       items: [
         'mathematics/signal-processing-basics',
         'mathematics/fft',
@@ -84,7 +84,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Architecture',
+      label: '4. Model Architecture',
       items: [
         'architecture/transformers-for-audio',
         'architecture/variational-autoencoders',
@@ -95,7 +95,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Training & Evaluation',
+      label: '5. Training and Evaluation',
       items: [
         'training/dataset-curation',
         'training/data-augmentation',
@@ -106,7 +106,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'APIs & Integration',
+      label: '6. APIs and Integration',
       items: [
         'apis/index',
         'apis/suno-api',
@@ -116,7 +116,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'AI Music Agents',
+      label: '7. AI Music Agents',
       items: [
         'agents/index',
         'agents/multi-model-pipelines',
@@ -127,7 +127,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Advanced Topics',
+      label: '8. Advanced Systems',
       items: [
         'advanced/multimodal-generation',
         'advanced/controllable-generation',
