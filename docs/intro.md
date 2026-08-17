@@ -9,15 +9,19 @@ title: Introduction
 
 Neural Audio Theory is an open educational reference for both people making music with AI and people engineering the systems behind it.
 
-## Choose Your Path
+## Choose your learning path
 
-### [User Guides](./user-guides/index.md)
+### [Create music with AI: User Guides](./user-guides/index.md)
 
-For musicians, producers, and curious readers who want plain-language explanations, better prompts, practical workflows, troubleshooting, and responsible release guidance. No machine-learning background is required.
+Choose this path if your goal is to make, troubleshoot, finish, or release AI-assisted music. It uses plain language and assumes no machine-learning background.
 
-### [Engineering Docs](./engineering/index.md)
+**Start here:** [AI Music in Plain Language](./for-dummies.md) → [Prompt Engineering](./suno-prompting-guide.md) → [Production Workflow](./producer-handbook/production-workflow.md)
 
-For developers, researchers, and technical readers who want signal processing, representations, architectures, training methods, evaluation, APIs, and system-design details.
+### [Build and study neural audio systems: Engineering Docs](./engineering/index.md)
+
+Choose this path if your goal is to understand, build, train, integrate, or evaluate neural audio systems. It assumes comfort with software concepts and introduces the required mathematics along the way.
+
+**Start here:** [Digital Audio Basics](./audio-fundamentals/digital-audio-basics.md) → [Music Representations](./concepts/music-representations.md) → [Signal Processing Basics](./mathematics/signal-processing-basics.md)
 
 Technical claims follow the guide's [Reliability and Sourcing](./engineering/reliability-and-sourcing.md) standard, which distinguishes documented facts, observations, inference, and unknowns.
 
