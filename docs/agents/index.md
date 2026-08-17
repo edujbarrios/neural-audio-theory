@@ -16,7 +16,7 @@ Every current AI music model excels at something and struggles with something el
 | Model | Strengths | Weaknesses |
 |-------|-----------|------------|
 | **Suno** | Full-song generation, vocal quality, catchy hooks | Limited structural control, no stem output |
-| **Sonauto** | Extend/inpaint, lyrics alignment, API-first | Shorter base generations (v2 ~95 s) |
+| **Treblo** | Generation, extension, streaming, and lyrics alignment through a documented API | Version-specific controls require contract-aware routing |
 | **MusicGen** | Melody conditioning, open weights, deterministic | No vocals, shorter clips |
 | **MusicLM** | Semantic richness from text, good timbre | Closed, lower audio fidelity |
 | **Stable Audio** | High-fidelity stereo, timing control, long-form | Primarily instrumental |

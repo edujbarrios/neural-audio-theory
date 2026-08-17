@@ -41,12 +41,12 @@ A multi-model pipeline sends audio (or metadata) through a sequence of AI models
 
 **Goal:** Produce a full-length track (3–5 min) from a single prompt.
 
-**Models used:** Sonauto v3 (generation) → Sonauto `/v2/extend` (extension) → FFmpeg (normalization)
+**Models used:** Treblo v3 (generation and extension) → FFmpeg (normalization)
 
 ```python
 import os, time, requests
 
-BASE = "https://api.sonauto.ai/v1"
+BASE = "https://api.treblo.com/v1"
 H = {"Authorization": f"Bearer {os.environ['SONAUTO_API_KEY']}", "Content-Type": "application/json"}
 
 def poll(task_id: str) -> dict:
@@ -136,12 +136,12 @@ print("Remix saved → remixed.wav")
 
 **Goal:** Iteratively improve a weak section of a generated song.
 
-**Models used:** Sonauto v2 (generation + inpaint) → human review loop
+**Models used:** Treblo v2 (generation + inpaint) → human review loop
 
 ```python
 import os, time, requests, json
 
-BASE = "https://api.sonauto.ai/v1"
+BASE = "https://api.treblo.com/v1"
 H = {"Authorization": f"Bearer {os.environ['SONAUTO_API_KEY']}", "Content-Type": "application/json"}
 
 def poll(task_id):
@@ -182,7 +182,7 @@ print(f"Inpainted: {improved}")
 ```python
 import os, asyncio, aiohttp
 
-BASE = "https://api.sonauto.ai/v1"
+BASE = "https://api.treblo.com/v1"
 KEY = os.environ["SONAUTO_API_KEY"]
 
 async def generate_one(session, prompt, tags):
@@ -237,6 +237,6 @@ for i, url in enumerate(variations):
 
 - [Orchestration Patterns](./orchestration-patterns)
 - [Building a Music Agent](./building-a-music-agent)
-- [Sonauto API](../apis/sonauto-api)
+- [Treblo API](../apis/treblo-api)
 - [MusicGen](../model-zoo/musicgen)
 - [Stem Separation](../producer-handbook/stem-separation)

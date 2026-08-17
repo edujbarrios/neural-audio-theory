@@ -22,7 +22,7 @@ The agent reads the task description and **routes it to the single best model** 
   └───────────┘
     /    |    \
    ▼     ▼     ▼
-[Suno] [Sonauto] [MusicGen]
+[Suno] [Treblo] [MusicGen]
 ```
 
 **When to use:** You have a heterogeneous queue of tasks (some need vocals, some melody-only, some need extensions) and want to automatically dispatch each to the right service.
@@ -33,12 +33,12 @@ def select_model(task: dict) -> str:
     if task.get("has_lyrics") and task.get("needs_full_song"):
         return "suno"
     if task.get("extend_existing"):
-        return "sonauto_extend"
+        return "treblo_extend"
     if task.get("melody_conditioning"):
         return "musicgen"
     if task.get("high_fidelity") and not task.get("vocals"):
         return "stable_audio"
-    return "sonauto_v3"   # sensible default
+    return "treblo_v3"   # sensible default
 
 task = {"has_lyrics": True, "needs_full_song": True}
 model = select_model(task)
@@ -58,7 +58,7 @@ def llm_select_model(task_description: str) -> str:
             "content": (
                 "You are a music AI router. Given a task description, "
                 "return a JSON object with key 'model' set to one of: "
-                "'suno', 'sonauto_v3', 'sonauto_extend', 'musicgen', 'stable_audio'."
+                "'suno', 'treblo_v3', 'treblo_extend', 'musicgen', 'stable_audio'."
             )
         }, {
             "role": "user",
@@ -81,7 +81,7 @@ Each model's output feeds directly into the next. This is the simplest pattern a
 
 Key rules:
 - **Fail fast:** if any step returns an error, abort and surface it immediately.
-- **Pass CDN URLs directly** between Sonauto calls — never re-upload decoded audio unnecessarily (avoids re-encoding quality loss).
+- **Pass original CDN URLs directly** between Treblo calls when supported to avoid unnecessary re-encoding.
 - **Log every intermediate file** so you can replay from any step.
 
 ```python
@@ -113,7 +113,7 @@ Send the same prompt to multiple models (or the same model multiple times) in pa
 ```
               ┌───────────────────────────────────┐
               │           Fan-out                 │
-              │  [Suno v3]  [Sonauto v3]  [MusicGen]│
+              │  [Suno]     [Treblo v3]   [MusicGen]│
               └─────────────┬─────────────────────┘
                             │
                             ▼
@@ -135,8 +135,8 @@ The fan-in step can be:
 import asyncio, aiohttp, os
 
 async def fan_out_models(prompt: str, tags: list[str]) -> dict[str, str]:
-    """Run Sonauto v3 and a second Sonauto v3 request in parallel (budget comparison)."""
-    BASE = "https://api.sonauto.ai/v1"
+    """Run two Treblo v3 requests in parallel for a budget comparison."""
+    BASE = "https://api.treblo.com/v1"
     KEY = os.environ["SONAUTO_API_KEY"]
 
     async with aiohttp.ClientSession() as session:
@@ -198,14 +198,14 @@ import requests, os, time
 
 def generate(prompt: str, tags: list) -> str:
     H = {"Authorization": f"Bearer {os.environ['SONAUTO_API_KEY']}"}
-    r = requests.post("https://api.sonauto.ai/v1/generations/v3",
+    r = requests.post("https://api.treblo.com/v1/generations/v3",
                       json={"prompt": prompt, "tags": tags, "instrumental": True},
                       headers={**H, "Content-Type": "application/json"})
     task_id = r.json()["task_id"]
     while True:
-        s = requests.get(f"https://api.sonauto.ai/v1/generations/status/{task_id}", headers=H).text.strip('"')
+        s = requests.get(f"https://api.treblo.com/v1/generations/status/{task_id}", headers=H).text.strip('"')
         if s == "SUCCESS":
-            return requests.get(f"https://api.sonauto.ai/v1/generations/{task_id}", headers=H).json()["song_paths"][0]
+            return requests.get(f"https://api.treblo.com/v1/generations/{task_id}", headers=H).json()["song_paths"][0]
         if s == "FAILURE":
             return None
         time.sleep(5)
@@ -286,5 +286,5 @@ Fully automated pipelines are powerful, but sometimes you want a human decision 
 
 - [Multi-Model Pipelines](./multi-model-pipelines)
 - [Building a Music Agent](./building-a-music-agent)
-- [Sonauto API](../apis/sonauto-api)
+- [Treblo API](../apis/treblo-api)
 - [Controllable Generation](../advanced/controllable-generation)

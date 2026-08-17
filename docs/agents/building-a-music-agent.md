@@ -12,7 +12,7 @@ This guide walks through designing, implementing, and deploying a complete AI mu
 A **Brief-to-Track agent** that:
 1. Accepts a natural-language creative brief
 2. Uses an LLM to derive tags, lyrics scaffold, and model routing decisions
-3. Generates a seed track with Sonauto v3
+3. Generates a seed track with Treblo v3
 4. Extends it to full length
 5. Optionally stem-separates and applies MusicGen melody remix
 6. Returns a normalized MP3
@@ -29,8 +29,8 @@ Creative Brief (text)
 ┌──────────────────────┐
 │   Execution Engine   │  (sequential + async steps)
 │  ┌────────────────┐  │
-│  │  Sonauto v3    │  │  generate seed
-│  │  Sonauto ext.  │  │  extend to full length
+│  │  Treblo v3     │  │  generate seed
+│  │  Treblo extend │  │  extend to full length
 │  │  Demucs        │  │  (optional) stem split
 │  │  MusicGen      │  │  (optional) melody regen
 │  │  FFmpeg        │  │  mix & normalize
@@ -50,7 +50,7 @@ music_agent/
 ├── agent.py           ← top-level orchestrator
 ├── planner.py         ← LLM planning step
 ├── models/
-│   ├── sonauto.py     ← Sonauto API wrapper
+│   ├── treblo.py      ← Treblo API wrapper
 │   ├── musicgen.py    ← MusicGen wrapper
 │   └── stems.py       ← Demucs wrapper
 ├── audio/
@@ -110,13 +110,13 @@ def plan(brief: str) -> dict:
 
 ---
 
-## Step 3: Sonauto Wrapper
+## Step 3: Treblo Wrapper
 
 ```python
-# models/sonauto.py
+# models/treblo.py
 import os, time, requests
 
-BASE = "https://api.sonauto.ai/v1"
+BASE = "https://api.treblo.com/v1"
 
 def _headers():
     return {
@@ -134,7 +134,7 @@ def _poll(task_id: str) -> str:
             data = requests.get(f"{BASE}/generations/{task_id}", headers=_headers()).json()
             return data["song_paths"][0]
         if status == "FAILURE":
-            raise RuntimeError(f"Sonauto task {task_id} failed")
+            raise RuntimeError(f"Treblo task {task_id} failed")
         time.sleep(6)
 
 def generate_v3(prompt: str, tags: list[str], instrumental: bool = False) -> str:
@@ -217,7 +217,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from planner import plan
-from models.sonauto import generate_v3, extend
+from models.treblo import generate_v3, extend
 from models.musicgen import melody_remix
 from audio.normalize import normalize_to_mp3
 
@@ -234,7 +234,7 @@ def run_agent(brief: str, output_path: str = "output.mp3") -> str:
     )
     print(f"Seed: {seed_url}")
 
-    # Extend to target duration if needed (Sonauto v3 ~2-4 min, extend if more needed)
+    # Extend to the target duration when the selected generation is too short.
     current_url = seed_url
     target = p.get("target_duration_seconds", 120)
     if target > 150:
@@ -251,7 +251,7 @@ def run_agent(brief: str, output_path: str = "output.mp3") -> str:
     if p.get("use_musicgen_remix"):
         print("\n=== MusicGen melody remix ===")
         import subprocess
-        # Download the Sonauto track locally for Demucs
+        # Download the Treblo track locally for Demucs.
         local = "temp_seed.ogg"
         subprocess.run(["curl", "-s", "-o", local, current_url], check=True)
         subprocess.run(["python", "-m", "demucs", "--two-stems=vocals", local], check=True)
@@ -350,6 +350,6 @@ def generate_task(brief: str, job_id: str):
 
 - [Multi-Model Pipelines](./multi-model-pipelines)
 - [Orchestration Patterns](./orchestration-patterns)
-- [Sonauto API](../apis/sonauto-api)
+- [Treblo API](../apis/treblo-api)
 - [Suno API](../apis/suno-api)
 - [Real-Time Inference](../advanced/real-time-inference)
