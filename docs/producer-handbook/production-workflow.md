@@ -18,6 +18,29 @@ Before prompting, lock these constraints:
 
 Short briefs reduce random outputs and speed up iteration.
 
+### Reusable track brief
+
+Copy this before opening a generator. Leave a field blank when it does not matter; do not invent constraints merely to fill the template.
+
+```text
+Working title:
+Intended use:
+Target listener or context:
+Genre and subgenre:
+Tempo and rhythmic feel:
+Key or tonal center, if important:
+Core instruments:
+Vocal role, register, and delivery:
+Required sections and approximate duration:
+Energy curve:
+Mix and texture direction:
+Must include:
+Must avoid:
+Acceptance criteria:
+```
+
+Write acceptance criteria as audible outcomes, such as “the chorus arrives by 00:45” or “the kick remains distinct from the bass.” Avoid criteria that depend on an undisclosed model mechanism.
+
 ## 2) Build a Structured Prompt
 
 Use an ordered prompt template:
@@ -122,5 +145,9 @@ Before calling the version complete:
 - [ ] The approved prompt and generation settings are archived
 
 Store the project record beside the audio deliverables so the musical and provenance history travel together.
+
+## Definition of done
+
+A track is done when the approved version satisfies the brief, the exports pass the delivery checklist, and another person can trace the source generation and subsequent edits. “No more ideas” and “no more credits” are stopping conditions, not acceptance criteria.
 
 Use the dedicated [Quality Control and Delivery](./quality-control-and-delivery.md) workflow to validate rendered files, stems, metadata, checksums, and AI-specific risks before handoff.

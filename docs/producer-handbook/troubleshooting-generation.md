@@ -124,6 +124,21 @@ When a generation misses the target:
 4. Compare against last best version
 5. Repeat until direction is stable
 
+Record each attempt in a small comparison table instead of relying on memory:
+
+| Attempt | Single change | Candidates | Best result | Decision |
+| --- | --- | ---: | --- | --- |
+| Baseline | Original prompt | 4 | Candidate B | Keep as reference |
+| A | Reduce instrument count | 4 | Candidate A | Clearer mix; promote |
+| B | Add transition cue | 4 | Candidate D | Better transition; promote |
+
+Stop the loop when one of these conditions is true:
+
+- the candidate meets the track brief and can move to production;
+- two controlled attempts fail to improve the same symptom, suggesting the model or source material is the constraint;
+- the remaining issue is cheaper and more predictable to fix in the DAW;
+- the next attempt would exceed the time, credit, or review budget.
+
 ## Know When to Regenerate or Edit
 
 Regenerate when the failure affects the composition: the wrong groove, missing section, unsuitable melody, or genre drift. Edit the selected audio when the musical idea works but needs trimming, level changes, transition effects, stem balancing, or other production polish.
