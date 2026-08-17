@@ -7,12 +7,24 @@ slug: /user-guides
 
 Create, troubleshoot, and finish AI-assisted music without needing a machine-learning background. This path focuses on audible results, repeatable workflows, and plain-language explanations.
 
-## Recommended path
+## Follow the path
+
+Work through the guide in three stages. Each stage produces something useful before you move to the next.
+
+### 1. Understand and direct
 
 1. **[AI Music in Plain Language](../for-dummies.md)** — understand what the tools do and where their limits come from.
 2. **[Prompt Engineering Guide](../suno-prompting-guide.md)** — write clearer prompts for instruments, structure, production, and vocals.
+
+### 2. Produce and diagnose
+
 3. **[Production Workflow](../producer-handbook/production-workflow.md)** — move from a track brief to an organized delivery.
 4. **[Troubleshooting Generation](../producer-handbook/troubleshooting-generation.md)** — diagnose weak or inconsistent results one variable at a time.
+
+### 3. Finish and release
+
+Continue with **[Mixing AI Outputs](../producer-handbook/mixing-ai-outputs.md)** and **[Quality Control and Delivery](../producer-handbook/quality-control-and-delivery.md)**, then review:
+
 5. **[Responsible Use](../ethics-legal/responsible-use.md)** — make informed decisions about attribution, consent, and release practices.
 
 ## Choose by goal
