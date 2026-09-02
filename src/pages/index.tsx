@@ -13,11 +13,12 @@ function HomepageHeader() {
       <div className={clsx('container', styles.heroContainer)}>
         <p className={styles.eyebrow}>Neural Audio Theory</p>
         <Heading as="h1" className={styles.heroTitle}>
-          Understand How AI Music Systems Are Engineered
+          Understand How Neural Audio and AI Music Systems Work
         </Heading>
         <p className={styles.heroSubtitle}>
-          A practical, technically rigorous guide to creating with AI music
-          systems, understanding their internals, and evaluating their limits.
+          An open educational guide to creating with AI music tools and studying
+          the signal representations, model architectures, conditioning methods,
+          evaluation practices, and limitations behind them.
         </p>
         <div className={styles.pathGrid} aria-label="Choose a learning path">
           <Link className={clsx(styles.pathCard, styles.producerPath)} to="/docs/user-guides">
@@ -25,7 +26,7 @@ function HomepageHeader() {
             <span className={styles.pathCopy}>
               <span className={styles.pathLabel}>For music makers</span>
               <strong>Producer path</strong>
-              <span>Prompt, arrange, troubleshoot, mix, and release.</span>
+              <span>Prompt, compare, troubleshoot, edit, mix, and prepare releases.</span>
             </span>
             <span className={styles.pathArrow} aria-hidden="true">→</span>
           </Link>
@@ -34,13 +35,13 @@ function HomepageHeader() {
             <span className={styles.pathCopy}>
               <span className={styles.pathLabel}>For technical readers</span>
               <strong>Engineering path</strong>
-              <span>Study signals, models, training, evaluation, and deployment.</span>
+              <span>Study signals, representations, models, training, evaluation, and deployment.</span>
             </span>
             <span className={styles.pathArrow} aria-hidden="true">→</span>
           </Link>
         </div>
         <p className={styles.proofLine}>
-          Open source · 50+ focused chapters · equations, workflows, and primary references
+          Open source · producer and engineering tracks · equations, workflows, and cited technical claims
         </p>
       </div>
     </header>
@@ -50,8 +51,8 @@ function HomepageHeader() {
 export default function Home(): ReactNode {
   return (
     <Layout
-      title="Engineering AI Music"
-      description="Open-source educational project about the engineering principles behind AI music generation.">
+      title="Neural Audio and AI Music Engineering"
+      description="Open-source guide to neural audio, AI music workflows, model architectures, conditioning, evaluation, and system limitations.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
@@ -59,11 +60,15 @@ export default function Home(): ReactNode {
           <div className={clsx('container', styles.startContainer)}>
             <div className={styles.startCopy}>
               <span className={styles.sectionLabel}>A connected curriculum</span>
-              <Heading as="h2" id="start-heading">See the whole signal path</Heading>
+              <Heading as="h2" id="start-heading">Follow the signal path without assuming one universal architecture</Heading>
               <p>
-                Move from physical sound to representations, generation, and a measured output—without losing the connections between each layer.
+                Move from physical sound to digital representations, model inputs and outputs,
+                generation, and evaluation. The guide compares common design patterns while
+                calling out where real systems differ or published details are unavailable.
               </p>
               <Link to="/docs/intro">Open the complete learning map →</Link>
+              <br />
+              <Link to="/docs/engineering/reliability-and-sourcing">Read the reliability and sourcing standard →</Link>
             </div>
             <ol className={styles.signalFlow} aria-label="Neural audio learning sequence">
               <li><span>01</span><strong>Sound</strong><small>Waveforms & perception</small></li>
