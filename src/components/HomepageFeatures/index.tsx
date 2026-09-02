@@ -45,36 +45,39 @@ function PromptIcon(props: SVGProps<SVGSVGElement>) {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Signal Representation Pipeline',
+    title: 'Audio and Music Representations',
     Icon: SignalIcon,
     description: (
       <>
-        Track the engineering path from waveform capture to STFT, mel scaling,
-        and latent embeddings used by modern generative audio stacks.
+        Compare waveforms, time-frequency representations, symbolic formats,
+        neural codec tokens, embeddings, and latents—and learn why different
+        systems choose different representations.
       </>
     ),
-    href: '/docs/audio-fundamentals/digital-audio-basics',
+    href: '/docs/concepts/music-representations',
     accent: 'coral',
   },
   {
-    title: 'Model Internals and Training',
+    title: 'Model Architectures and Training',
     Icon: NodeIcon,
     description: (
       <>
-        Study how transformer attention, diffusion denoising, and objective
-        functions interact to optimize timbre, rhythm, and structural coherence.
+        Study transformer sequence modeling, diffusion-style generation, loss
+        functions, datasets, and evaluation without treating one architecture
+        as the blueprint for every music model.
       </>
     ),
     href: '/docs/architecture/transformers-for-audio',
     accent: 'violet',
   },
   {
-    title: 'Conditioning and Prompt Control',
+    title: 'Conditioning and Control',
     Icon: PromptIcon,
     description: (
       <>
-        Learn how text tokens become conditioning vectors that steer genre,
-        arrangement, and dynamics in text-to-music inference pipelines.
+        Trace how text, metadata, structure, or reference audio can condition a
+        generator, and separate general techniques from controls that are
+        specific to a particular product or published model.
       </>
     ),
     href: '/docs/advanced/controllable-generation',
@@ -104,8 +107,11 @@ export default function HomepageFeatures(): ReactNode {
       <div className="container">
         <div className={styles.sectionHeading}>
           <span>Inside the guide</span>
-          <Heading as="h2">From sound to system</Heading>
-          <p>Follow the complete technical path, or enter at the layer relevant to your work.</p>
+          <Heading as="h2">Learn the patterns—and the exceptions</Heading>
+          <p>
+            Build a connected mental model of neural audio while keeping
+            architecture-specific behavior, unpublished details, and uncertainty explicit.
+          </p>
         </div>
         <div className={styles.featureGrid}>
           {FeatureList.map((props) => (
