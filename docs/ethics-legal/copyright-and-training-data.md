@@ -5,168 +5,123 @@ title: Copyright & Training Data
 
 # Copyright and Training Data
 
-The intersection of AI music generation and copyright law is one of the most actively debated topics in the field. This page covers the key issues from an engineering and practical perspective.
+AI music raises separate questions about training inputs, generated outputs, contractual rights, and infringement. Those questions are jurisdiction-specific and change over time, so this page distinguishes documented law and policy from unresolved issues.
 
-## The Core Tension
+:::info Checked 5 September 2026
 
-AI music models are trained on existing music. This creates fundamental questions:
+The legal summaries below were checked against primary or official sources, including the EU DSM Directive, UK Intellectual Property Office guidance, and the U.S. Copyright Office's AI reports. This is educational information, not legal advice.
 
-1. **Is training on copyrighted music legal?** (Training data rights)
-2. **Who owns the AI-generated output?** (Output ownership)
-3. **Can AI output infringe copyright?** (Output similarity)
-4. **Should training data creators be compensated?** (Fair compensation)
+:::
 
-These questions remain legally unsettled in most jurisdictions as of 2026.
+## Keep four questions separate
 
-## Training Data Rights
+1. **Training permission** — may a developer copy or analyze protected works for model training?
+2. **Output copyrightability** — does copyright subsist in a generated work, and who is the author?
+3. **Output infringement** — does a particular output copy protectable expression from an existing work?
+4. **Platform contract rights** — what does a provider's current agreement let a user do with an output?
 
-### What Models Learn From
+A contractual permission to monetize an output is not the same thing as copyright ownership, and copyrightability does not guarantee that an output is non-infringing.
 
-Large music generation models are trained on:
+## Training data rights
 
-- Licensed music catalogs
-- Public domain recordings
-- Creative Commons music
-- Web-scraped audio (legal status debated)
-- Synthetic/rendered audio from MIDI
-- User-uploaded content (per platform terms)
+There is no single global rule that makes copyrighted music lawful or unlawful to use for machine learning. The result can depend on the jurisdiction, the source of the material, lawful access, contractual restrictions, statutory exceptions, rights reservations, and the facts of the particular use.
 
-### Legal Frameworks
+### Selected legal frameworks
 
-| Jurisdiction | Current Position |
-|---|---|
-| **United States** | No definitive ruling; "fair use" arguments pending. Several lawsuits in progress |
-| **European Union** | Text and Data Mining exception (Article 4, DSM Directive) allows training for research; commercial use requires opt-out mechanisms |
-| **United Kingdom** | Proposed TDM exception was withdrawn; current law is restrictive |
-| **Japan** | Broadly permits training on copyrighted works for ML (Article 30-4, Copyright Act) |
+| Jurisdiction | What the primary sources support |
+| --- | --- |
+| **United States** | Fair use is a case-specific statutory defense. The U.S. Copyright Office's 2025 AI training report describes unresolved policy and legal questions; outcomes cannot safely be reduced to a rule that all AI training is or is not fair use. AI-music litigation remains relevant to this area. |
+| **European Union** | DSM Directive Article 3 creates a TDM exception for research organisations and cultural-heritage institutions conducting scientific research on works to which they have lawful access. Article 4 separately creates a broader TDM exception for lawfully accessible works, but it does not apply where rightholders have expressly reserved the relevant rights in an appropriate manner; for publicly available online content, the Directive identifies machine-readable means as appropriate. |
+| **United Kingdom** | The current statutory TDM exception described by the UK Intellectual Property Office applies to computational analysis for **non-commercial research** where the researcher already has lawful access. Do not describe current UK law as a general commercial-training exception. |
+| **Other jurisdictions** | Rules differ materially. Check the current statute, implementing guidance, and relevant case law rather than extrapolating from the US, EU, or UK. |
 
-### Fair Use Analysis (US Framework)
+### EU rights reservations
 
-US fair use considers four factors:
+Do not treat `robots.txt` as a universal copyright switch. Under Article 4 of the EU DSM Directive, the relevant question is whether the rightholder has expressly reserved TDM rights in an appropriate manner. For content publicly available online, the Directive specifically points to machine-readable means, including metadata and website/service terms.
 
-1. **Purpose and character**: Is it transformative? (AI training arguably transforms individual works)
-2. **Nature of the copyrighted work**: Creative works get stronger protection
-3. **Amount used**: Training on full songs vs. clips
-4. **Market effect**: Does the AI output compete with the original works?
+For an engineering ingestion pipeline, preserve:
 
-Courts have not yet issued definitive rulings on AI music training.
+- source URL or acquisition record;
+- date and basis of lawful access;
+- applicable licence or contract version;
+- machine-readable rights metadata and relevant site terms;
+- any opt-out or rights-reservation signal observed at ingestion time;
+- dataset-level provenance and removal records.
 
-### Opt-Out Mechanisms
+## Output copyrightability
 
-Under EU law and increasingly as best practice:
+Copyrightability is distinct from ownership language in a provider's terms.
 
-- **robots.txt**: signal that web-accessible audio should not be scraped
-- **Do Not Train registries**: formal lists of works excluded from training
-- **Metadata flags**: rights information embedded in audio files
-- **Content identification**: fingerprinting systems to detect and exclude specific works
+### United States
 
-## Output Ownership
+The U.S. Copyright Office's January 2025 report states that generative-AI outputs can be protected only where a human author has determined sufficient expressive elements. Human-authored material perceptible in an output, or sufficiently creative human selection, arrangement, or modification, can be protected. Mere prompting, by itself, is not enough under the Office's analysis.
 
-### Who Owns AI-Generated Music?
+That means "AI-assisted" and "AI-generated" are not binary legal categories. Preserve the human-authored contributions that matter: lyrics, composition, recordings, arrangement decisions, edits, and other expressive changes.
 
-The ownership question has no universal answer:
+### Provider rights are contractual
 
-| Entity | Claim | Status |
-|---|---|---|
-| **AI user** (prompter) | Creative direction via prompts | Strongest claim in practice |
-| **AI company** | Built the model | May claim via ToS |
-| **Training data artists** | Contributed learned patterns | No current legal mechanism |
-| **Nobody** (public domain) | No human authorship | Some jurisdictions require human author |
+A provider can grant or assign contractual rights even when copyright does not vest in an output. Read the current terms for the account tier and for the specific asset.
 
-### US Copyright Office Position
+For example, Suno's current terms distinguish free/basic outputs from outputs generated under paid tiers. Paid-tier terms can grant ownership or commercial-use rights subject to the contract, while Suno expressly warns that it does not guarantee that copyright subsists in an output. Free/basic outputs are restricted to personal, non-commercial use under the current terms. Treat those rules as versioned contract terms, not universal copyright law.
 
-As of 2023–2024, the US Copyright Office has ruled that:
-- Pure AI-generated content is **not copyrightable** (no human author)
-- Works with **sufficient human creative input** (arrangement, selection, editing) may be copyrightable
-- The degree of human involvement required is evaluated case-by-case
+Do not generalize one provider's rules to another provider, and do not describe Suno and Udio collectively as simply "royalty-free" without checking each service's current agreement.
 
-### Practical Implications for Producers
+## Output infringement
 
-- **Add meaningful human creative contribution**: editing, arranging, mixing, production decisions
-- **Document your creative process**: record prompts, selection decisions, post-processing steps
-- **Check platform terms of service**: some platforms grant users full ownership; others retain rights
-- **Register works with appropriate caveats**: disclose AI involvement where required
+An AI-generated work can still create infringement risk. The relevant legal test is jurisdiction-specific and depends on protectable expression, copying, access/inference rules, defences, and the facts of the case.
 
-## Output Similarity and Infringement
+Avoid universal statements such as "melody is protectable but rhythm and timbre are not." Musical copyright analysis is more contextual than a fixed ranking of musical attributes, and sound recordings can also carry separate rights from the underlying composition.
 
-### Can AI Output Infringe Copyright?
+For release review, ask:
 
-Yes — if an AI output is "substantially similar" to a copyrighted work, it could constitute infringement regardless of how it was created.
+- Does the output reproduce recognizable lyrics, melody, arrangement, or recorded material from a known work?
+- Does it contain a recognizable sample or recording fragment?
+- Was copyrighted source audio uploaded or used as conditioning material, and under what rights?
+- Are there contractual restrictions on prompts, remixes, extensions, or downloaded assets?
+- Does a distributor or platform impose additional rules beyond copyright law?
 
-### Substantial Similarity Tests
+## Memorization and similarity
 
-Courts evaluate musical similarity using:
+Models can reproduce or closely approximate training examples under some conditions, but the likelihood is model- and dataset-dependent. Do not present popularity, temperature, guidance scale, or any single training characteristic as a universal predictor of memorization without evidence for the model being discussed.
 
-1. **Melody**: the most protectable element
-2. **Harmony/chord progression**: less protectable (common progressions are not copyrightable)
-3. **Lyrics**: protected as literary works
-4. **Rhythm**: generally not protectable alone
-5. **Sound/timbre**: generally not protectable
-6. **Overall feel**: "total concept and feel" test used in some jurisdictions
+Useful engineering checks include:
 
-### Memorization Risk
+| Check | Purpose |
+| --- | --- |
+| Exact and near-duplicate detection | Detect training/test leakage and repeated source files |
+| Audio fingerprinting | Find exact or transformation-resistant recording matches |
+| Melody / embedding retrieval | Surface candidates for closer human review; not a legal infringement test |
+| Canary or extraction tests | Measure memorization risk under a defined evaluation protocol |
+| Human rights review | Evaluate flagged material in context before release |
 
-AI models can memorize and reproduce training data, especially:
-- Popular songs heard many times during training
-- Unique, distinctive melodies or productions
-- Specific vocal performances
+A fingerprint or embedding threshold is an engineering signal, not a legal conclusion about substantial similarity.
 
-Risk factors for memorization:
-- Small, homogeneous training datasets
-- High model capacity relative to data size
-- Low temperature / high guidance during inference
-- Prompts that closely describe a specific known song
+## Style, voice, and likeness
 
-### Mitigation Strategies
+Copyright does not generally give a monopoly over an abstract artistic style, but "style imitation" can intersect with other rights and laws: trademark or passing off, unfair competition, publicity/personality rights, false endorsement, contractual restrictions, and rights in particular lyrics, compositions, recordings, or voice performances.
 
-| Strategy | Implementation |
-|---|---|
-| **Similarity detection** | Run output against a music fingerprint database (e.g., Audible Magic) |
-| **Memorization testing** | During development, test if model can reproduce training examples |
-| **Diverse training data** | Larger, more diverse datasets reduce memorization risk |
-| **Output filtering** | Reject generations that match known works above a similarity threshold |
-| **User guidelines** | Warn users not to prompt for specific copyrighted songs |
+Accordingly, avoid telling users that artist imitation is either always lawful or always copyright infringement. For commercial releases, evaluate the concrete output, marketing, naming, voice likeness, and source material.
 
-## Licensing Models for AI Music
+## Practical release checklist
 
-### Royalty-Free AI Generation
+1. Record the generator, model/version shown by the service, account tier, and generation date.
+2. Keep the provider terms and rights page reviewed for the release.
+3. Preserve prompts, uploaded inputs, lyrics, edits, and material human-authored contributions.
+4. Confirm that every uploaded or conditioned source was lawfully usable for the intended purpose.
+5. Run similarity and fingerprint checks where risk justifies them, then review matches manually.
+6. Do not equate commercial-use permission with copyright registration eligibility.
+7. Review distributor, label, collecting-society, and platform rules separately.
+8. Obtain qualified legal advice for high-value releases, disputes, voice-likeness issues, or uncertain source rights.
 
-Most commercial platforms (Suno, Udio) offer outputs that are:
-- Royalty-free for the user
-- Licensed per platform terms
-- Not exclusive (platform may use similar content)
+## Primary and official sources
 
-### Revenue Sharing
+Checked 5 September 2026:
 
-Some emerging models propose:
-- Attribute training data contributions
-- Share revenue with rights holders whose data was used
-- Blockchain-based tracking of data provenance
+- [EU Directive 2019/790, Articles 3 and 4](https://eur-lex.europa.eu/eli/dir/2019/790/oj)
+- [UK IPO: Exceptions to copyright — text and data mining for non-commercial research](https://www.gov.uk/guidance/exceptions-to-copyright)
+- [U.S. Copyright Office: Copyright and Artificial Intelligence](https://www.copyright.gov/policy/artificial-intelligence/)
+- [U.S. Copyright Office Part 2 announcement: Copyrightability](https://www.copyright.gov/newsnet/2025/1060.html)
+- [Suno Terms of Service](https://suno.com/terms-of-service)
+- [Suno Help: Rights & Ownership](https://help.suno.com/en/categories/550145)
 
-### Licensed Training Data
-
-Companies increasingly train on fully licensed data:
-- Shutterstock audio library
-- Production music catalogs
-- Direct artist agreements
-- Synthetic data generation
-
-## Best Practices for AI Music Producers
-
-1. **Know your platform's terms**: read ToS carefully before commercial use
-2. **Run similarity checks**: use tools like YouTube Content ID, Shazam, or AudibleMagic
-3. **Add substantial human creativity**: don't release raw AI output as-is
-4. **Don't clone specific artists**: avoid prompts designed to reproduce copyrighted styles
-5. **Document everything**: keep records of your creative process
-6. **Stay informed**: this legal landscape is evolving rapidly
-7. **When in doubt, consult a lawyer**: especially for commercial releases
-
-## The Evolving Landscape
-
-The legal framework around AI music is changing quickly. Key cases and legislation to watch:
-- Major label lawsuits against AI music platforms
-- US Senate hearings on AI and copyright
-- EU AI Act implementation and enforcement
-- Global coordination on AI training data governance
-
-The engineering community can contribute by building systems with transparency, attribution, and proper licensing at their core.
+Because legislation, litigation, and provider contracts change, re-check these sources for any production decision that depends on them.
