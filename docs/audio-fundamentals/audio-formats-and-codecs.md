@@ -5,155 +5,108 @@ title: Audio Formats & Codecs
 
 # Audio Formats and Codecs
 
-Audio format choices affect data size, quality, and compatibility with ML pipelines. This page covers traditional codecs, modern perceptual codecs, and the neural codecs that are transforming audio ML.
+Audio format choices affect storage, fidelity, interoperability, and reproducibility. Codec quality is not a single fixed number: it depends on bitrate, signal type, encoder implementation, listening conditions, and the comparison protocol.
 
-## Uncompressed Formats
+## Uncompressed audio
 
 ### WAV (RIFF/WAVE)
 
-- PCM audio in a simple container
-- No quality loss
-- Large files (~10 MB per minute for CD quality)
-- Standard input for most audio ML pipelines
+WAV is a container commonly used for PCM audio. For 44.1 kHz, 16-bit stereo PCM, the raw payload is about 1,411.2 kbit/s, or roughly 10.6 MB per minute before container overhead.
 
 ### AIFF
 
-- Apple's equivalent of WAV
-- Same PCM data, different container
-- Less common in ML contexts
+AIFF is another container commonly used for uncompressed PCM audio. It can carry equivalent sample data to WAV; container choice alone does not determine audio fidelity.
 
 ### Raw PCM
 
-- No header, just sample data
-- Requires external metadata (sample rate, bit depth, channels)
-- Sometimes used for direct model input
+Raw PCM contains sample values without a self-describing container header, so sample rate, sample format, channel count, and byte order must be known separately.
 
-## Lossless Compression
+## Lossless compression
 
-### FLAC (Free Lossless Audio Codec)
+### FLAC
 
-- Bit-perfect reconstruction
-- ~50–70% compression ratio
-- Open source, widely supported
-- Good archival format for training data
+FLAC reconstructs the encoded PCM samples exactly. Compression ratio depends strongly on the source material, so avoid treating one percentage range as a guarantee.
 
-### ALAC (Apple Lossless)
+### ALAC
 
-- Apple's lossless codec
-- Similar ratios to FLAC
-- Less common in ML workflows
+Apple Lossless is also lossless: decoding restores the encoded PCM samples. FLAC and ALAC differ in ecosystem and implementation details rather than in whether the decoded result is bit-exact.
 
-Lossless compression uses **entropy coding** (similar to ZIP) and **linear prediction** to exploit redundancy:
+## Lossy perceptual codecs
 
-$$
-\hat{x}[n] = \sum_{k=1}^{p} a_k \, x[n-k]
-$$
+### MP3 and AAC
 
-The residual $e[n] = x[n] - \hat{x}[n]$ is then entropy-coded. Smaller residuals → better compression.
+MP3 and AAC are perceptual codecs. Audible quality varies with encoder, bitrate, signal, and listener. Statements such as “artifacts become audible below 192 kbps” or “AAC is always better than MP3 at the same bitrate” are too absolute without a specific listening test.
 
-## Lossy Perceptual Codecs
-
-### MP3 (MPEG-1 Audio Layer III)
-
-- Removes perceptually irrelevant components using psychoacoustic models
-- Typical bitrates: 128–320 kbps
-- Introduces audible artifacts below ~192 kbps
-- **Not recommended** as training data for high-fidelity models
-
-### AAC (Advanced Audio Coding)
-
-- Better quality than MP3 at same bitrate
-- Default codec for Apple and YouTube
-- Spectral band replication (SBR) extends bandwidth at low bitrates
+For ML datasets, lossy source material can be usable, but it may encode compression artifacts that a model can learn. Preserve original lossless masters when high-fidelity reconstruction is an objective.
 
 ### Opus
 
-- State-of-the-art traditional codec
-- Excellent at 64–128 kbps
-- Seamlessly switches between speech (SILK) and music (CELT) modes
-- Used in WebRTC, Discord, many streaming platforms
+Opus is standardized in RFC 6716 (with later updates). It combines technology derived from SILK and CELT and can operate across speech and music use cases.
 
-### Vorbis (OGG)
+RFC 6716 documents a bitrate range of 6 to 510 kbit/s and gives **sweet spots**, not universal transparency thresholds. For 20 ms frames it lists, among other examples, about 48–64 kbit/s for fullband mono music and 64–128 kbit/s for fullband stereo music.
 
-- Open-source alternative to MP3/AAC
-- Good quality at moderate bitrates
-- Less common today but still used in games
+Do not describe Opus as permanently “state-of-the-art” without naming a benchmark. Its practical strengths are that it is standardized, flexible, low-latency-capable, and widely implemented.
 
-### Perceptual Coding Principles
+## Neural audio codecs
 
-All lossy codecs follow a similar pipeline:
+Neural codecs use learned encoders/decoders and quantization to represent audio at compact rates. Their quality must be evaluated for a particular model, checkpoint, signal domain, and bitrate.
 
-1. **Time-frequency analysis** (MDCT or similar)
-2. **Psychoacoustic model** estimates masking thresholds
-3. **Quantization** removes sub-threshold components
-4. **Entropy coding** compresses the quantized data
+### EnCodec
 
-The noise-to-mask ratio (NMR) measures how well quantization noise stays below masking thresholds:
+Meta's released EnCodec repository documents two multi-bandwidth pretrained models:
 
-$$
-\text{NMR}(b) = \frac{N(b)}{T(b)}
-$$
+- a causal 24 kHz mono model supporting 1.5, 3, 6, 12, and 24 kbit/s;
+- a non-causal 48 kHz stereo model supporting 3, 6, 12, and 24 kbit/s.
 
-where $N(b)$ is quantization noise power in band $b$ and $T(b)$ is the masking threshold.
+The repository also exposes discrete codes, which is why EnCodec-style representations are useful in token-based generative systems.
 
-## Neural Audio Codecs
+Do not turn paper-specific listening results into the universal claim that EnCodec is “comparable to Opus at much lower bitrates.” Comparisons depend on the exact EnCodec model, Opus settings, content, and evaluation protocol.
 
-Neural codecs represent a paradigm shift: instead of hand-designed psychoacoustic models, they use learned encoder-decoder networks with vector quantization.
+### SoundStream and DAC
 
-### EnCodec (Meta)
+SoundStream and Descript Audio Codec are related neural-codec systems built around learned compression and quantization. Architectural and quality comparisons should cite the corresponding paper/checkpoint rather than a generic ranking.
 
-- Convolutional encoder → Residual Vector Quantization (RVQ) → Convolutional decoder
-- Operates at 1.5–24 kbps
-- Quality comparable to Opus at much lower bitrates
-- Codec tokens are used directly as inputs to language models (e.g., MusicGen)
+## Residual vector quantization
 
-### SoundStream (Google)
-
-- Similar architecture to EnCodec
-- Encoder-decoder with RVQ bottleneck
-- Used in AudioLM, MusicLM pipelines
-
-### Descript Audio Codec (DAC)
-
-- Improved training with multi-scale STFT discriminator
-- Better handling of music at low bitrates
-- Open-source implementation available
-
-### Residual Vector Quantization (RVQ)
-
-The key innovation in neural codecs. Instead of a single codebook, RVQ uses $Q$ sequential codebooks:
+With residual vector quantization, several codebooks successively approximate a latent vector:
 
 $$
 \hat{\mathbf{z}} = \sum_{q=1}^{Q} \mathbf{e}_{q}(k_q)
 $$
 
-where $k_q = \arg\min_k \| \mathbf{r}_{q-1} - \mathbf{e}_q(k) \|$ and the residual updates as:
+and each stage quantizes the residual left by earlier stages. It is safe to say that later stages refine the reconstruction; it is **not** generally safe to assign universal semantic roles such as “early codebooks = pitch/rhythm” and “late codebooks = timbre/noise” unless a particular model has been experimentally analyzed that way.
 
-$$
-\mathbf{r}_q = \mathbf{r}_{q-1} - \mathbf{e}_q(k_q)
-$$
+## Choosing formats for ML work
 
-Each codebook refines the approximation, with early codebooks capturing coarse structure (pitch, rhythm) and later codebooks adding fine detail (timbre nuance, noise).
+| Stage | Common choices | Why |
+| --- | --- | --- |
+| Archival / reference masters | WAV, FLAC, AIFF | Preserve PCM fidelity |
+| Training input | Decoded PCM tensors, often sourced from WAV/FLAC | Explicit sample access and preprocessing |
+| Token-based generation | Codec tokens from the selected neural codec | Compact discrete representation |
+| Intermediate production | WAV or FLAC | Avoid unnecessary additional lossy generations |
+| Web preview | Opus, AAC, or another browser-supported delivery codec | Reduce transfer size |
 
-## Format Recommendations for AI Audio
+These are workflow recommendations, not format requirements.
 
-| Stage | Recommended Format | Reason |
-|---|---|---|
-| Training data storage | FLAC or WAV | No quality loss |
-| Model input | WAV or raw PCM | Direct sample access |
-| Token-based models | Neural codec tokens | Discrete, compact, semantic |
-| Output / distribution | WAV (full quality) or FLAC | Preserve generation quality |
-| Web demos | Opus or AAC | Small files, good quality |
+## Bitrate is not a quality score
 
-## Bitrate vs. Quality Trade-offs
+A table that labels 128 kbit/s Opus “transparent”, 320 kbit/s MP3 “near-transparent”, or 6 kbit/s EnCodec “good for music” turns context-dependent listening judgments into facts. Instead, compare codecs using controlled tests that record:
 
-| Codec Type | Bitrate | Approximate Quality |
-|---|---|---|
-| PCM (CD) | 1,411 kbps | Reference |
-| FLAC | ~700 kbps | Lossless |
-| Opus | 128 kbps | Transparent for most listeners |
-| MP3 | 320 kbps | Near-transparent |
-| EnCodec | 6 kbps | Good for music |
-| EnCodec | 1.5 kbps | Acceptable for speech |
+1. codec and encoder version;
+2. bitrate/mode and channel configuration;
+3. source corpus and sample rate;
+4. loudness handling;
+5. objective metrics, if used;
+6. blinded listening protocol and number of listeners.
 
-Neural codecs achieving good quality at 6 kbps represent a ~200× compression over CD-quality PCM, enabling efficient tokenization for language model-based music generation.
+For reference, CD-format stereo PCM at 44.1 kHz and 16 bits/sample is 1,411.2 kbit/s. Comparing that number directly with a neural codec bitrate gives a compression factor, **not** a perceptual-quality equivalence.
+
+## Sources checked
+
+Checked 5 September 2026:
+
+- [RFC 6716: Definition of the Opus Audio Codec](https://www.rfc-editor.org/rfc/rfc6716)
+- [Meta EnCodec repository](https://github.com/facebookresearch/encodec)
+- [AudioCraft EnCodec documentation](https://github.com/facebookresearch/audiocraft/blob/main/docs/ENCODEC.md)
+
+Use codec papers and standardized specifications for technical claims, and use listening tests for perceptual-quality claims.
