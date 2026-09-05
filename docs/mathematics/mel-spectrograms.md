@@ -5,181 +5,139 @@ title: Mel Spectrograms
 
 # Mel Spectrograms
 
-The mel spectrogram is the most common audio representation in modern music ML. It combines spectral analysis with perceptual frequency weighting, producing a compact 2D feature that models can process efficiently.
+Mel spectrograms are a widely used time-frequency representation in speech, music-information retrieval, text-to-audio, and neural-vocoder pipelines. They reduce a linear-frequency magnitude or power spectrum with a perceptually motivated filter bank. They are useful, but they are not the universal representation for modern music generation: current systems also operate on waveform samples, complex STFTs, continuous latents, and discrete neural-codec tokens.
 
-## From Linear Spectrogram to Mel
+## From STFT to mel features
 
-### Step 1: STFT
-
-Compute the Short-Time Fourier Transform (see [FFT page](./fft.md)):
+For a windowed frame, a common STFT convention is
 
 $$
-X(m, k) = \sum_{n=0}^{N-1} x[n + mH] \, w[n] \, e^{-j2\pi kn/N}
+X(m,k)=\sum_{n=0}^{N-1}x[n+mH]w[n]e^{-j2\pi kn/N}.
 $$
 
-This produces a complex-valued time-frequency representation with $K = N/2 + 1$ frequency bins.
-
-### Step 2: Power Spectrum
-
-Take the squared magnitude:
+For real-valued input, implementations commonly retain $N/2+1$ non-negative-frequency bins. A mel feature can be computed from magnitude or power. With power,
 
 $$
-S(m, k) = |X(m, k)|^2
+S(m,k)=|X(m,k)|^2,
 $$
 
-### Step 3: Mel Filter Bank
-
-Apply a bank of $B$ triangular filters spaced according to the mel scale:
+and a mel filter bank gives
 
 $$
-M(m, b) = \sum_{k=0}^{K-1} W(b, k) \cdot S(m, k)
+M(m,b)=\sum_k W(b,k)S(m,k).
 $$
 
-where $W(b, k)$ is the weight of filter $b$ at frequency bin $k$.
-
-### Step 4: Log Compression
-
-Apply logarithmic compression to match human loudness perception:
+Logarithmic or decibel compression is then often applied, for example
 
 $$
-M_{\log}(m, b) = \log(M(m, b) + \epsilon)
+M_{\log}(m,b)=\log(M(m,b)+\epsilon).
 $$
 
-The small constant $\epsilon$ (typically $10^{-6}$ or $10^{-10}$) prevents $\log(0)$.
+The exact scale, normalization, power exponent, and floor are part of the model contract. Two tensors both called “mel spectrograms” are not necessarily interchangeable.
 
-## The Mel Scale
+## Mel-frequency conventions
 
-The mel scale maps frequency to perceived pitch:
-
-$$
-m(f) = 2595 \log_{10}\left(1 + \frac{f}{700}\right)
-$$
-
-Inverse:
+One commonly cited formula is
 
 $$
-f(m) = 700\left(10^{m/2595} - 1\right)
+m(f)=2595\log_{10}\left(1+\frac{f}{700}\right),
 $$
 
-### Mel Filter Bank Design
-
-Triangular filters are placed at equally spaced points on the mel scale:
-
-1. Choose the number of filters $B$ (typically 80 or 128 for music)
-2. Define frequency range $[f_{\min}, f_{\max}]$ (e.g., [0 Hz, 8000 Hz] or [20 Hz, 16000 Hz])
-3. Convert limits to mel: $m_{\min} = m(f_{\min})$, $m_{\max} = m(f_{\max})$
-4. Space $B+2$ points equally in mel domain
-5. Convert back to Hz for filter center frequencies
-6. Build overlapping triangular filters
-
-Each filter $b$ has center frequency $f_c^{(b)}$ and spans from $f_c^{(b-1)}$ to $f_c^{(b+1)}$:
+with inverse
 
 $$
-W(b, k) = \begin{cases}
-\frac{f(k) - f_c^{(b-1)}}{f_c^{(b)} - f_c^{(b-1)}} & f_c^{(b-1)} \leq f(k) < f_c^{(b)} \\
-\frac{f_c^{(b+1)} - f(k)}{f_c^{(b+1)} - f_c^{(b)}} & f_c^{(b)} \leq f(k) \leq f_c^{(b+1)} \\
-0 & \text{otherwise}
-\end{cases}
+f(m)=700\left(10^{m/2595}-1\right).
 $$
 
-Filters are narrow at low frequencies (fine pitch resolution) and wide at high frequencies (coarse, matching human perception).
+This is not the only mel convention. Libraries differ in formulas and filter normalization; for example, librosa exposes HTK and Slaney-style choices. Reproduce the implementation used by the training pipeline rather than assuming a formula from the name alone.
 
-## Typical Parameters for Music ML
+## Filter-bank design
 
-| Parameter | Typical Value | Notes |
-|---|---|---|
-| Sample rate | 22050 or 44100 Hz | Higher = more bandwidth |
-| FFT size ($N$) | 1024 or 2048 | Frequency resolution |
-| Hop size ($H$) | 256 or 512 | Time resolution |
-| Mel bands ($B$) | 80 or 128 | Feature dimensionality |
-| $f_{\min}$ | 0 or 20 Hz | Low frequency cutoff |
-| $f_{\max}$ | $f_s/2$ or 8000 Hz | High frequency cutoff |
-| Log type | Natural log or $\log_{10}$ | Scale convention |
-| Power | 1 (magnitude) or 2 (power) | Energy vs. amplitude |
+A conventional triangular mel bank:
 
-### Parameter Trade-offs
+1. chooses $f_{\min}$, $f_{\max}$, and the number of bands;
+2. maps the frequency limits into the selected mel convention;
+3. places band centers on that scale;
+4. maps centers back to Hz;
+5. applies overlapping filters to STFT magnitude or power bins.
 
-- **More mel bands** → finer frequency detail, larger model input
-- **Larger FFT** → better frequency resolution, coarser time resolution
-- **Smaller hop** → finer time resolution, more frames, slower processing
-- **Higher $f_{\max}$** → captures high harmonics and brightness cues
+Lower-frequency bands are usually narrower in Hz than upper-frequency bands. This is a perceptual frequency warping, not a claim that the representation exactly models human pitch or loudness.
 
-## Mel Spectrograms vs. Other Representations
+## Parameters are model-specific
 
-| Representation | Frequency Spacing | Phase Info | Dimensionality | Invertible |
-|---|---|---|---|---|
-| Complex STFT | Linear | Yes | High | Yes (perfect) |
-| Magnitude spectrogram | Linear | No | High | Approximate |
-| Mel spectrogram | Perceptual | No | Moderate | Approximate |
-| CQT | Logarithmic | Optional | Moderate | Approximate |
-| MFCC | Perceptual + DCT | No | Low | No |
+There is no single standard set of “music ML” mel parameters. Published systems use different sample rates, FFT sizes, hops, mel-band counts, frequency ranges, and compression rules. When reproducing a model, copy those values from its preprocessing code or paper.
 
-## Inversion: Mel Spectrogram to Audio
+| Parameter | What it controls |
+| --- | --- |
+| sample rate | available audio bandwidth |
+| FFT/window length | time-frequency analysis resolution |
+| hop length | frame rate and overlap |
+| mel bands | feature dimensionality and frequency aggregation |
+| $f_{\min},f_{\max}$ | analyzed frequency range |
+| magnitude vs power | spectral quantity fed to the filter bank |
+| log/dB rule | dynamic-range compression |
+| filter convention | exact band placement and normalization |
 
-Since the mel spectrogram discards phase and compresses frequency, inversion requires estimation.
+A larger FFT does not automatically give a useful “better” frequency representation: window duration, hop, sample rate, zero-padding, and the stationarity of the signal all matter. Likewise, reducing the hop increases frame density but also computation and statistical redundancy.
 
-### Griffin-Lim Algorithm
+## Invertibility
 
-Iterative phase reconstruction:
+A complex STFT can support exact or near-exact reconstruction when the transform, window, hop, boundary handling, and inverse satisfy the appropriate overlap-add conditions. Calling every complex STFT “perfectly invertible” without those conditions is too broad.
 
-1. Start with random phase
-2. Apply mel filter bank inverse (approximate)
-3. Iterate: iSTFT → enforce magnitude → STFT → enforce consistency
+Magnitude-only and mel representations discard information, especially phase and frequency detail. Their inversion therefore requires additional assumptions or a learned model.
 
-$$
-\hat{X}^{(i+1)}(m,k) = |X_{\text{target}}(m,k)| \cdot e^{j \angle \hat{X}^{(i)}(m,k)}
-$$
+### Griffin–Lim
 
-Griffin-Lim is fast but produces metallic, artifact-prone audio.
+Griffin–Lim iteratively searches for a signal whose STFT magnitude is consistent with a target magnitude spectrogram. A mel spectrogram first needs an approximate projection back toward a linear-frequency magnitude representation. Reconstruction quality depends strongly on analysis parameters and iteration count; it should not be described by a universal quality label.
 
-### Neural Vocoders (Preferred)
+### Neural vocoders
 
-Modern systems use trained neural networks for high-quality inversion:
+Learned vocoders can map acoustic features such as mel spectrograms to waveform samples. Representative publications include WaveNet, WaveGlow, HiFi-GAN, BigVGAN, and Vocos, but their quality and speed are benchmark-dependent.
 
-| Vocoder | Architecture | Quality | Speed |
-|---|---|---|---|
-| WaveNet | Autoregressive | Excellent | Very slow |
-| WaveGlow | Flow-based | Very good | Fast |
-| HiFi-GAN | GAN-based | Excellent | Very fast |
-| BigVGAN | GAN-based | State-of-the-art | Fast |
-| Vocos | ISTFT-based | Very good | Very fast |
+- **HiFi-GAN** reports high-fidelity parallel waveform synthesis and fast inference in the authors' speech benchmarks.
+- **BigVGAN** reports improved generalization on several out-of-distribution conditions in its published evaluation.
+- **Vocos** directly predicts Fourier coefficients and reports large speed gains over the time-domain baselines used in its paper.
 
-HiFi-GAN and BigVGAN are the most common choices in production systems.
+Do not turn those paper-specific results into a permanent ranking or claim that one vocoder is the most common production choice. Measure the exact checkpoint on the target domain and hardware.
 
-## Mel Spectrograms in Diffusion Models
+## Use in generative systems
 
-Mel spectrograms serve as both training targets and intermediate representations in diffusion-based music generation:
+Mel spectrograms can be targets or intermediate representations in generative audio systems, including some diffusion and TTS pipelines. Other diffusion or flow systems operate in waveform or compressed latent spaces instead. The generic forward noising equation
 
 $$
-\mathbf{z}_t = \sqrt{\bar{\alpha}_t} M_{\log} + \sqrt{1-\bar{\alpha}_t} \boldsymbol{\epsilon}
+\mathbf{z}_t=\sqrt{\bar\alpha_t}\,\mathbf{z}_0+\sqrt{1-\bar\alpha_t}\,\boldsymbol\epsilon
 $$
 
-The model learns to denoise mel spectrograms, then a vocoder converts the clean mel spectrogram to waveform.
+does not imply that $\mathbf{z}_0$ is a mel spectrogram; its meaning depends on the model.
 
-## Dynamic Range Compression Variants
+## Dynamic-range alternatives
 
-Beyond simple log compression, other approaches exist:
-
-### Power-Law Compression
+Power-law compression is one possible transform:
 
 $$
-M_{\text{power}}(m, b) = M(m, b)^{\gamma}, \quad \gamma \in (0, 1)
+M_{\text{power}}(m,b)=M(m,b)^\gamma,\qquad 0<\gamma<1.
 $$
 
-### PCEN (Per-Channel Energy Normalization)
+Per-Channel Energy Normalization (PCEN) is another family of transformations with automatic gain-control behavior. Its parameters are task-dependent; robustness claims should be tied to the datasets and experiments in which PCEN was evaluated.
 
-$$
-\text{PCEN}(m, b) = \left(\frac{M(m, b)}{(\epsilon + \bar{M}(m, b))^\alpha + \delta}\right)^r - \delta^r
-$$
+## Implementation checklist
 
-PCEN provides automatic gain control and is robust to varying recording conditions. Useful for training on diverse, inconsistently-normalized data.
+- record library and version;
+- record sample rate, window, FFT and hop;
+- record mel formula, band normalization, and frequency bounds;
+- record magnitude/power choice and log or dB transform;
+- use identical preprocessing at training and inference;
+- test reconstruction or downstream accuracy when changing any parameter.
 
-## Implementation Notes
+Common implementations include `torchaudio.transforms.MelSpectrogram`, `librosa.feature.melspectrogram`, and TensorFlow signal primitives. Their defaults are not guaranteed to match one another.
 
-Most frameworks provide mel spectrogram computation:
+## Primary references
 
-- **torchaudio**: `torchaudio.transforms.MelSpectrogram`
-- **librosa**: `librosa.feature.melspectrogram`
-- **tensorflow**: `tf.signal.linear_to_mel_weight_matrix` + STFT
+- Stevens, Volkmann & Newman, *A Scale for the Measurement of the Psychological Magnitude Pitch* (1937), foundational mel-scale work.
+- Griffin & Lim, *Signal Estimation from Modified Short-Time Fourier Transform* (1984).
+- Kong, Kim & Bae, [HiFi-GAN](https://arxiv.org/abs/2010.05646) (NeurIPS 2020).
+- Lee et al., [BigVGAN](https://arxiv.org/abs/2206.04658) (2022).
+- Siuzdak, [Vocos](https://arxiv.org/abs/2306.00814) (2023).
+- librosa, [mel filter-bank documentation](https://librosa.org/doc/latest/generated/librosa.filters.mel.html).
 
-Ensure consistent parameter choices between training and inference — mismatched mel parameters will produce garbage outputs.
+Sources checked: 2026-09-05.
