@@ -5,13 +5,13 @@ title: AI Music Agents Overview
 
 # AI Music Agents
 
-An **AI music agent** is an orchestration layer that chains multiple AI models together — each contributing a different capability — to produce results no single model can achieve alone. Rather than sending one prompt to one service, an agent decides *which models to invoke*, *in what order*, and *how to pass outputs between them*.
+An **AI music agent** is an orchestration layer that coordinates models or services so that generation, analysis, editing, validation, and delivery can be handled as separate stages. The useful engineering idea is orchestration, not the assumption that one provider is permanently "best" at a particular musical task.
 
-This section covers the patterns, architectures, and concrete recipes for building agent-driven music workflows.
+This section covers patterns, architectures, and concrete recipes for building agent-driven music workflows.
 
 ## Before you build
 
-Treat every model call as an unreliable external dependency. A production agent needs explicit boundaries around provider changes, private media, cost, retries, and human approval.
+Treat every model call as an external dependency whose contract can change. A production agent needs explicit boundaries around provider changes, private media, cost, retries, and human approval.
 
 Use this readiness checklist before implementing a pipeline:
 
@@ -23,22 +23,37 @@ Use this readiness checklist before implementing a pipeline:
 - [ ] Define which failures can retry automatically and which require human review.
 - [ ] Preserve inputs, decisions, edits, and output provenance for approved assets.
 
-Start with a single deterministic workflow. Add model selection or critic loops only after the baseline can be measured and recovered when a provider fails.
+Start with a single measurable workflow. Add model selection or critic loops only after the baseline can be recovered and evaluated when a provider fails.
 
-## Why Agents?
+## Choose stages from documented capabilities
 
-Every current AI music model excels at something and struggles with something else:
+Do not maintain a timeless strengths/weaknesses leaderboard for hosted music products. Product features and model versions change too quickly, and subjective statements such as "best vocals" or "catchy hooks" require a dated benchmark rather than documentation prose.
 
-| Model | Strengths | Weaknesses |
-|-------|-----------|------------|
-| **Suno** | Full-song generation, vocal quality, catchy hooks | Limited structural control, no stem output |
-| **Treblo** | Generation, extension, streaming, and lyrics alignment through a documented API | Version-specific controls require contract-aware routing |
-| **MusicGen** | Melody conditioning, open weights, deterministic | No vocals, shorter clips |
-| **MusicLM** | Semantic richness from text, good timbre | Closed, lower audio fidelity |
-| **Stable Audio** | High-fidelity stereo, timing control, long-form | Primarily instrumental |
-| **Jukebox** | Raw audio style transfer, genre depth | Extremely slow, legacy |
+As checked on 5 September 2026, these are examples of **documented** capabilities that can justify an orchestration stage:
 
-An agent can route tasks to whichever model fits best, or pipeline several models in sequence to compound their strengths.
+| System | Publicly documented capability relevant to an agent | Boundary to preserve |
+| --- | --- | --- |
+| **Suno** | Prompt-based song creation plus editing/remixing workflows; the current product also advertises stem export, so older claims that Suno has "no stem output" are obsolete | Hosted product behavior, limits, model names, and plan entitlements are versioned; do not infer the generation architecture from output audio |
+| **Treblo** | Documented REST API for generation, extension, status retrieval, streaming, lyrics-related controls, and webhooks | Route only fields supported by the selected API version and re-check the live contract before deployment |
+| **MusicGen / AudioCraft** | Open research implementation with text conditioning; melody variants accept audio melody conditioning; generation parameters use stochastic sampling by default | "Open weights" does not mean every run is automatically deterministic; record seeds/settings and environment when reproducibility matters |
+| **Stable Audio Open** | Released model for text-conditioned stereo audio with a documented maximum generation duration in its model card | Treat the released model's card and licence as the source of truth; do not generalize capabilities of a hosted Stable Audio product to the open model |
+| **Legacy / research systems** | Systems such as Jukebox or MusicLM are useful historical references for architecture and research comparisons | Do not present an old research demo as a current production dependency unless there is a maintained interface you can actually call |
+
+An agent can route tasks among tools that expose the required contracts, or pipeline several stages in sequence. The routing decision should come from requirements and measured behavior, not reputation.
+
+## Benchmark before routing by quality
+
+If an agent selects a provider based on musical quality, build a dated evaluation rather than hard-coding claims into the documentation. Record:
+
+- provider and displayed model/version;
+- account tier and region;
+- complete prompt/input set;
+- candidate count and selection policy;
+- latency and failure rate;
+- downloaded format and post-processing;
+- listener protocol and objective metrics where relevant.
+
+A provider can only be called "better" for the dimensions and test conditions that were actually measured.
 
 ## What's Covered
 
@@ -55,5 +70,14 @@ An agent can route tasks to whichever model fits best, or pipeline several model
 2. [Orchestration Patterns](./orchestration-patterns.md) for routing and recovery strategies.
 3. [Building a Music Agent](./building-a-music-agent.md) for an end-to-end implementation.
 4. [Agent Evaluation and Observability](./evaluation-and-observability.md) before comparing or deploying changes.
+
+## Sources checked
+
+Checked 5 September 2026:
+
+- [Suno product site](https://suno.com/)
+- [Treblo developer documentation](https://treblo.com/developers/docs)
+- [AudioCraft MusicGen documentation](https://github.com/facebookresearch/audiocraft/blob/main/docs/MUSICGEN.md)
+- [AudioCraft MusicGen implementation](https://github.com/facebookresearch/audiocraft/blob/main/audiocraft/models/musicgen.py)
 
 For provider-specific contracts, use the [API overview](../apis/index.md). For evidence and freshness requirements, follow [Reliability and Sourcing](../engineering/reliability-and-sourcing.md).
