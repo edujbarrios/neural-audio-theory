@@ -5,219 +5,158 @@ title: Training Strategies
 
 # Training Strategies for Audio Models
 
-Training large audio models requires careful engineering beyond choosing the right loss function. This page covers the practical strategies that make training stable, efficient, and effective.
+Training behavior depends on architecture, objective, data, optimizer, precision, hardware, and distributed strategy. This page describes common tools without presenting one recipe or hyperparameter set as universal for audio models.
 
-## Learning Rate Scheduling
+## Learning-rate schedules
 
-### Warm-Up
+### Warm-up
 
-Start with a small learning rate and linearly increase over the first $N_{\text{warmup}}$ steps:
-
-$$
-\eta_t = \eta_{\max} \cdot \frac{t}{N_{\text{warmup}}}, \quad t \leq N_{\text{warmup}}
-$$
-
-Warm-up prevents large, destabilizing gradient updates in early training when model weights are randomly initialized.
-
-### Cosine Annealing
-
-After warm-up, decay the learning rate following a cosine schedule:
+A linear warm-up can be written as
 
 $$
-\eta_t = \eta_{\min} + \frac{1}{2}(\eta_{\max} - \eta_{\min})\left(1 + \cos\left(\frac{\pi \cdot t}{T}\right)\right)
+\eta_t=\eta_{\max}\frac{t}{N_{\mathrm{warmup}}},\qquad t\le N_{\mathrm{warmup}}.
 $$
 
-Cosine decay is smoother than step decay and often yields better final performance.
+Warm-up is often used to avoid large early updates, especially in transformer training, but its necessity and duration are empirical choices rather than fixed requirements.
 
-### Warm-Up + Cosine (Common in Practice)
+### Cosine decay
 
-```
-η
-|  /‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\
-| /                   \
-|/                     \___
-└─────────────────────────── steps
-  warmup   cosine decay
-```
-
-### Inverse Square Root
-
-Used in some transformer training:
+One common schedule is
 
 $$
-\eta_t = \eta_{\max} \cdot \min\left(\frac{1}{\sqrt{t}}, \frac{t}{N_{\text{warmup}}^{3/2}}\right)
+\eta_t=\eta_{\min}+\frac12(\eta_{\max}-\eta_{\min})\left(1+\cos\frac{\pi t}{T}\right).
 $$
 
-## Optimizer Choice
+Cosine schedules are widely used, but claims that they inherently produce better final performance than step decay require a controlled comparison on the target task.
+
+### Inverse-square-root schedules
+
+Transformer systems sometimes use schedules proportional to $t^{-1/2}$ after warm-up. The exact normalization varies by implementation, so copy the formula from the code or paper being reproduced.
+
+## Optimizers
 
 ### Adam and AdamW
 
-Adam is the default optimizer for audio models:
+Adam maintains exponential moving averages of first and second gradient moments. AdamW modifies Adam by decoupling weight decay from the loss-gradient update. The AdamW paper demonstrated benefits in the authors' experiments; this should not be generalized into a guarantee that AdamW always improves generalization.
+
+Default values such as $\beta_1=0.9$, $\beta_2=0.999$, and $\epsilon=10^{-8}$ are common library defaults, not audio-specific laws. Weight decay, betas, learning rate, and epsilon should be reported with each experiment.
+
+Other optimizers such as Adafactor, Lion, LAMB, or second-order approximations may be useful under particular memory or scaling constraints. Their inclusion in a library does not establish superiority for audio.
+
+## Mixed precision
+
+Frameworks such as PyTorch AMP can execute selected operations in lower precision while keeping other operations in FP32. `float16` and `bfloat16` have different numerical properties and hardware support.
+
+Mixed precision **can** reduce memory use or increase throughput when the accelerator has efficient lower-precision kernels. Fixed statements such as “50% less memory” or “2–3× faster” are hardware-, model-, batch-, and kernel-dependent and should be measured rather than assumed.
+
+For FP16 training, gradient scaling is commonly used to reduce underflow risk. BF16 has the same exponent width as FP32 and therefore a wider dynamic range than FP16, but it has fewer fraction bits than FP32. Whether BF16 is preferable depends on accelerator support and model behavior.
+
+Record:
+
+- compute dtype and parameter/master-weight dtype;
+- whether gradient scaling is enabled;
+- framework and accelerator generation;
+- throughput, memory peak, and any convergence change versus FP32.
+
+## Gradient accumulation
+
+Accumulating gradients over $K$ micro-batches can approximate a larger effective batch:
 
 $$
-m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t
-$$
-$$
-v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2
-$$
-$$
-\theta_t = \theta_{t-1} - \eta \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
+g_{\mathrm{acc}}=\frac1K\sum_{k=1}^{K}g_k.
 $$
 
-**AdamW** decouples weight decay from the gradient update, which typically improves generalization:
+The often-quoted effective batch size
 
 $$
-\theta_t = \theta_{t-1} - \eta \left(\frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon} + \lambda \theta_{t-1}\right)
+B_{\mathrm{eff}}=B_{\mathrm{micro}}\times K\times N_{\mathrm{data\ parallel\ ranks}}
 $$
 
-Typical hyperparameters for audio:
-- $\beta_1 = 0.9$, $\beta_2 = 0.999$
-- $\epsilon = 10^{-8}$
-- Weight decay $\lambda = 0.01$
+is useful bookkeeping, but accumulation is not automatically identical to a single large-batch update. Differences can arise from batch-normalization statistics, stochastic layers, loss reduction, gradient clipping, optimizer/scheduler step timing, sequence packing, and stateful model components.
 
-### Other Optimizers
+## Distributed training
 
-- **Lion**: Sign-based optimizer, lower memory, competitive with Adam on some tasks
-- **Adafactor**: Memory-efficient factored optimizer for very large models
-- **Sophia**: Second-order optimizer that has shown promise for language modeling
+### Distributed Data Parallel (DDP)
 
-## Mixed Precision Training
+In replicated data parallelism, each rank holds model parameters, processes different data, and synchronizes gradients. PyTorch DDP uses collective communication for synchronization. It is a common baseline, but avoid claiming it is the most common strategy across all audio training.
 
-Modern audio models use mixed precision (FP16 or BF16) to:
-- Reduce memory usage by ~50%
-- Speed up training by 2–3× on modern GPUs
-- Enable larger batch sizes
+### Fully Sharded Data Parallel (FSDP)
 
-The key components:
+PyTorch FSDP can shard parameters, gradients, and optimizer states depending on the selected sharding strategy. Full sharding reduces per-rank memory relative to full replication but introduces all-gather/reduce-scatter communication. Whether this raises or lowers end-to-end training time depends on model size, network topology, wrapping policy, overlap, and batch size.
 
-1. **FP16/BF16 forward pass**: faster computation
-2. **FP32 master weights**: maintain precision for small gradient updates
-3. **Loss scaling**: prevent gradient underflow in FP16
+### Tensor, pipeline, and other model parallelism
+
+Very large models may use tensor parallelism, pipeline parallelism, sharded data parallelism, activation checkpointing, CPU/NVMe offload, or combinations of these. A parameter count alone does not establish which method is “necessary.”
+
+## Gradient clipping
+
+Norm clipping can limit an update when a gradient norm exceeds threshold $c$:
 
 $$
-\text{scaled\_loss} = \text{loss} \times s
+g'=g\min\left(1,\frac{c}{\|g\|}\right).
 $$
 
-$$
-\text{gradients} = \frac{\nabla \text{scaled\_loss}}{s}
-$$
+A max norm such as 1.0 is a common starting value in some transformer recipes, not a universal audio setting. Under sharded training, use the framework's sharding-aware clipping API when required.
 
-**BFloat16** is preferred over FP16 when available because it has the same exponent range as FP32, eliminating most overflow/underflow issues.
+## Exponential moving averages
 
-## Gradient Accumulation
-
-When GPU memory is insufficient for the desired batch size, accumulate gradients over multiple micro-batches:
+An EMA of parameters has the form
 
 $$
-g_{\text{effective}} = \frac{1}{K}\sum_{k=1}^{K} g_k
+\theta_{\mathrm{EMA}}\leftarrow\beta\theta_{\mathrm{EMA}}+(1-\beta)\theta.
 $$
 
-Effective batch size = micro-batch size × accumulation steps × number of GPUs.
+EMA is useful in some diffusion and generative-model recipes, but not every architecture benefits from it and no single $\beta$ is generally correct. Evaluate EMA and non-EMA checkpoints on the same validation protocol before selecting one.
 
-This is mathematically equivalent to training with the larger batch size (ignoring batch normalization effects).
+## Batch size and learning-rate scaling
 
-## Distributed Training
+There are no universal “small / medium / large” batch-size bands for audio. A batch of 16 long stereo waveforms may consume more memory and represent more tokens than thousands of short symbolic sequences.
 
-### Data Parallelism (DDP)
+Report batch size in units relevant to the model, for example:
 
-- Replicate model on each GPU
-- Each GPU processes different data
-- Average gradients across GPUs via all-reduce
-- Most common strategy for audio models
+- clips and seconds of audio per optimizer step;
+- codec tokens or frames per step;
+- sequence length distribution;
+- number of data-parallel ranks;
+- gradient-accumulation steps.
 
-### Fully Sharded Data Parallelism (FSDP)
+The linear scaling rule, $\eta'=k\eta$, originated as a useful heuristic in large-batch vision training. It is not guaranteed to hold for a new audio model; verify stability and validation performance after changing global batch size.
 
-- Shard model parameters, gradients, and optimizer states across GPUs
-- Each GPU holds only a fraction of the full model
-- Enables training models that don't fit on a single GPU
-- Higher communication overhead than DDP
+## Staged training
 
-### Model Parallelism
+Pretraining followed by task/domain adaptation is common across modern machine learning, but there is no universal three-stage sequence of “pretrain → fine-tune → RLHF” for audio. Music and audio systems may instead train codecs separately, freeze encoders, perform supervised fine-tuning, preference tuning, distillation, adversarial stages, or joint end-to-end training.
 
-- Split model layers across GPUs
-- Necessary for very large models (billions of parameters)
-- More complex to implement, used mainly for the largest systems
+Describe stages by the actual objective and data rather than labeling an undocumented phase “alignment.”
 
-## Training Stability Techniques
+## Curriculum learning
 
-### Gradient Clipping
+Curriculum learning deliberately changes the training-data distribution or task difficulty over time. Published work shows benefits in some settings and no guaranteed improvement in others. If using a curriculum, define the ordering signal, schedule, baseline without curriculum, and effect on convergence and held-out quality.
 
-Prevent exploding gradients:
+## Checkpointing and exact resumption
 
-$$
-g' = \begin{cases} g & \text{if } \|g\| \leq c \\ c \cdot \frac{g}{\|g\|} & \text{if } \|g\| > c \end{cases}
-$$
+A reproducible checkpoint may need more than model and optimizer tensors. Depending on the stack, save:
 
-Typical max norm $c = 1.0$ for transformer-based audio models.
+- model and optimizer states;
+- scheduler and gradient-scaler states;
+- EMA state if used;
+- global step/epoch and sampler state;
+- random-number generator states;
+- data-shard position where practical;
+- model/config and dependency versions.
 
-### Exponential Moving Average (EMA)
-
-Maintain an EMA of model weights for more stable inference:
-
-$$
-\theta_{\text{EMA}} = \beta \cdot \theta_{\text{EMA}} + (1-\beta) \cdot \theta
-$$
-
-Typical $\beta = 0.9999$. Use EMA weights for evaluation and generation; train with regular weights.
-
-### Dropout and Regularization
-
-- **Dropout**: standard in transformer layers ($p = 0.1$)
-- **Weight decay**: L2 regularization via AdamW
-- **Label smoothing**: soften one-hot targets for classification components
-
-## Batch Size Considerations
-
-| Batch Size | Effect |
-|---|---|
-| Small (1–8) | Noisy gradients, implicit regularization, slower convergence |
-| Medium (16–64) | Good balance for most audio models |
-| Large (128–512) | Smoother optimization, requires learning rate scaling |
-| Very large (1k+) | May need LARS/LAMB optimizers, careful warm-up |
-
-### Linear Scaling Rule
-
-When increasing batch size by factor $k$, scale learning rate proportionally:
-
-$$
-\eta' = k \cdot \eta
-$$
-
-This heuristic (from large-scale vision training) works well with warm-up but can break down at extreme scales.
-
-## Multi-Stage Training
-
-Many state-of-the-art audio systems use staged training:
-
-1. **Pre-training**: large, diverse, lower-quality data for general knowledge
-2. **Fine-tuning**: smaller, high-quality data for target quality level
-3. **Alignment**: human feedback or preference optimization (RLHF-style)
-
-### Curriculum Learning
-
-Order training data by difficulty:
-- Start with cleaner, simpler examples
-- Gradually introduce harder, noisier, or more complex music
-- Can accelerate convergence and improve final quality
-
-## Checkpointing and Resumption
-
-- Save checkpoints every $N$ steps (not just every epoch)
-- Include optimizer state for exact resumption
-- Keep the best checkpoint by validation metric
-- Use EMA checkpoints for final model selection
+Saving every fixed number of steps is one policy, not a requirement. Choose cadence from checkpoint cost, failure rate, and acceptable lost work.
 
 ## Monitoring
 
-Essential metrics to track during training:
+Useful signals depend on the model. Typical examples include training/validation objectives, gradient norms, learning rate, throughput, memory peaks, numerical overflows, data-loader stalls, and task-specific validation metrics.
 
-| Metric | What It Tells You |
-|---|---|
-| Training loss | Optimization progress |
-| Validation loss | Generalization |
-| Gradient norm | Stability |
-| Learning rate | Schedule correctness |
-| GPU utilization | Efficiency |
-| Throughput (samples/s) | Training speed |
-| Discriminator accuracy | GAN balance (if applicable) |
-| FAD on validation set | Audio quality trend |
+Do not label FAD, CLAP similarity, discriminator accuracy, or any other single metric as an unconditional “audio quality” monitor. Each metric has a defined scope and failure modes; use the evaluation protocol described in [Evaluation Metrics](./evaluation-metrics.md).
+
+## Primary references and documentation
+
+- Loshchilov & Hutter, [Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101) (AdamW).
+- PyTorch, [Automatic Mixed Precision documentation](https://docs.pytorch.org/docs/stable/amp.html).
+- PyTorch, [FullyShardedDataParallel documentation](https://docs.pytorch.org/docs/stable/fsdp.html).
+- Goyal et al., [Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour](https://arxiv.org/abs/1706.02677) (linear-scaling rule context).
+
+Sources checked: 2026-09-05.
