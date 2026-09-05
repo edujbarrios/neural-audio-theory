@@ -5,273 +5,144 @@ title: Evaluation Metrics
 
 # Evaluation Metrics for AI Music
 
-Evaluating generated music is challenging because quality is multidimensional and inherently subjective. This page covers the objective metrics, perceptual scores, and human evaluation methods used in the field.
+AI-music evaluation is multidimensional. No single objective score establishes musical quality, prompt adherence, originality, perceptual fidelity, or production usefulness. A defensible evaluation combines metrics chosen for the task with controlled listening tests when human perception is part of the claim.
 
-## Objective Audio Metrics
+## Fréchet Audio Distance (FAD)
 
-### Fréchet Audio Distance (FAD)
-
-FAD is the most widely used metric for generative audio quality. It measures the distributional distance between generated and real audio embeddings:
+FAD was introduced as a reference-free distributional metric for audio enhancement. It compares fitted Gaussian distributions of embeddings from reference and evaluated audio:
 
 $$
-\text{FAD} = \|\boldsymbol{\mu}_r - \boldsymbol{\mu}_g\|^2 + \text{tr}\left(\boldsymbol{\Sigma}_r + \boldsymbol{\Sigma}_g - 2\left(\boldsymbol{\Sigma}_r \boldsymbol{\Sigma}_g\right)^{1/2}\right)
+\text{FAD}=\|\boldsymbol\mu_r-\boldsymbol\mu_g\|^2+\mathrm{tr}\left(\boldsymbol\Sigma_r+\boldsymbol\Sigma_g-2(\boldsymbol\Sigma_r\boldsymbol\Sigma_g)^{1/2}\right).
 $$
 
-where $(\boldsymbol{\mu}_r, \boldsymbol{\Sigma}_r)$ and $(\boldsymbol{\mu}_g, \boldsymbol{\Sigma}_g)$ are the mean and covariance of embeddings from real and generated audio respectively.
+Lower values mean the fitted embedding distributions are closer under that exact pipeline. FAD is used in generative-audio research, but describing it as *the* most widely used quality metric is difficult to substantiate and risks implying more than it measures.
 
-**Lower FAD indicates closer fitted embedding distributions under the chosen setup.** It is not a direct measure of musical quality. FAD is sensitive to the embedding model, sample duration, resampling, loudness, reference corpus, and sample count. Scores produced with different pipelines are not directly comparable.
+A FAD number is not portable across arbitrary implementations. Report at least:
 
-Embedding model choices include:
-- **VGGish**: original, widely used but dated
-- **CLAP**: more recent, captures text-audio alignment
-- **MERT**: music-oriented representations; using it creates a Fréchet-style embedding distance, not the original VGGish FAD protocol
+- embedding model and checkpoint;
+- sample rate and preprocessing;
+- clip duration and segmentation;
+- reference corpus;
+- number of clips;
+- treatment of silence and failed generations;
+- implementation/version.
 
-The Gaussian estimate is biased at finite sample counts. Use the same number of clips for every system, bootstrap the complete pipeline, and publish the exact embedding checkpoint and preprocessing code.
+Changing the embedding model produces a different Fréchet-style metric. The original FAD work used VGGish; a CLAP- or music-encoder-based Fréchet distance should be named accordingly rather than silently presented as the identical protocol.
 
-### Fréchet Inception Distance (FID)
+## Inception-style and kernel distances
 
-FID applied to spectrogram images, using a vision model (e.g., Inception) as the embedding extractor. Less common than FAD for audio but still used in some papers.
-
-### Inception Score (IS)
-
-$$
-\text{IS} = \exp\left(\mathbb{E}_x \left[ D_{\text{KL}}(p(y|x) \| p(y)) \right]\right)
-$$
-
-Measures both quality (confident class predictions) and diversity (uniform marginal distribution). Originally for images; adapted for audio with audio classifiers.
-
-### Kernel Inception Distance (KID)
+### Inception Score
 
 $$
-\text{KID} = \text{MMD}^2(\{f(x_r)\}, \{f(x_g)\})
+\text{IS}=\exp\left(\mathbb E_x[D_{\mathrm{KL}}(p(y|x)\|p(y))]\right).
 $$
 
-Unbiased alternative to FID/FAD, uses Maximum Mean Discrepancy. Better statistical properties with small sample sizes.
+The interpretation depends entirely on the classifier and label space. A confident classifier does not prove perceptual quality or musical coherence.
 
-## Spectral Metrics
+### Kernel distances
 
-### Multi-Resolution STFT Loss
+Maximum Mean Discrepancy and kernel-based distances can compare embedding distributions without fitting the same Gaussian model. Claims such as “better for small samples” must be tied to a particular estimator and experiment; they are not a universal guarantee.
 
-Used both for training and evaluation:
+## Spectral and reconstruction metrics
 
-$$
-\mathcal{L}_{\text{MRSTFT}} = \frac{1}{M}\sum_{m=1}^{M}\left(\mathcal{L}_{\text{sc}}^{(m)} + \mathcal{L}_{\text{mag}}^{(m)}\right)
-$$
+### Multi-resolution STFT loss
 
-where spectral convergence and log-magnitude losses are computed at multiple STFT resolutions.
-
-**Spectral convergence**:
+A common form aggregates spectral terms across several STFT settings:
 
 $$
-\mathcal{L}_{\text{sc}} = \frac{\||\text{STFT}(x)| - |\text{STFT}(\hat{x})|\|_F}{\||\text{STFT}(x)|\|_F}
+\mathcal L_{\mathrm{MRSTFT}}=\frac{1}{M}\sum_{m=1}^{M}(\mathcal L_{\mathrm{sc}}^{(m)}+\mathcal L_{\mathrm{mag}}^{(m)}).
 $$
 
-### Log-Spectral Distance (LSD)
+These metrics are useful when a target waveform or reconstruction exists. They do not, by themselves, measure whether an unconstrained generated song is musically preferable.
+
+### SI-SDR
+
+SI-SDR is particularly useful for source-separation and reconstruction tasks where a time-aligned reference signal exists:
 
 $$
-\text{LSD} = \frac{1}{T}\sum_{t=1}^{T}\sqrt{\frac{1}{K}\sum_{k=1}^{K}\left(10\log_{10}\frac{|X(t,k)|^2}{|\hat{X}(t,k)|^2}\right)^2}
-$$
-
-Measures per-frame spectral distortion in dB. Lower is better.
-
-### Mel Cepstral Distortion (MCD)
-
-$$
-\text{MCD} = \frac{10}{\ln 10}\sqrt{2\sum_{i=1}^{D}(c_i - \hat{c}_i)^2}
-$$
-
-where $c_i$ and $\hat{c}_i$ are mel cepstral coefficients. Widely used in speech synthesis; applicable to singing voice.
-
-## Text-Audio Alignment Metrics
-
-### CLAP similarity
-
-Using a pre-trained CLAP (Contrastive Language-Audio Pretraining) model:
-
-$$
-\text{CLAP Score} = \text{cos\_sim}(\mathbf{e}_{\text{text}}, \mathbf{e}_{\text{audio}})
-$$
-
-Measures compatibility under one pretrained model. Higher is not universally better: the model can reward audible prompt keywords while missing arrangement, negation, counting, or fine temporal control. Report results by prompt category and include hard negatives or counterfactual prompts.
-
-### Text-Audio Relevance
-
-Can also be computed using:
-- ImageBind (multimodal alignment)
-- MuLan (music-language model)
-
-## Musical Attribute Metrics
-
-### Tempo Accuracy
-
-Compare detected BPM of generated audio vs. target:
-
-$$
-\text{Tempo Error} = |BPM_{\text{detected}} - BPM_{\text{target}}|
-$$
-
-### Key Accuracy
-
-Percentage of generated clips where the detected musical key matches the prompted or target key.
-
-### Pitch Quality
-
-- **F0 RMSE**: root mean square error of fundamental frequency trajectory
-- **Voicing Decision Error**: accuracy of voiced/unvoiced detection
-- **Gross Pitch Error (GPE)**: percentage of frames with >50 cent pitch error
-
-### Rhythm Metrics
-
-- **Beat F1**: precision and recall of detected beat positions vs. reference
-- **Downbeat F1**: accuracy of measure-level timing
-- **Groove consistency**: autocorrelation analysis of onset patterns
-
-## Perceptual Quality Scores
-
-### PESQ (Perceptual Evaluation of Speech Quality)
-
-$$
-\text{PESQ} \in [-0.5, 4.5]
-$$
-
-Designed for speech; sometimes repurposed for vocal evaluation. Higher is better.
-
-### ViSQOL (Virtual Speech Quality Objective Listener)
-
-Perceptual quality estimator using spectro-temporal comparison:
-
-$$
-\text{ViSQOL} \in [1.0, 5.0]
-$$
-
-More robust than PESQ for music content.
-
-### SI-SDR (Scale-Invariant Signal-to-Distortion Ratio)
-
-$$
-s_{\text{proj}} = \frac{\langle\hat{s}, s\rangle}{\|s\|^2}\, s
+s_{\mathrm{proj}}=\frac{\langle\hat s,s\rangle}{\|s\|^2}s,
 $$
 
 $$
-\text{SI-SDR} = 10\log_{10} \frac{\|s_{\text{proj}}\|^2}{\|\hat{s} - s_{\text{proj}}\|^2}
+\mathrm{SI\!\text{-}\!SDR}=10\log_{10}\frac{\|s_{\mathrm{proj}}\|^2}{\|\hat s-s_{\mathrm{proj}}\|^2}.
 $$
 
-Used primarily for source separation quality. Higher is better.
+It is not a general-purpose score for free-form music generation.
 
-## Human Evaluation
+## Text-audio alignment
 
-### Mean Opinion Score (MOS)
+A CLAP-style cosine score is
 
-Listeners rate audio samples on a 1–5 scale:
+$$
+\mathrm{score}=\cos(\mathbf e_{\mathrm{text}},\mathbf e_{\mathrm{audio}}).
+$$
 
-| Score | Quality |
-|---|---|
-| 5 | Excellent |
-| 4 | Good |
-| 3 | Fair |
-| 2 | Poor |
-| 1 | Bad |
+This measures compatibility according to one pretrained embedding model. It can miss negation, chronology, counting, arrangement detail, or attributes outside the encoder's training distribution. Compare systems with the same checkpoint and preprocessing, and supplement aggregate scores with prompt-category tests and counterfactual or hard-negative prompts.
 
-MOS is useful but expensive, and a mean can hide listener disagreement. Study size should come from a power analysis or sequential design rather than a fixed folklore threshold. Design guidelines:
+## Musical attribute tests
 
-- define the target population and screen listening equipment when relevant
-- Randomize presentation order
-- Include anchor samples (real music, known-bad examples)
-- collect repeated or sentinel trials to estimate reliability
-- Report uncertainty and the number of listeners and ratings per condition
+Tempo, key, pitch, beat, and structure can be evaluated when the prompt or source defines a testable target. The metric inherits the errors of the detector used to estimate that attribute. A “key accuracy” result based on an automatic key detector is not ground truth unless the detector itself has been validated for the tested material.
 
-### AB Preference Testing
+Prefer task-specific reports such as:
 
-Present two samples (A and B) and ask which is preferred. Simpler than MOS, captures relative quality.
-
-### MUSHRA (Multi-Stimulus with Hidden Reference and Anchor)
-
-- Present multiple versions simultaneously
-- Include a hidden reference (real audio)
-- Include a low-quality anchor
-- Listeners rate each on 0–100 scale
-- Good for comparing multiple systems
-
-### Attribute Rating
-
-Rate specific dimensions independently:
-
-- **Audio quality**: production fidelity, absence of artifacts
-- **Musicality**: harmonic coherence, melodic quality
-- **Text adherence**: how well the audio matches the prompt
-- **Creativity / interestingness**: novelty and engagement
-- **Structure**: presence of coherent arrangement
-
-## Evaluation Best Practices
-
-| Practice | Reason |
-|---|---|
-| Report multiple metrics | No single metric captures everything |
-| Always include human evaluation | Objective metrics can diverge from perception |
-| Use large evaluation sets | Small sets have high variance |
-| Compare on the same test set | Ensure fair comparisons |
-| Report confidence intervals | Quantify uncertainty |
-| Disclose evaluation conditions | Sample rate, duration, number of listeners |
-
-## A reproducible evaluation protocol
-
-### 1. Freeze the evaluation unit
-
-Define whether one observation is a clip, prompt, song, continuation, or listener rating. Multiple clips generated from one prompt are correlated and must not be treated as independent prompts. Keep train, validation, and test identities disjoint at the work or recording level when possible.
-
-### 2. Pre-register system settings
-
-Freeze checkpoints, samplers, guidance, candidate count, reranking, duration, random seeds, loudness processing, and failure handling. If a product generates four candidates and a human selects one, compare that workflow against other systems with an equivalent selection budget.
-
-### 3. Use paired comparisons
-
-Generate every system output from the same prompt or source item. Analyze paired differences and resample at the highest independent level—usually prompt or source—not individual rating. For listener studies, a mixed-effects model can account for both listener and item variation.
-
-### 4. Separate evaluation dimensions
-
-At minimum, distinguish:
-
-- signal fidelity and artifacts;
-- prompt or control adherence;
-- musical coherence over time;
-- diversity within and across prompts;
-- memorization or similarity risk;
-- latency, throughput, and resource use.
-
-A single weighted score hides trade-offs and makes the result depend on arbitrary weights.
-
-### 5. Quantify uncertainty
-
-Publish confidence intervals or posterior intervals, paired effect sizes, sample counts, and the resampling unit. Correct for multiple comparisons when testing many systems or attributes. Statistical significance without a practically meaningful effect size is not a useful product decision.
-
-### 6. Preserve artifacts
-
-Store prompt IDs, seeds, model and dependency versions, raw outputs, metric inputs, excluded cases, and analysis code. Normalize only copies used for a declared listening condition; retain original renders for artifact and loudness analysis.
-
-## Common evaluation leaks
-
-| Leak | Why it invalidates a comparison |
+| Claim | Useful evidence |
 | --- | --- |
-| Selecting only successful outputs | Measures a curated demo, not system reliability |
-| Different candidate budgets | Gives one system more chances to succeed |
-| Reference corpus overlaps training data | Can reward memorization or familiar production |
-| Per-clip random split of one recording | Places near-duplicate material in train and test |
-| Different mastering chains | Confounds model quality with loudness and post-processing |
-| Unblinded system labels | Introduces brand and expectation bias |
-| Treating every listener rating as independent | Produces confidence intervals that are too narrow |
+| follows requested tempo | annotated target + tempo estimator validated on the domain |
+| preserves melody | note/F0 alignment plus listening review |
+| follows section order | human or reliably annotated structural timeline |
+| matches text prompt | blinded ratings plus a fixed embedding score |
+| preserves source signal | SI-SDR/spectral metrics plus artifact-focused listening |
 
-## Metric Correlation Summary
+## PESQ and ViSQOL
 
-| Metric | Correlates With | Limitations |
-|---|---|---|
-| FAD | Overall distributional quality | Doesn't capture per-sample issues |
-| CLAP Score | Text-audio relevance | Bounded by CLAP model quality |
-| MOS | Perceived quality | Expensive, subjective variance |
-| LSD | Spectral accuracy | Doesn't capture temporal coherence |
-| Tempo/Key accuracy | Musical correctness | Narrow attributes only |
+PESQ is standardized for speech-quality evaluation and should not be treated as a generic music-quality score.
+
+ViSQOL is a full-reference perceptual metric with separate speech and audio modes. The current official implementation documents 48 kHz input for audio mode and 16 kHz wideband input for speech mode; audio mode downmixes multichannel input to mono for comparison. Its MOS-LQO output is a model prediction, not a human MOS measurement.
+
+Do not describe ViSQOL as universally “more robust than PESQ for music.” Use its documented audio mode, disclose the version and settings, and validate correlation with listeners for the degradation types that matter to the project.
+
+## Human evaluation
+
+### MOS-style ratings
+
+A mean opinion score summarizes listener ratings, but the scale labels, instructions, population, playback conditions, anchors, and statistical analysis must be specified. Different studies that both report “MOS” are not automatically comparable.
+
+### Pairwise preference
+
+A/B tests are useful for relative judgments when systems can be evaluated on matched prompts or sources. Randomize side/order and analyze paired outcomes rather than treating every rating as independent.
+
+### MUSHRA
+
+ITU-R BS.1534 defines the MUSHRA method for intermediate audio quality. A proper MUSHRA study uses a hidden reference and anchors and follows the standard's test design. Merely presenting several clips on a 0–100 slider is not sufficient to claim a standards-compliant MUSHRA test.
+
+## Reproducible evaluation protocol
+
+1. **Define the unit of analysis.** A prompt, song, source recording, and listener rating are different statistical units.
+2. **Freeze generation settings.** Record checkpoint/model label, sampler, seed policy, candidate count, reranking, duration, and failure handling.
+3. **Match budgets.** If one workflow allows four candidates plus manual selection, give competitors an equivalent selection budget or report the asymmetry.
+4. **Use paired material.** Compare systems on the same prompts or source items wherever possible.
+5. **Separate dimensions.** Fidelity, prompt adherence, structure, diversity, latency, and memorization risk should not be hidden in one arbitrary weighted score.
+6. **Quantify uncertainty.** Report confidence or posterior intervals, effect sizes, sample counts, and the resampling unit.
+7. **Preserve artifacts.** Keep raw outputs, prompts, seeds, metric inputs, exclusions, and analysis code.
+8. **Include listening evidence when making perceptual claims.** Objective metrics may be sufficient for a narrow engineering property, but claims about listener preference or perceived musical quality require listener data.
+
+## Common failure modes
+
+| Failure | Consequence |
+| --- | --- |
+| selecting only successful outputs | evaluates a curated demo rather than reliability |
+| unequal candidate budgets | gives one system more chances to succeed |
+| changing loudness/mastering between systems | confounds generation and post-processing |
+| embedding checkpoint changes | makes distribution scores non-comparable |
+| per-clip split of the same recording | creates leakage between train/test identities |
+| treating repeated listener ratings as independent | understates uncertainty |
+| calling an objective predictor “MOS” | confuses model prediction with human judgment |
 
 ## Primary references and standards
 
-- Kilgour et al., [Fréchet Audio Distance: A Reference-Free Metric for Evaluating Music Enhancement Algorithms](https://arxiv.org/abs/1812.08466) (2019)
-- ITU-R, [BS.1534: Method for the subjective assessment of intermediate quality level of audio systems](https://www.itu.int/rec/R-REC-BS.1534/) (MUSHRA)
-- ITU-T, [P.808: Subjective evaluation of speech quality with a crowdsourcing approach](https://www.itu.int/rec/T-REC-P.808/)
+- Kilgour et al., [Fréchet Audio Distance](https://arxiv.org/abs/1812.08466) (2019).
+- ITU-R, [BS.1534: Method for the subjective assessment of intermediate quality level of audio systems](https://www.itu.int/rec/R-REC-BS.1534/).
+- ITU-T, [P.808: Subjective evaluation of speech quality with a crowdsourcing approach](https://www.itu.int/rec/T-REC-P.808/).
+- Google, [ViSQOL official repository](https://github.com/google/visqol).
+
+Sources checked: 2026-09-05.
