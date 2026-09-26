@@ -21,6 +21,8 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
 
+  clientModules: ['./src/translate.ts'],
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
