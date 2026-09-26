@@ -1,7 +1,6 @@
 type TranslateApi = {
   language: {
     setLocal: (language: string) => void;
-    getLanguage?: () => string;
   };
   service: {
     use: (service: string) => void;
@@ -13,10 +12,11 @@ type TranslateApi = {
     tag?: string[];
     class?: string[];
   };
-  selectLanguageTag?: {
+  selectLanguageTag: {
     show: boolean;
+    languages: string;
+    documentId: string;
   };
-  changeLanguage: (language: string) => void;
   execute: () => void;
 };
 
@@ -32,16 +32,7 @@ const LANGUAGE_SELECTOR_ID = 'neural-audio-language-selector';
 const TRANSLATE_SCRIPT_SRC =
   'https://cdn.staticfile.net/translate.js/3.18.66/translate.js';
 
-const LANGUAGES = [
-  {id: 'english', label: 'English'},
-  {id: 'spanish', label: 'Español'},
-  {id: 'french', label: 'Français'},
-  {id: 'deutsch', label: 'Deutsch'},
-  {id: 'portuguese', label: 'Português'},
-  {id: 'italian', label: 'Italiano'},
-] as const;
-
-function createLanguageSelector(translate: TranslateApi): void {
+function createLanguageSelectorContainer(): void {
   if (document.getElementById(LANGUAGE_SELECTOR_ID)) {
     return;
   }
@@ -53,7 +44,7 @@ function createLanguageSelector(translate: TranslateApi): void {
 
   const wrapper = document.createElement('div');
   wrapper.id = LANGUAGE_SELECTOR_ID;
-  wrapper.className = 'navbar__item translation-language-picker';
+  wrapper.className = 'navbar__item translation-language-picker ignore';
   wrapper.setAttribute('aria-label', 'Language selector');
   wrapper.style.display = 'flex';
   wrapper.style.alignItems = 'center';
@@ -62,38 +53,9 @@ function createLanguageSelector(translate: TranslateApi): void {
   const icon = document.createElement('span');
   icon.textContent = '🌐';
   icon.setAttribute('aria-hidden', 'true');
+  wrapper.appendChild(icon);
 
-  const select = document.createElement('select');
-  select.setAttribute('aria-label', 'Language');
-  select.style.background = 'transparent';
-  select.style.color = 'inherit';
-  select.style.border = '1px solid var(--ifm-color-emphasis-300)';
-  select.style.borderRadius = '6px';
-  select.style.padding = '0.3rem 0.45rem';
-  select.style.font = 'inherit';
-  select.style.cursor = 'pointer';
-
-  for (const language of LANGUAGES) {
-    const option = document.createElement('option');
-    option.value = language.id;
-    option.textContent = language.label;
-    select.appendChild(option);
-  }
-
-  select.value = 'english';
-  select.addEventListener('change', () => {
-    translate.changeLanguage(select.value);
-  });
-
-  wrapper.append(icon, select);
   navbarRight.insertBefore(wrapper, navbarRight.firstChild);
-
-  window.setTimeout(() => {
-    const currentLanguage = translate.language.getLanguage?.();
-    if (currentLanguage && LANGUAGES.some((language) => language.id === currentLanguage)) {
-      select.value = currentLanguage;
-    }
-  }, 0);
 }
 
 function initializeTranslate(): void {
@@ -106,16 +68,19 @@ function initializeTranslate(): void {
   window.__neuralAudioTranslateInitialized = true;
 
   // Neural Audio Theory is authored in English. Visitors choose translations
-  // explicitly from the navbar selector; there is no browser-language autodetect.
+  // explicitly from translate.js' own language selector; no autodetect is used.
   translate.language.setLocal('english');
   translate.service.use('client.edge');
 
-  // Hide translate.js' built-in picker because the site provides its own navbar UI.
-  if (translate.selectLanguageTag) {
-    translate.selectLanguageTag.show = false;
-  }
+  // Put translate.js' native selector in the Docusaurus navbar. Using the
+  // library's own selector keeps its change-language state and events intact.
+  createLanguageSelectorContainer();
+  translate.selectLanguageTag.show = true;
+  translate.selectLanguageTag.documentId = LANGUAGE_SELECTOR_ID;
+  translate.selectLanguageTag.languages =
+    'english,spanish,french,deutsch,portuguese,italian';
 
-  // Keep technical material and the language picker itself intact while translating.
+  // Keep technical material intact while translating surrounding prose.
   translate.ignore?.tag?.push('pre', 'code', 'script', 'style', 'textarea');
   translate.ignore?.class?.push(
     'katex',
@@ -123,8 +88,6 @@ function initializeTranslate(): void {
     'theme-code-block',
     'translation-language-picker',
   );
-
-  createLanguageSelector(translate);
 
   // Docusaurus performs client-side navigation, so watch DOM updates and
   // translate newly rendered page content without requiring a full reload.
