@@ -45,42 +45,39 @@ function PromptIcon(props: SVGProps<SVGSVGElement>) {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Audio and Music Representations',
+    title: 'Produce and arrange',
     Icon: SignalIcon,
     description: (
       <>
-        Compare waveforms, time-frequency representations, symbolic formats,
-        neural codec tokens, embeddings, and latents—and learn why different
-        systems choose different representations.
+        Plan a track, write controlled prompts, select takes, direct vocals
+        and shape the arrangement before committing to a mix.
       </>
     ),
-    href: '/docs/concepts/music-representations',
+    href: '/docs/user-guides',
     accent: 'coral',
   },
   {
-    title: 'Model Architectures and Training',
+    title: 'Mix and master audio',
     Icon: NodeIcon,
     description: (
       <>
-        Study transformer sequence modeling, diffusion-style generation, loss
-        functions, datasets, and evaluation without treating one architecture
-        as the blueprint for every music model.
+        Prepare DAW sessions, identify masking or separation artifacts,
+        use measured processing and validate final masters for streaming.
       </>
     ),
-    href: '/docs/architecture/transformers-for-audio',
+    href: '/docs/audio-engineering',
     accent: 'violet',
   },
   {
-    title: 'Conditioning and Control',
+    title: 'Research and build AI systems',
     Icon: PromptIcon,
     description: (
       <>
-        Trace how text, metadata, structure, or reference audio can condition a
-        generator, and separate general techniques from controls that are
-        specific to a particular product or published model.
+        Explore waveforms, spectrograms, codec tokens, model architectures,
+        conditioning, benchmarks and production integrations.
       </>
     ),
-    href: '/docs/advanced/controllable-generation',
+    href: '/docs/engineering',
     accent: 'cyan',
   },
 ];
@@ -107,10 +104,10 @@ export default function HomepageFeatures(): ReactNode {
       <div className="container">
         <div className={styles.sectionHeading}>
           <span>Inside the guide</span>
-          <Heading as="h2">Learn the patterns—and the exceptions</Heading>
+          <Heading as="h2">Choose the detail level that fits your work</Heading>
           <p>
-            Build a connected mental model of neural audio while keeping
-            architecture-specific behavior, unpublished details, and uncertainty explicit.
+            One knowledge base, three clearly separated workflows. Practical guides
+            link to deeper engineering explanations when needed.
           </p>
         </div>
         <div className={styles.featureGrid}>

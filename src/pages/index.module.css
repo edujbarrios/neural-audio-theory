@@ -24,7 +24,7 @@
 }
 
 .heroContainer {
-  max-width: 860px;
+  max-width: 990px;
   text-align: center;
 }
 
@@ -44,7 +44,7 @@
 
 .heroTitle {
   margin: 1.2rem auto 1rem;
-  max-width: 820px;
+  max-width: 940px;
   color: #f4fffe;
   font-size: clamp(2.4rem, 5.3vw, 4.35rem);
   letter-spacing: -0.04em;
@@ -65,7 +65,7 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   margin: 2.5rem auto 0;
-  max-width: 820px;
+  max-width: 940px;
   text-align: left;
 }
 
@@ -74,7 +74,7 @@
   grid-template-columns: auto 1fr auto;
   gap: 1rem;
   align-items: center;
-  min-height: 9rem;
+  min-height: 10.5rem;
   padding: 1.25rem;
   border: 1px solid transparent;
   border-radius: 1rem;
@@ -314,4 +314,38 @@
   .pathArrow {
     transition: none;
   }
+}
+
+/* Clearly separate production, sound engineering and model-development audiences. */
+.technicalStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  margin: 1rem auto 0;
+  max-width: 940px;
+  padding: 1rem 1.3rem;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  border-radius: 0.8rem;
+  background: rgba(49, 35, 75, 0.35);
+  color: #e5e3ff;
+  font-size: 0.88rem;
+  text-align: left;
+  text-decoration: none;
+}
+.technicalStrip:hover,
+.technicalStrip:focus-visible {
+  border-color: #c4b5fd;
+  color: #fff;
+  text-decoration: none;
+}
+.technicalStrip > span:last-child {
+  flex: 0 0 auto;
+  color: #d8b4fe;
+  font-weight: 700;
+}
+@media screen and (max-width: 620px) {
+  .heroBanner { padding: 3.6rem 0 3rem; }
+  .technicalStrip { flex-direction: column; align-items: flex-start; }
+  .technicalStrip > span:last-child { align-self: flex-end; }
 }

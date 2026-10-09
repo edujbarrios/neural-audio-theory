@@ -1,11 +1,11 @@
 ---
-title: Engineering Docs
+title: AI / DSP Engineering
 slug: /engineering
 ---
 
-# Engineering Docs
+# AI / DSP Engineering
 
-Study how neural audio systems represent sound, learn conditional relationships, generate audio, and are evaluated in production and research settings.
+**For software engineers, researchers and machine-learning practitioners.** Study how neural audio systems represent sound, learn conditional relationships, generate audio, and are evaluated in production and research settings. If your aim is to mix or master a finished song in a DAW, take the [Sound Engineering route](../audio-engineering/index.md) instead.
 
 ## Follow the path
 
@@ -39,4 +39,4 @@ Apply the foundations through **[APIs and Integration](../apis/index.md)**, **[A
 | Fine-tune or control a model | [Advanced Topics](../advanced/fine-tuning-and-adaptation.md) |
 | Check terminology | [Glossary](../glossary.md) |
 
-These pages assume comfort with software concepts and introduce mathematics where it clarifies system behavior. Readers primarily interested in making music can use the **[User Guides](../user-guides/index.md)**.
+These pages assume comfort with software concepts and introduce mathematics where it clarifies system behavior. **[Producer Guides](../user-guides/index.md)** prioritize creative decisions, while **[Sound Engineering](../audio-engineering/index.md)** covers session preparation, mix diagnostics, master delivery and provenance. The model-engineering curriculum here is intentionally separate.
