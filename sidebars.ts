@@ -47,6 +47,23 @@ const sidebars: SidebarsConfig = {
     },
   ],
 
+  audioEngineeringSidebar: [
+    {type: 'doc', id: 'audio-engineering/index', label: 'Sound Engineering Home'},
+    {
+      type: 'category',
+      label: '1. Prepare and Mix',
+      items: ['audio-engineering/mix-session-and-diagnostics'],
+    },
+    {
+      type: 'category',
+      label: '2. Master and Deliver',
+      items: [
+        'audio-engineering/mastering-for-streaming',
+        'audio-engineering/provenance-and-release',
+      ],
+    },
+  ],
+
   engineeringSidebar: [
     {type: 'doc', id: 'engineering/index', label: 'Engineering Docs Home'},
     {type: 'doc', id: 'engineering/reliability-and-sourcing', label: 'Reliability & Sourcing'},
