@@ -86,13 +86,19 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'userGuidesSidebar',
           position: 'left',
-          label: 'User Guides',
+          label: 'For Producers',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'audioEngineeringSidebar',
+          position: 'left',
+          label: 'Sound Engineering',
         },
         {
           type: 'docSidebar',
           sidebarId: 'engineeringSidebar',
           position: 'left',
-          label: 'Engineering Docs',
+          label: 'AI / DSP',
         },
         {to: '/blog', label: 'Engineering Notes', position: 'left'},
         {
@@ -118,7 +124,11 @@ const config: Config = {
               to: '/docs/user-guides',
             },
             {
-              label: 'Engineering Docs',
+              label: 'Sound Engineering',
+              to: '/docs/audio-engineering',
+            },
+            {
+              label: 'AI / DSP Engineering',
               to: '/docs/engineering',
             },
           ],
