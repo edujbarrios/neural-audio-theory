@@ -85,6 +85,12 @@ All stems must share the same start time, duration, sample rate, bit depth, and 
 
 A perfect null is not always possible when processors are nonlinear, random, oversampled, or rendered in separate passes. Document the reason rather than claiming sample-identical reconstruction.
 
+## Streaming mastering reference: Spotify
+
+Spotify currently publishes **−14 LUFS integrated** as its normal playback normalization reference and recommends maximum true peak **below −1 dBTP**, or **below −2 dBTP** when the master is louder than −14 LUFS. These are audio quality recommendations, not mandatory mastering numbers. For delivery Spotify prefers one native-resolution stereo FLAC; qualifying WAV is accepted.
+
+Read the [official loudness guidance](https://support.spotify.com/es/artists/article/loudness-normalization/), [official audio format guidance](https://support.spotify.com/es-eu/artists/article/audio-file-formats/), and our [engineering mastering workflow](../audio-engineering/mastering-for-streaming.md).
+
 ## AI-specific checks
 
 - Scan vocal and lead passages for malformed syllables, identity drift, and abrupt timbral changes.
@@ -93,6 +99,7 @@ A perfect null is not always possible when processors are nonlinear, random, ove
 - Compare suspicious melodies, lyrics, and recordings against known source material when similarity risk is material.
 - Preserve the provider/model label, prompt or request record, edit history, terms review date, and downloaded-source hash.
 - Confirm consent and authorization for every uploaded reference, cloned voice, lyric, and performance.
+- Preserve platform provenance records and review [AI Provenance and Release](../audio-engineering/provenance-and-release.md) for licensing and attribution.
 
 ## Package the delivery
 
