@@ -5,7 +5,18 @@ title: Mixing AI Outputs
 
 # Mixing and Post-Processing AI Music Outputs
 
-AI-generated music is raw material, not a finished product. This guide covers the essential mixing and post-processing techniques to bring AI outputs to release quality.
+AI-assisted music can be a useful starting point or an almost finished performance. This producer-focused guide helps prioritize musical choices and handoffs. The separate [Sound Engineering Guide](../audio-engineering/mix-session-and-diagnostics.md) covers systematic diagnostics and measured processing.
+
+## Producer vs. sound engineer
+
+| Creative producer decision | Engineering test |
+| --- | --- |
+| Should the chorus feel bigger? | Compare dynamics after matching loudness |
+| Does the vocal carry the emotion? | Check for distortion, sibilance and dropouts |
+| Is the bass supporting the groove? | Check masking, kick/bass interaction and mono |
+| Is this the strongest generated take? | Validate repairability, stem quality and mix translation |
+
+Keep a clear handoff: approved arrangement, original sources, timecoded notes, and one or two references.
 
 ## Why Post-Processing Is Necessary
 
@@ -145,11 +156,15 @@ Some AI outputs have a subtle background noise:
 - High-pass filter removes low-frequency rumble
 - Gate can clean up gaps between sections
 
+## A short listening exercise
+
+Take a chorus that sounds muddy. First lower one competing instrument, then compare it with an EQ correction at similar perceived loudness. Note which approach improves the vocal without thinning the backing. Repeat in mono and on small speakers.
+
 ## Loudness and delivery
 
 Streaming normalization references are not universal mastering targets. Services can use different measurement methods, album behavior, user settings, codecs, and policy revisions. Master for the musical result and the current delivery specification, measure integrated and short-term loudness plus true peak, and audition any lossy preview separately. Broadcast, cinema, games, clubs, physical media, and archival masters each have different constraints.
 
-See [Quality Control and Delivery](./quality-control-and-delivery.md) for export verification and handoff requirements.
+See the [Sound Engineering mastering guide](../audio-engineering/mastering-for-streaming.md) for Spotify-specific reference measurements and [Quality Control and Delivery](./quality-control-and-delivery.md) for export verification.
 
 ## Quick Quality Checklist
 
